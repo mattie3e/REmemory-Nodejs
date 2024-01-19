@@ -2,7 +2,7 @@ import { pool } from "../../../config/dbConfig.js";
 import { BaseError } from "../../../config/error.js";
 import { status } from "../../../config/responseStatus.js";
 
-import { checkCapsuleNum_d } from "./pcapsuleDao.js";
+import { checkCapsuleNum_d, saveTextImage, saveVoice } from "./pcapsuleDao.js";
 
 // 캡슐넘버 생성
 export const createCapsuleNum_p = async (nickname) => {
@@ -22,6 +22,7 @@ export const createCapsuleNum_p = async (nickname) => {
 	return capsule_number;
 };
 
+// text_image or voice data 생성
 export const createContent_p = async (content_type, content) => {
 	const connection = await pool.getConnection(async (conn) => conn);
 
