@@ -39,6 +39,20 @@ export const checkCapsuleNum_d = async (connection, capsule_number) => {
 	return checkCapsuleNumRow[0].isExistCapsule;
 };
 
+export const getPcs_d = async (capsule_number, pcapsule_password) => {
+	const query = `SELECT * FROM pcapsule WHERE capsule_number = ? AND pcapsule_password = ?;`;
+	const [pcapsuleRow] = await connection.query(query, [
+		capsule_number,
+		pcapsule_password,
+	]);
+	return pcapsuleRow[0];
+};
+
+export const updatePcsStatus_d = async (capsule_number, status) => {
+	const query = `UPDATE pcapsule SET status = ? WHERE capsule_number = ?;`;
+	await connection.query(query, [status, capsule_number]);
+};
+
 // 이건 공통으로 사용될거같은데 공통으로 사용되는 함수들 파일 필요할듯
 export const saveTextImage = async (connection, body, image_url, sort) => {
 	const query = `INSERT INTO text_image (body, image_url, sort, created_at, updated_at) VALUES (?, ?, ?, ?, ?);`;

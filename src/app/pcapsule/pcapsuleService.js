@@ -7,6 +7,8 @@ import {
 	checkCapsuleNum_d,
 	insertPcapsule_d,
 	insertCapsuleNum_d,
+	getPcs_d,
+	updatePcsStatus_d,
 } from "./pcapsuleDao.js";
 
 // 캡슐 생성
@@ -69,5 +71,23 @@ export const createPcs_s = async (body, nickname) => {
 		throw error;
 	} finally {
 		connection.release();
+	}
+};
+
+// 캡슐 조회
+export const getPcs_s = async (capsule_number, pcapsule_password) => {
+	const pcapsule = await getPcs_d(capsule_number, pcapsule_password);
+	if (!pcapsule) {
+		throw new Error("Capsule not found");
+	}
+	// 조회할 때만 비교해서 status 변경 -> 차후 변경
+	if (new Date(pcapsule.open_date) <= new Date()) {
+		await updatePcsStatus_d(capsule_number, "OPENED");
+		pcapsule.status = "OPENED";
+	}
+	if (pcapsule.status === "LOCKED") {
+		return { message: "The capsule is locked." };
+	} else {
+		return pcapsule;
 	}
 };

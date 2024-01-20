@@ -38,3 +38,14 @@ export const savePassword_c = async (req, res, next) => {
 		next(error);
 	}
 };
+
+// [GET] pcapsule/{pcapsule_id}
+export const getPcs_c = async (req, res, next) => {
+	try {
+		const { capsule_number, pcapsule_password } = req.body;
+		const result = await getPcs_s(capsule_number, pcapsule_password);
+		res.send(response(status.SUCCESS, result));
+	} catch (error) {
+		next(error);
+	}
+};
