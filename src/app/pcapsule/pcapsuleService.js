@@ -6,6 +6,7 @@ import {
 	checkCapsuleNum_d,
 	insertPcapsule,
 	insertCapsuleNumber,
+	savePassword_d,
 } from "./pcapsuleDao.js";
 
 // 캡슐 생성
@@ -62,6 +63,25 @@ export const createPcs_s = async (body, nickname) => {
 		await connection.commit();
 
 		return { ...createPcsData, capsule_number };
+	} catch (error) {
+		await connection.rollback();
+		throw error;
+	} finally {
+		connection.release();
+	}
+};
+
+// 캡슐 비밀번호 추가
+export const savePassword_s = async (capsule_number, pcapsule_password) => {
+	const connection = await pool.getConnection(async (conn) => conn);
+	try {
+		connection.beginTransaction();
+
+		await savePassword_d(connection, capsule_number, pcapsule_password);
+
+		await connection.commit();
+
+		return { message: "Password saved successfully." };
 	} catch (error) {
 		await connection.rollback();
 		throw error;

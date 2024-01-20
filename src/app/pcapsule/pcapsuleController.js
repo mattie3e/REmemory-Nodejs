@@ -3,7 +3,7 @@ import { status } from "../../../config/responseStatus.js";
 
 import { getUserInfos } from "../user/userService.js";
 
-import { createPcs_s } from "./pcapsuleService.js";
+import { createPcs_s, savePassword_s } from "./pcapsuleService.js";
 
 // API Name : pcapsule 생성 API
 // [POST] /create
@@ -22,6 +22,18 @@ export const createPcs_c = async (req, res, next) => {
 				capsule_number: data.capsule_number,
 			}),
 		);
+	} catch (error) {
+		next(error);
+	}
+};
+
+// [POST] create/savePassword
+export const savePassword_c = async (req, res, next) => {
+	try {
+		const { capsule_number, pcapsule_password } = req.body;
+		const result = await savePassword_s(capsule_number, pcapsule_password);
+
+		res.send(response(status.SUCCESS, result));
 	} catch (error) {
 		next(error);
 	}
