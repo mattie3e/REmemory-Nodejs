@@ -34,6 +34,19 @@ export const status = {
 		message: "권한이 거부되었습니다.",
 	},
 
+	CAPSULE_NOT_FOUND: {
+		status: StatusCodes.NOT_FOUND,
+		isSuccess: false,
+		code: "CAP001",
+		message: "캡슐을 찾을 수 없습니다.",
+	},
+
+	INTERNAL_SERVER_ERROR: {
+		status: StatusCodes.INTERNAL_SERVER_ERROR,
+		isSuccess: false,
+		code: "COMMON000",
+		message: "서버 에러, 관리자에게 문의 바랍니다.",
+	},
 	BAD_REQUEST: {
 		status: StatusCodes.BAD_REQUEST,
 		isSuccess: false,

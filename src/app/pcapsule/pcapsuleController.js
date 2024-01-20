@@ -1,7 +1,7 @@
 import { response } from "../../../config/response.js";
 import { status } from "../../../config/responseStatus.js";
 
-import { getUserInfos } from "../user/userService.js";
+import { getUserInfos } from "../User/userService.js";
 
 import { createPcs_s, savePassword_s } from "./pcapsuleService.js";
 
