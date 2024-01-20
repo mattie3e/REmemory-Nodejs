@@ -1,12 +1,12 @@
+// Service
 import { pool } from "../../../config/dbConfig.js";
 import { BaseError } from "../../../config/error.js";
 import { status } from "../../../config/responseStatus.js";
 import { createCapsuleNum_p, createContent_p } from "./pcapsuleProvider.js";
 import {
 	checkCapsuleNum_d,
-	insertPcapsule,
-	insertCapsuleNumber,
-	savePassword_d,
+	insertPcapsule_d,
+	insertCapsuleNum_d,
 } from "./pcapsuleDao.js";
 
 // 캡슐 생성
@@ -36,6 +36,7 @@ export const createPcs_s = async (body, nickname) => {
 	);
 
 	const connection = await pool.getConnection(async (conn) => conn);
+
 	try {
 		connection.beginTransaction();
 
@@ -46,7 +47,7 @@ export const createPcs_s = async (body, nickname) => {
 			throw new BaseError(status.CAPSULE_NOT_FOUND);
 		}
 
-		await insertCapsuleNumber(connection, capsule_number);
+		await insertCapsuleNum_d(connection, capsule_number);
 
 		const insertData = [
 			capsule_number,
@@ -58,30 +59,11 @@ export const createPcs_s = async (body, nickname) => {
 			content_type === 1 ? text_image_id : null,
 			content_type === 2 ? voice_id : null,
 		];
-		const createPcsData = await insertPcapsule(connection, insertData);
+		const createPcsData = await insertPcapsule_d(connection, insertData);
 
 		await connection.commit();
 
 		return { ...createPcsData, capsule_number };
-	} catch (error) {
-		await connection.rollback();
-		throw error;
-	} finally {
-		connection.release();
-	}
-};
-
-// 캡슐 비밀번호 추가
-export const savePassword_s = async (capsule_number, pcapsule_password) => {
-	const connection = await pool.getConnection(async (conn) => conn);
-	try {
-		connection.beginTransaction();
-
-		await savePassword_d(connection, capsule_number, pcapsule_password);
-
-		await connection.commit();
-
-		return { message: "Password saved successfully." };
 	} catch (error) {
 		await connection.rollback();
 		throw error;

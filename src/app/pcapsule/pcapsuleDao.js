@@ -1,4 +1,5 @@
-export const insertPcapsule = async (connection, data) => {
+// Dao
+export const insertPcapsule_d = async (connection, data) => {
 	const query = `INSERT INTO pcapsule 
     (capsule_number, pcapsule_name, open_date, dear_name, theme, content_type, 
       text_image_id, voice_id, created_at, updated_at, status) 
@@ -26,7 +27,7 @@ export const savePassword_d = async (
 	return updatePasswordRow[0];
 };
 
-export const insertCapsuleNumber = async (connection, capsule_number) => {
+export const insertCapsuleNum_d = async (connection, capsule_number) => {
 	const query = `INSERT INTO time_capsule (capsule_number) VALUES (?);`;
 	const [insertTimeCapsuleRow] = await connection.query(query, capsule_number);
 	return insertTimeCapsuleRow[0];
