@@ -1,3 +1,42 @@
 import { pool } from "../../../config/dbConfig.js";
 import { BaseError } from "../../../config/error.js";
 import { status } from "../../../config/responseStatus.js";
+
+import { checkCapsuleNum_d, saveTextImage, saveVoice } from "./pcapsuleDao.js";
+
+// 캡슐넘버 생성
+export const createCapsuleNum_p = async (nickname) => {
+	const connection = await pool.getConnection(async (conn) => conn);
+	let capsule_number;
+
+	while (true) {
+		const random_number = Math.floor(Math.random() * 100000 + 1); // 1~100000 사이의 랜덤 숫자
+		capsule_number = `${nickname}_${random_number}`;
+
+		const isExistCapsule = await checkCapsuleNum_d(connection, capsule_number);
+		if (!isExistCapsule) {
+			break;
+		}
+	}
+	connection.release();
+	return capsule_number;
+};
+
+// text_image or voice data 생성
+export const createContent_p = async (content_type, content) => {
+	const connection = await pool.getConnection(async (conn) => conn);
+
+	let text_image_id = null;
+	let voice_id = null;
+
+	if (content_type === 1) {
+		const { body, image_url, sort } = content;
+		text_image_id = await saveTextImage(connection, body, image_url, sort);
+	} else if (content_type === 2) {
+		const { voice_url } = content;
+		voice_id = await saveVoice(connection, voice_url);
+	}
+
+	connection.release();
+	return { text_image_id, voice_id };
+};
