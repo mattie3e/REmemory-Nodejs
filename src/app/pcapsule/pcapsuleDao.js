@@ -8,7 +8,7 @@ export const insertPcapsule_d = async (connection, data) => {
 		...data,
 		new Date(),
 		new Date(),
-		"ACTIVE", // status 추가
+		"LOCKED", // status 추가
 	]);
 	return insertPcapsuleRow[0];
 };
