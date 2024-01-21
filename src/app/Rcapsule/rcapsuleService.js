@@ -23,9 +23,10 @@ export const postRcapsule = async (body, nickname, userId) => {
     });
 
     const capsule_number = await createCapsuleNum_r(nickname);
+    const rcapsule_url = `${process.env.FRONT_DOMAIN}/rcapsule_number=${capsule_number}`;
 
     const connection = await pool.getConnection(async (conn) => conn);
-    try {        
+    try {       
         await connection.beginTransaction();
 
         //create time_capsule
@@ -43,6 +44,7 @@ export const postRcapsule = async (body, nickname, userId) => {
             rcapsule_name,
             open_date,
             dear_name,
+            rcapsule_url,
         ];
 
         const createRcsData = await insertRcapsule(connection, insertData);

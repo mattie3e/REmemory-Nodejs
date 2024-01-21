@@ -15,8 +15,8 @@ export const insertTimeCapsule = async (connection, capsule_number, userId) => {
 
 export const insertRcapsule = async (connection, insertData) => {
     const query = `INSERT INTO rcapsule 
-    (id, time_capsule_id, capsule_number, rcapsule_name rcapsule_password, rcapsule_cnt, url, open_date, dear_name, created_at, updated_at, status)
-    VALUES (NULL, ?, ?, ?, NULL, NULL, NULL, ?, ?, ?, ?, ?);`;
+    (id, time_capsule_id, capsule_number, rcapsule_name, rcapsule_password, rcapsule_cnt, url, open_date, dear_name, created_at, updated_at, status)
+    VALUES (NULL, ?, ?, ?, NULL, NULL, ?, ?, ?, ?, ?, ?);`;
     const [insertRcapsuleRow] = await connection.query(query, [
         ...insertData,
         new Date(),

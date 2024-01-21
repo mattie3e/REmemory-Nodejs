@@ -5,7 +5,7 @@ import SwaggerUi from "swagger-ui-express";
 
 import { userRouter } from "./src/app/User/userRoute.js";
 import { pcapsuleRouter } from "./src/app/Pcapsule/pcapsuleRoute.js";
-import { rcapsuleRouter } from "./src/app/Rcapsule/rcapsuleRoute.js";
+import { rcapsuleRouter } from "./src/app/rcapsule/rcapsuleRoute.js";
 
 const app = expressConfig();
 const port = 3000;
