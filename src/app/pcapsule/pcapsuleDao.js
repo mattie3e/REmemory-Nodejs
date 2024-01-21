@@ -39,18 +39,51 @@ export const checkCapsuleNum_d = async (connection, capsule_number) => {
 	return checkCapsuleNumRow[0].isExistCapsule;
 };
 
-export const getPcs_d = async (capsule_number, pcapsule_password) => {
-	const query = `SELECT * FROM pcapsule WHERE capsule_number = ? AND pcapsule_password = ?;`;
-	const [pcapsuleRow] = await connection.query(query, [
-		capsule_number,
-		pcapsule_password,
-	]);
-	return pcapsuleRow[0];
+// export const getPcs_d = async (capsule_number, pcapsule_password) => {
+// 	const query = `SELECT * FROM pcapsule WHERE capsule_number = ? AND pcapsule_password = ?;`;
+// 	const [pcapsuleRow] = await connection.query(query, [
+// 		capsule_number,
+// 		pcapsule_password,
+// 	]);
+// 	return pcapsuleRow[0];
+// };
+
+// export const updatePcsStatus_d = async (capsule_number, status) => {
+// 	const query = `UPDATE pcapsule SET status = ? WHERE capsule_number = ?;`;
+// 	await connection.query(query, [status, capsule_number]);
+// };
+
+export const retrieveCapsule_d = async (connection, capsule_number) => {
+	const query = `SELECT * FROM pcapsule WHERE capsule_number = ?`;
+	const [retrieveCapsuleRow] = await connection.query(query, capsule_number);
+	return retrieveCapsuleRow[0];
 };
 
-export const updatePcsStatus_d = async (capsule_number, status) => {
-	const query = `UPDATE pcapsule SET status = ? WHERE capsule_number = ?;`;
-	await connection.query(query, [status, capsule_number]);
+export const checkPasswordValidity = async (
+	connection,
+	capsuleNumber,
+	capsulePassword,
+) => {
+	const query = `SELECT EXISTS(SELECT 1 FROM pcapsule WHERE capsule_number = ? AND password = ?) as isValidPassword;`;
+	const [passwordResult] = await connection.query(
+		query,
+		capsuleNumber,
+		capsulePassword,
+	);
+	return passwordResult[0].isValidPassword;
+};
+
+export const retrieveText_image = async (connection, text_image_id) => {
+	const query =
+		"SELECT body, image_url FROM text_image WHERE text_image_id = ?";
+	const [retrieveText_imageRow] = await connection.query(query, text_image_id);
+	return retrieveText_imageRow[0];
+};
+
+export const retrieveVoice = async (connection, voice_id) => {
+	const query = "SELECT voice_url FROM voice WHERE voice_id = ?";
+	const [retrieveVoiceRow] = await connection.query(query, voice_id);
+	return retrieveVoiceRow[0];
 };
 
 // 이건 공통으로 사용될거같은데 공통으로 사용되는 함수들 파일 필요할듯

@@ -4,7 +4,7 @@ import { status } from "../../../config/responseStatus.js";
 
 import { getUserInfos } from "../user/userService.js";
 
-import { createPcs_s } from "./pcapsuleService.js";
+import { createPcs_s, readPcs_s, readDetailPcs_s } from "./pcapsuleService.js";
 import { savePassword_p } from "./pcapsuleProvider.js";
 
 // API Name : pcapsule 생성 API
@@ -39,12 +39,39 @@ export const savePassword_c = async (req, res, next) => {
 	}
 };
 
-// [GET] pcapsule/{pcapsule_id}
-export const getPcs_c = async (req, res, next) => {
+// API Name : pcapsule 조회 API
+// [GET] /retrieve
+export const readPcs_c = async (req, res, next) => {
 	try {
-		const { capsule_number, pcapsule_password } = req.body;
-		const result = await getPcs_s(capsule_number, pcapsule_password);
-		res.send(response(status.SUCCESS, result));
+		const capsuleNumber = req.body.capsule_number;
+		const capsulePassword = req.body.password;
+
+		const data = await readPcs_s(capsuleNumber, capsulePassword);
+
+		res.send(
+			response(status.SUCCESS, {
+				pcapsules: data,
+			}),
+		);
+	} catch (error) {
+		next(error);
+	}
+};
+
+// API Name : pcapsule 상세조회 API
+// [GET] /retrieveDetail
+export const readDetailPcs_c = async (req, res, next) => {
+	try {
+		const capsuleNumber = req.body.capsule_number;
+		const capsulePassword = req.body.password;
+
+		const data = await readDetailPcs_s(capsuleNumber, capsulePassword);
+
+		res.send(
+			response(status.SUCCESS, {
+				pcapsules: data,
+			}),
+		);
 	} catch (error) {
 		next(error);
 	}

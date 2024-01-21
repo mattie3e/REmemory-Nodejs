@@ -40,4 +40,33 @@ export const status = {
 		code: "COMMON001",
 		message: "잘못된 요청입니다.",
 	},
+
+	// capsule err
+	CAPSULE_NOT_FOUND: {
+		status: StatusCodes.NOT_FOUND,
+		isSuccess: false,
+		code: "CAPSULE4001",
+		message: "존재하지 않는 캡슐입니다.",
+	},
+
+	CAPSULE_PASSWORD_WRONG: {
+		status: StatusCodes.IS_WRONG,
+		isSuccess: false,
+		code: "CAPSULE4002",
+		message: "패스워드가 잘못되었습니다.",
+	},
+
+	TEXT_IMAGE_NOT_FOUND: {
+		status: StatusCodes.NOT_FOUND,
+		isSuccess: false,
+		code: "CAPSULE4003",
+		message: "텍스트 및 이미지가 없습니다.",
+	},
+
+	VOICE_NOT_FOUND: {
+		status: StatusCodes.NOT_FOUND,
+		isSuccess: false,
+		code: "CAPSULE4004",
+		message: "음성이 없습니다.",
+	},
 };

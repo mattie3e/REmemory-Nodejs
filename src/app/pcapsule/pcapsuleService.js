@@ -7,8 +7,10 @@ import {
 	checkCapsuleNum_d,
 	insertPcapsule_d,
 	insertCapsuleNum_d,
-	getPcs_d,
-	updatePcsStatus_d,
+	retrieveCapsule_d,
+	checkPasswordValidity,
+	retrieveText_image,
+	retrieveVoice,
 } from "./pcapsuleDao.js";
 
 // 캡슐 생성
@@ -74,20 +76,153 @@ export const createPcs_s = async (body, nickname) => {
 	}
 };
 
-// 캡슐 조회
-export const getPcs_s = async (capsule_number, pcapsule_password) => {
-	const pcapsule = await getPcs_d(capsule_number, pcapsule_password);
-	if (!pcapsule) {
-		throw new Error("Capsule not found");
+// // 캡슐 상태변경
+// export const getPcs_s = async (capsule_number, pcapsule_password) => {
+// 	const pcapsule = await getPcs_d(capsule_number, pcapsule_password);
+// 	if (!pcapsule) {
+// 		throw new Error("Capsule not found");
+// 	}
+// 	// 조회할 때만 비교해서 status 변경 -> 차후 변경
+// 	if (new Date(pcapsule.open_date) <= new Date()) {
+// 		await updatePcsStatus_d(capsule_number, "OPENED");
+// 		pcapsule.status = "OPENED";
+// 	}
+// 	if (pcapsule.status === "LOCKED") {
+// 		return { message: "The capsule is locked." };
+// 	} else {
+// 		return pcapsule;
+// 	}
+// };
+
+//캡슐 조회
+export const readPcs_s = async (capsuleNumber, capsulePassword) => {
+	const connection = await pool.getConnection(async (conn) => conn);
+	try {
+		await connection.beginTransaction();
+
+		// 캡슐 존재 확인
+		const isExistCapsule = await checkCapsuleNum_d(connection, capsuleNumber);
+
+		if (isExistCapsule) {
+			throw new BaseError(status.CAPSULE_NOT_FOUND);
+		}
+
+		// 패스워드 확인
+		const isPasswordValid = await checkPasswordValidity(
+			connection,
+			capsuleNumber,
+			capsulePassword,
+		);
+
+		if (!isPasswordValid) {
+			throw new BaseError(status.CAPSULE_PASSWORD_WRONG);
+		}
+
+		// 캡슐 정보 조회
+		const pcapsuleData = await retrieveCapsule_d(connection, capsuleNumber);
+
+		const responseData = {
+			capsule_number: pcapsuleData.capsule_number,
+			pcapsule_name: pcapsuleData.pcapsule_name,
+			open_date: pcapsuleData.open_date,
+			dear_name: pcapsuleData.dear_name,
+			theme: pcapsuleData.theme,
+			// 상세정보를 전부 반환하지 않고 일부만 반환
+		};
+
+		await connection.commit();
+
+		res.send(
+			response(status.SUCCESS, {
+				pcapsule: responseData,
+			}),
+		);
+	} catch (error) {
+		await connection.rollback();
+		next(error);
+	} finally {
+		connection.release();
 	}
-	// 조회할 때만 비교해서 status 변경 -> 차후 변경
-	if (new Date(pcapsule.open_date) <= new Date()) {
-		await updatePcsStatus_d(capsule_number, "OPENED");
-		pcapsule.status = "OPENED";
-	}
-	if (pcapsule.status === "LOCKED") {
-		return { message: "The capsule is locked." };
-	} else {
-		return pcapsule;
+};
+
+//캡슐 상세조회
+export const readDetailPcs_s = async (capsuleNumber, capsulePassword) => {
+	const connection = await pool.getConnection(async (conn) => conn);
+	try {
+		await connection.beginTransaction();
+
+		// 캡슐 존재 확인
+		const isExistCapsule = await checkCapsuleNum_d(connection, capsuleNumber);
+
+		if (isExistCapsule) {
+			throw new BaseError(status.CAPSULE_NOT_FOUND);
+		}
+
+		// 패스워드 확인
+		const isPasswordValid = await checkPasswordValidity(
+			connection,
+			capsuleNumber,
+			capsulePassword,
+		);
+
+		if (!isPasswordValid) {
+			throw new BaseError(status.CAPSULE_PASSWORD_WRONG);
+		}
+
+		// 캡슐 정보 조회
+		const pcapsuleData = await retrieveCapsule_d(connection, capsuleNumber);
+
+		const retrieveData = {
+			capsule_number: pcapsuleData.capsule_number,
+			pcapsule_name: pcapsuleData.pcapsule_name,
+			open_date: pcapsuleData.open_date,
+			dear_name: pcapsuleData.dear_name,
+			theme: pcapsuleData.theme,
+			content_type: pcapsuleData.content_type,
+			text_image_id: pcapsuleData.text_image_id,
+			voice_id: pcapsuleData.voice_id,
+		};
+
+		//content 가져오기
+		if (pcapsuleData.content_type == 1 && pcapsuleData.text_image_id) {
+			const textImageData = await retrieveText_image(
+				connection,
+				pcapsuleData.text_image_id,
+			);
+
+			if (textImageData.length > 0) {
+				// text_image_id에 해당하는 데이터가 존재하는 경우
+
+				retrieveData.text_image_body = textImageData.body;
+				retrieveData.text_image_url = textImageData.image_url;
+			} else {
+				throw new BaseError(status.TEXT_IMAGE_NOT_FOUND);
+			}
+		}
+
+		if (pcapsuleData.content_type == 2 && pcapsuleData.voice_id) {
+			const voiceData = await retrieveVoice(connection, pcapsuleData.voice_id);
+
+			if (voiceData.length > 0) {
+				// voice_id에 해당하는 데이터가 존재하는 경우
+
+				retrieveData.voice_url = voiceData.voice_url;
+			} else {
+				throw new BaseError(status.VOICE_NOT_FOUND);
+			}
+		}
+
+		await connection.commit();
+
+		res.send(
+			response(status.SUCCESS, {
+				pcapsule: retrieveData,
+			}),
+		);
+	} catch (error) {
+		await connection.rollback();
+		next(error);
+	} finally {
+		connection.release();
 	}
 };
