@@ -43,3 +43,9 @@ export const updatePassword = async(connection, rcapsule_password, rcapsule_id) 
     ]);
     return result[0];
 };
+
+export const getRcapsuleId = async(connection, capsule_number) => {
+    const query = `SELECT id FROM rcapsule WHERE capsule_number = ?;`;
+    const [result] = await connection.query(query, capsule_number);
+    return result[0].id;
+}

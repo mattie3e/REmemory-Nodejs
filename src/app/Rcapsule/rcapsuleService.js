@@ -9,6 +9,7 @@ import {
     getTimeCapsuleId, 
     insertRcapsule,
     updatePassword,
+    getRcapsuleId,
  } from "./rcapsuleDao.js";
 import { response } from "express";
 
@@ -55,9 +56,11 @@ export const postRcapsule = async (body, nickname, userId) => {
 
         const createRcsData = await insertRcapsule(connection, insertData);
 
+        const newRcapsuleId = await getRcapsuleId(connection, capsule_number);
+
         await connection.commit();
 
-        return { ...createRcsData, capsule_number };
+        return { ...createRcsData, capsule_number, newRcapsuleId };
     }
     catch (error) {
         await connection.rollback(); // 실패 시 롤백
