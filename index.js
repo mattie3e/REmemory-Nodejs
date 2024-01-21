@@ -1,16 +1,15 @@
-import express from "express";
-import cors from "cors";
-import { userRouter } from "./src/app/User/userRoute.js";
+import expressConfig from "./config/expressConfig.js";
 
-const app = express();
+import { userRouter } from "./src/app/User/userRoute.js";
+import { pcapsuleRouter } from "./src/app/Pcapsule/pcapsuleRoute.js";
+import { RcapsuleRouter } from "./src/app/Rcapsule/rcapsuleRoute.js";
+
+const app = expressConfig();
 const port = 3000;
 
-app.use(cors());
-app.use(express.static("public"));
-app.use(express.json());
-app.use(express.urlencoded({ extended: false }));
-
 app.use("/user", userRouter);
+app.use("/pcapsule", pcapsuleRouter);
+app.use("/rcapsule", RcapsuleRouter);
 
 app.listen(port, () => {
 	console.log(`Example app listening on port ${port}`);
