@@ -3,12 +3,14 @@
 import { pool } from "../../../config/dbConfig.js";
 import { status } from "../../../config/responseStatus.js";
 import { readNumNUrl_d, 
-        readCapsuleCnt_d,
+        //readCapsuleCnt_d,
+        readDear_d,
 } from "./rcapsuleDao.js";
 
 //캡슐 번호 및 url 가져오기
-export const readNumnUrl_s = async (capsuleNumber, capsuleUrl) => {
-    try {const connection = await pool.getConnection();
+export const readNumnUrl_s = async (capsuleNumber) => {
+    const connection = await pool.getConnection();
+    try {
     //캡슐 존재 확인
     //..
     //DAO를 통해 캡슐 정보 조회
@@ -55,3 +57,25 @@ export const readNumnUrl_s = async (capsuleNumber, capsuleUrl) => {
 //         connection.release();
 //     }
 // };
+
+// capsulenumber, 
+export const readDear_s = async(capsuleNumber) => {
+    const connection = await pool.getConnection();
+    try {
+        //DAO를 총해 캡슐 정보 조회
+        const rCapsuleData = await readDear_d(connection, capsuleNumber);
+
+        const resdata = {
+            dear_name : rCapsuleData.dear_name,
+            capsule_id : rCapsuleData.capsule_id,
+        }
+        return ({rcapsule : resdata});
+    }catch (error){
+        //에러 발생 시 롤백
+        await connection.rollback();
+        throw error;
+    } finally {
+        //모든 경우에 연결 반환
+        connection.release();
+    }
+};

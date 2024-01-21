@@ -22,3 +22,16 @@ export const readNumNUrl_d = async(connection, capsuleNumber) => {
 //     //결과 반환
 //     return { capsule_cnt: resCnt[0].capsule_cnt, };
 // }
+
+// dear네임 반환
+
+export const readDear_d = async(connection, capsuleNumber) => {
+    const query = 'SELECT dear_name, id FROM rcapsule WHERE capsule_number = ?'
+    const [resdata] = await connection.query(query, [capsuleNumber]);
+    //결과가 존재하지 않으면 null 반환 (캡슐 생성 X) * 추가
+    if (resNumNUrl.length === 0 ){
+        return null;
+    }
+    //결과 반환
+    return resdata[0];
+}

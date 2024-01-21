@@ -3,8 +3,8 @@ import asyncHandler from "express-async-handler";
 
 import { 
     readNumNUrl_c,
-    userUrl_c,
-    readDearNameNCnt_c,
+    //userUrl_c,
+    readDear_c,
 } from "./rcapsuleController.js";
 
 export const rcapsuleRouter = express.Router();
@@ -13,8 +13,8 @@ export const rcapsuleRouter = express.Router();
 rcapsuleRouter.get("/rcapsule/info", asyncHandler(readNumNUrl_c));
 
 // X
-// //redirection ...
+// redirection ...
 // rcapsuleRouter.get("Rememory/:rcapsule_number", asyncHandler(userUrl_c));
 
 //url 들어왔을 시
-rcapsuleRouter.get("/rcapsule_number", asyncHandler(readDearNameNCnt_c));
+rcapsuleRouter.get("/rcapsule_number", asyncHandler(readDear_c));

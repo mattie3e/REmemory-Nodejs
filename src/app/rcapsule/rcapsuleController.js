@@ -2,8 +2,8 @@ import { response } from "../../../config/response.js";
 import { status } from "../../../config/responseStatus.js";
 
 import { readNumnUrl_s, 
-         readCapsuleCnt_s,
-         readDearNameNCnt_s 
+         //readCapsuleCnt_s,
+         readDear_s 
     } from "./rcapsuleService.js";
 /**
  * API Name : 캡슐번호, 롤링페이퍼 url 받기
@@ -19,7 +19,7 @@ export const readNumNUrl_c = async (req, res, next) => {
     const data = await readNumnUrl_s(capsuleNumber,capsuleUrl); 
 
     //받은 정보를 응답으로 보내기 .. status * 추가
-    res.json({numNUrl : data});
+    res.send({numNUrl : data});
 
     } catch(error) { //에러 처리
         next(error);
@@ -54,9 +54,14 @@ export const readNumNUrl_c = async (req, res, next) => {
  * dearName 과 rcapsule_id 반환
  * [GET] : /:rcapsule_number/:rCapsuleCnt
  */
-export const readDearNameNCnt_c = async(req, res, next) => {
+export const readDear_c = async(req, res, next) => {
     try {
+        const capsuleNumber = req.body.capsule_number;
         
+        const data = await readDear_s(capsuleNumber);
+        
+        res.send({dearNid : data, });
+
     }catch (error){
         next(error);
         console.log(error);
