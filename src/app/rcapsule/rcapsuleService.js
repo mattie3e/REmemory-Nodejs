@@ -3,7 +3,6 @@
 import { pool } from "../../../config/dbConfig.js";
 import { readNumNUrl_d } from "./rcapsuleDao.js";
 
-
 //캡슐 번호 및 url 가져오기
 export const readNumnUrl_s = async (capsuleNumber, capsuleUrl) => {
     try {const connection = await pool.getConnection();
