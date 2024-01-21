@@ -3,7 +3,7 @@ import { status } from "../../../config/responseStatus.js";
 
 import { getUserInfos } from "../User/userService.js";
 
-import { postRcapsule } from "./rcapsuleService.js";
+import { postRcapsule, setPassword_s } from "./rcapsuleService.js";
 
 // API Name : 롤링페이퍼(rcapsule) 생성 API
 // [POST] /rcapsule/create
@@ -45,5 +45,24 @@ export const createRcapsule = async (req, res, next) => {
             console.error("Error creating rcapsule:", error);
             res.status(500).send("Internal Server Error");
         }
+    }
+};
+
+// API Name : 롤링페이퍼(rcapsule) 비밀번호 설정 API
+// [PATCH] /rcapsule/:rcapsule_id
+export const setRcapsulePw = async (req, res, next) => {
+    // body: rcapsule_password
+    const rcapsule_id = req.params.rcapsule_id;
+
+    try {
+        if (!rcapsule_id) {
+            return res.send(response(status.BAD_REQUEST), { err: "rcapsule_id가 없습니다." });
+        }
+
+        const result = await setPassword_s(req.body, rcapsule_id);
+        res.send(result);
+    } catch (error) {
+        res.send(response(status.INTERNAL_SERVER_ERROR, { error: error.message }));
+        // next(error);
     }
 };

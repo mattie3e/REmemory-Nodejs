@@ -4,7 +4,13 @@ import { status } from "../../../config/responseStatus.js";
 
 import { createCapsuleNum_r } from "./rcapsuleProvider.js";
 
-import { insertTimeCapsule, getTimeCapsuleId, insertRcapsule } from "./rcapsuleDao.js";
+import { 
+    insertTimeCapsule, 
+    getTimeCapsuleId, 
+    insertRcapsule,
+    updatePassword,
+ } from "./rcapsuleDao.js";
+import { response } from "express";
 
 export const postRcapsule = async (body, nickname, userId) => {
      // 값이 제대로 전송 안된 경우
@@ -60,4 +66,29 @@ export const postRcapsule = async (body, nickname, userId) => {
     finally {
         connection.release();
     }
-}
+};
+
+export const setPassword_s = async (body, rcapsule_id) => {
+    const { rcapsule_password } = body;
+
+    if (!rcapsule_password) {
+        throw new BaseError(status.BAD_REQUEST);
+    }
+
+    const connection = await pool.getConnection(async (conn) => conn);
+
+    try {
+        connection.beginTransaction();
+
+        await updatePassword(connection, rcapsule_password, rcapsule_id);
+
+        await connection.commit();
+
+        return response(status.SUCCESS);
+    } catch (error) {
+        await connection.rollback();
+        throw new BaseError(status.INTERNAL_SERVER_ERROR);
+    } finally {
+        connection.release();
+    }
+};

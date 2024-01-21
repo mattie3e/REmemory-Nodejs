@@ -32,4 +32,14 @@ export const getTimeCapsuleId = async(connection, capsule_number) => {
     WHERE capsule_number = ?;`;
     const [result] = await connection.query(query, capsule_number);
     return result[0].id;
-}
+};
+
+export const updatePassword = async(connection, rcapsule_password, rcapsule_id) => {
+    const query = `UPDATE rcapsule SET rcapsule_password = ?, updated_at = ? WHERE id = ?;`;
+    const [result] = await connection.query(query, [
+        rcapsule_password,
+        new Date(),
+        rcapsule_id,
+    ]);
+    return result[0];
+};
