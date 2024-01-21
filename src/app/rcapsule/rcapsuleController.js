@@ -26,29 +26,29 @@ export const readNumNUrl_c = async (req, res, next) => {
         console.log(error);
     }
 }
-/** 
+/** X
  * redirection 
  * ./:rcapsule_number
  */
-export const userUrl_c = async(req, res, next)=> {
-    //동적으로 변하는 값 (ex. wit_98765) 가져오기
-    const rCapsuleNumber = req.params.rcapsule_number;
-    try{
-        //rcapsuleNumber에 대한 정보를 조회하는 등의 작업 수행
-        // 새로운 URL 생성
-        //1) db에서 해당 rcapsule_cnt 조회
-        const rCapsuleCnt = await readCapsuleCnt_s(rCapsuleNumber);
+// export const userUrl_c = async(req, res, next)=> {
+//     //동적으로 변하는 값 (ex. wit_98765) 가져오기
+//     const rCapsuleNumber = req.params.rcapsule_number;
+//     try{
+//         //rcapsuleNumber에 대한 정보를 조회하는 등의 작업 수행
+//         // 새로운 URL 생성
+//         //1) db에서 해당 rcapsule_cnt 조회
+//         const rCapsuleCnt = await readCapsuleCnt_s(rCapsuleNumber);
     
-        //2) 새로운 URL 생성
-        const redirectUrl = `/${rCapsuleNumber}/${rCapsuleCnt}`;
-        //3) redirection 수행
-        res.redirect(redirectUrl);
+//         //2) 새로운 URL 생성
+//         const redirectUrl = `/${rCapsuleNumber}/${rCapsuleCnt}`;
+//         //3) redirection 수행
+//         res.redirect(redirectUrl);
 
-    }catch (error){ // 에러 처리 ... *추가
-        next(error);
-        console.log(error);
-    }
-}
+//     }catch (error){ // 에러 처리 ... *추가
+//         next(error);
+//         console.log(error);
+//     }
+// }
 /**
  * API NAME : url 들어왔을 시 화면
  * dearName 과 rcapsule_id 반환
