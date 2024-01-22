@@ -1,4 +1,3 @@
-// Controller
 import { response } from "../../../config/response.js";
 import { status } from "../../../config/responseStatus.js";
 

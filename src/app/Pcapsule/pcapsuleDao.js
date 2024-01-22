@@ -1,4 +1,3 @@
-// Dao
 export const insertPcapsule_d = async (connection, data) => {
 	const query = `INSERT INTO pcapsule 
     (capsule_number, pcapsule_name, open_date, dear_name, theme, content_type, 
@@ -39,19 +38,10 @@ export const checkCapsuleNum_d = async (connection, capsule_number) => {
 	return checkCapsuleNumRow[0].isExistCapsule;
 };
 
-// export const getPcs_d = async (capsule_number, pcapsule_password) => {
-// 	const query = `SELECT * FROM pcapsule WHERE capsule_number = ? AND pcapsule_password = ?;`;
-// 	const [pcapsuleRow] = await connection.query(query, [
-// 		capsule_number,
-// 		pcapsule_password,
-// 	]);
-// 	return pcapsuleRow[0];
-// };
-
-// export const updatePcsStatus_d = async (capsule_number, status) => {
-// 	const query = `UPDATE pcapsule SET status = ? WHERE capsule_number = ?;`;
-// 	await connection.query(query, [status, capsule_number]);
-// };
+export const updateOpenedStatus_d = async () => {
+	const query = `UPDATE pcapsule SET status = 'OPENED' WHERE open_date <= CURDATE() AND status = 'LOCKED';`;
+	await connection.query(query);
+};
 
 export const retrieveCapsule_d = async (connection, capsule_number) => {
 	const query = `SELECT * FROM pcapsule WHERE capsule_number = ?`;
