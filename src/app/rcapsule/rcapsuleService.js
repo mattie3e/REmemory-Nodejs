@@ -83,6 +83,26 @@ export const readDear_s = async(capsuleNumber) => {
 };
 
 //post textNphotos
-export const creatText_s = async(capsuleNumber) => {
-    
+export const creatText_s = async(body) => {
+    const connection = await pool.getConnection(async(conn) => conn);
+    try{
+        await connection.beginTransaction();
+        //create TextNPhoto capsule
+        await creatText_d(connection, body);
+
+        
+        if(!rCapsuleData) {
+            throw new BaseError(status.CAPSULE_NOT_FOUND);
+        }
+        const insertData = [
+            rCapsuleData
+        ]
+    }catch (error){
+        //에러 발생 시 롤백
+        await connection.rollback();
+        throw error;
+    } finally {
+        //모든 경우에 연결 반환
+        connection.release();
+    }
 }
