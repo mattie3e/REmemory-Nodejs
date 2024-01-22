@@ -9,8 +9,9 @@ import { readNumNUrl_d,
 
 //캡슐 번호 및 url 가져오기
 export const readNumnUrl_s = async (capsuleNumber) => {
-    const connection = await pool.getConnection();
+    const connection = await pool.getConnection(async (conn) => conn);
     try {
+        connection.beginTransaction();
     //캡슐 존재 확인
     //..
     //DAO를 통해 캡슐 정보 조회
@@ -60,8 +61,9 @@ export const readNumnUrl_s = async (capsuleNumber) => {
 
 // capsulenumber, 
 export const readDear_s = async(capsuleNumber) => {
-    const connection = await pool.getConnection();
+    const connection = await pool.getConnection(async (conn) => conn);
     try {
+        connection.beginTransaction();
         //DAO를 총해 캡슐 정보 조회
         const rCapsuleData = await readDear_d(connection, capsuleNumber);
 
@@ -79,3 +81,8 @@ export const readDear_s = async(capsuleNumber) => {
         connection.release();
     }
 };
+
+//post textNphotos
+export const creatText_s = async(capsuleNumber) => {
+    
+}
