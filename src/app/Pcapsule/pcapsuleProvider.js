@@ -1,9 +1,13 @@
 import { pool } from "../../../config/dbConfig.js";
 import { BaseError } from "../../../config/error.js";
-// Provider
 import { status } from "../../../config/responseStatus.js";
 
-import { savePassword_d, saveTextImage, saveVoice } from "./pcapsuleDao.js";
+import {
+	savePassword_d,
+	saveTextImage,
+	saveVoice,
+	updateOpenedStatus_d,
+} from "./pcapsuleDao.js";
 
 // 캡슐넘버 생성
 export const createCapsuleNum_p = async (nickname) => {
@@ -58,4 +62,9 @@ export const createContent_p = async (content_type, content) => {
 
 	connection.release();
 	return { text_image_id, voice_id };
+};
+
+// 캡슐 상태변경
+export const updateOpenedStatus_p = async () => {
+	await updateOpenedStatus_d();
 };
