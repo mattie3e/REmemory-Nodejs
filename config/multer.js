@@ -1,7 +1,8 @@
 import multer from 'multer';
 import multerS3 from 'multer-s3';
 import path from 'path';
-const AWS = require('./aws'); // aws.js 파일 가져오기
+// const AWS = require('./aws'); // aws.js 파일 가져오기
+import AWS from './aws';
 
 const upload = multer({
    storage: multerS3({
