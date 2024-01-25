@@ -11,7 +11,8 @@ import {
     updatePassword,
     getRcapsuleId,
     addVoiceLetter_d,
-    getWriterId
+    getWriterId,
+    setRcapsuleWriter
  } from "./rcapsuleDao.js";
 import { response } from "express";
 
