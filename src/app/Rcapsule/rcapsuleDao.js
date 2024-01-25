@@ -21,7 +21,7 @@ export const insertRcapsule = async (connection, insertData) => {
         ...insertData,
         new Date(),
         new Date(),
-        "ACTIVE", // status
+        "LOCKED", // status
     ]);
     return insertRcapsuleRow[0];
 };
@@ -49,3 +49,34 @@ export const getRcapsuleId = async(connection, capsule_number) => {
     const [result] = await connection.query(query, capsule_number);
     return result[0].id;
 }
+
+export const getWriterId = async (connection, rcapsule_id) => {
+    const query = `SELECT id FROM rcapsule_writer WHERE rcapsule_id = ?;`;
+    const [result] = await connection.query(query, rcapsule_id);
+    return result[0].id;
+};
+
+export const addVoiceLetter_d = async (connection, voiceUrl, writer_id) => {
+    const query = `INSERT INTO voice (id, pcapsule_id, rwcapsule_id, voice_url, created_at, updated_at)
+    VALUES (null, null, ?, ?, ?, ?);`;
+    const [result] = await connection.query(query, [
+        writer_id,
+        voiceUrl,
+        new Date(),
+        new Date(),
+    ])
+};
+
+export const setRcapsuleWriter = async (connection, rcapsule_id, from_name, theme, content_type) => {
+    const query = `INSERT INTO rcapsule_writer (id, rcapsule_id, from_name, theme, content_type, created_at, updated_at) 
+    VALUES (null, ?, ?, ?, ?, ?, ?);`;
+    const [result] = await connection.query(query, [
+        rcapsule_id,
+        from_name,
+        theme,
+        content_type,
+        new Date(),
+        new Date(),
+    ]);
+    return result[0];
+};

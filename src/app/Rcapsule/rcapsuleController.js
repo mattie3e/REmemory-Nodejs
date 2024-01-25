@@ -3,7 +3,9 @@ import { status } from "../../../config/responseStatus.js";
 
 import { getUserInfos } from "../User/userService.js";
 
-import { postRcapsule, setPassword_s } from "./rcapsuleService.js";
+import { postRcapsule,
+    setPassword_s,
+    addVoiceLetter_s } from "./rcapsuleService.js";
 
 // API Name : 롤링페이퍼(rcapsule) 생성 API
 // [POST] /rcapsule/create
@@ -23,7 +25,7 @@ export const createRcapsule = async (req, res, next) => {
         const data = await postRcapsule(req.body, nickname, userId);
         res.send(
             response(status.SUCCESS, {
-                ...data,
+                // ...data,
                 capsule_number: data.capsule_number,
                 rcapsule_id: data.newRcapsuleId,
             })
@@ -65,5 +67,27 @@ export const setRcapsulePw = async (req, res, next) => {
     } catch (error) {
         res.send(response(status.INTERNAL_SERVER_ERROR, { error: error.message }));
         // next(error);
+    }
+};
+
+// API Name : 롤링페이퍼 음성 편지 쓰기
+export const addVoiceLetter_c = async (req, res, next) => {
+    // body : from_name, content_type, theme, voice (formdata)
+    try {
+        // aws s3에 업로드 된 파일 url 접근 및 db 저장
+        // console.log(req.file.location); // aws s3에 올려진 파일 url
+        if(!req.file.location) {
+            throw error;
+        }
+
+        if(!req.params.rcapsule_number) {
+            return res.send(response(status.BAD_REQUEST), { err: "rcapsule_number가 없습니다." });
+        }
+
+        const result = await addVoiceLetter_s(req.file.location, req.params.rcapsule_number, req.body);
+        res.send(result);
+
+    } catch (error) {
+        res.send(status.INTERNAL_SERVER_ERROR, { error: "음성 파일 업로드 실패.", detail: error });
     }
 };

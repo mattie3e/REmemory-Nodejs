@@ -10,17 +10,19 @@ import {
     insertRcapsule,
     updatePassword,
     getRcapsuleId,
+    addVoiceLetter_d,
+    getWriterId
  } from "./rcapsuleDao.js";
 import { response } from "express";
 
 export const postRcapsule = async (body, nickname, userId) => {
      // 값이 제대로 전송 안된 경우
-    const { rcapsule_name, open_date, dear_name, theme } = body;
+    const { rcapsule_name, open_date, dear_name } = body;
     const requiredFields = [
         "rcapsule_name",
         "open_date",
         "dear_name",
-        "theme",
+        // "theme",
     ];
 
     requiredFields.forEach((field) => {
@@ -91,6 +93,45 @@ export const setPassword_s = async (body, rcapsule_id) => {
     } catch (error) {
         await connection.rollback();
         throw new BaseError(status.INTERNAL_SERVER_ERROR);
+    } finally {
+        connection.release();
+    }
+};
+
+export const addVoiceLetter_s = async (voiceUrl, capsule_number, body) => {
+    const connection = await pool.getConnection(async (conn) => conn);
+    
+    const { from_name, theme, content_type } = body;
+
+    const requiredFields = [
+        "from_name",
+        "theme",
+        "content_type"
+    ];
+
+    requiredFields.forEach((field) => {
+        if(!body.hasOwnProperty(field)) {
+            throw new Error(`Missing required field: ${field}`);
+        }
+    });
+
+    try {
+        connection.beginTransaction();
+
+        const rcapsule_id = await getRcapsuleId(connection, capsule_number);
+
+        await setRcapsuleWriter(connection, rcapsule_id, from_name, theme, content_type);
+
+        const writer_id = await getWriterId(connection, rcapsule_id);
+
+        await addVoiceLetter_d(connection, voiceUrl, writer_id);
+
+        await connection.commit();
+
+        return response(status.SUCCESS);
+    } catch (error) {
+        await connection.rollback();
+        throw error;
     } finally {
         connection.release();
     }
