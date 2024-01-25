@@ -1,110 +1,99 @@
-import jwt from "jsonwebtoken";
 import { response } from "../../../config/response.js";
 import { status } from "../../../config/responseStatus.js";
+import { BaseError } from "../../../config/error.js";
 import {
-	checkUserEmail,
 	getUserIdByEmail,
 	getUserInfo,
+	insertUser,
 	setUserNickname,
+	setUserStatus,
 } from "./UserDao.js";
+import { getUserInfos, getuserStatus, setUserJwt } from "./userProvider.js";
 
-export const setUserJwt = (userId) => {
-	const provider = "kakao";
-	let token = jwt.sign(
-		{
-			userId: userId,
-			provider: provider,
-		},
-		process.env.SECRET_KEY,
-		{
-			expiresIn: "2h",
-		},
-	);
-	return {
-		token: token,
-		expires: "2h",
-	};
-};
-
-export const KakaoEmailCheck = async (userInfo) => {
-	const email = userInfo.email;
-
-	// DB 상에 존재하는 email일 경우 바로 토큰 전달, 아니라면 회원가입 후 전달
-	const checkUserData = await checkUserEmail({
-		email: email,
-	});
-
-	if (checkUserData == -1) {
-		const userId = await getUserIdByEmail(email);
+export const userSignAction = async (userCheck, userInfo) => {
+	if (userCheck) {
+		const userId = await getUserIdByEmail(userInfo.email);
+		if (userId == -1) throw new BaseError(status.BAD_REQUEST);
 		const tokenInfo = setUserJwt(userId);
 		const userData = await getUserInfo(userId);
-		console.log(userId);
-		console.log(userData);
-		return response(status.LOGIN_SUCCESS, {
-			userId: userId,
-			email: userData.email,
-			gender: userData.gender,
-			nickname: userData.nickname,
-			...tokenInfo,
-		});
+
+		if (!userData.status) {
+			await changeUserStatus(userId, 1);
+		}
+		return {
+			type: 1,
+			data: {
+				userId: userData.id,
+				email: userData.email,
+				gender: userData.gender,
+				nickname: userData.nickname,
+				...tokenInfo,
+			},
+		};
 	} else {
-		const userData = await getUserInfo(checkUserData);
-		return response(status.NICKNAME_REQUIRED, {
-			userId: userData.id,
-			email: userData.email,
-			gender: userData.gender,
-		});
+		const userId = await insertUser(userInfo);
+		const userData = await getUserInfos(userId);
+		return {
+			type: 0,
+			data: {
+				userId: userData.userId,
+				email: userData.email,
+				gender: userData.gender,
+			},
+		};
 	}
 };
 
 export const setNickname = async (body, newUser) => {
-	const userId = body.userId;
-	const nickname = body.nickname;
-	const email = body.email;
+	const { userId, nickname, email } = body;
+	const bodyArr = [userId, nickname];
 
-	if (userId == undefined || nickname == undefined) {
-		return response(status.BAD_REQUEST, {});
+	bodyArr.forEach((value) => {
+		if (!value) throw new BaseError(status.BAD_REQUEST);
+	});
+
+	const userInfoCheck = await getUserInfos(userId);
+	if (newUser) {
+		if (!email) throw new BaseError(status.BAD_REQUEST);
+		if (userInfoCheck.email != email) throw new BaseError(status.FORBIDDEN);
+		if (userInfoCheck.nickname !== null) throw new BaseError(status.FORBIDDEN); // 이미 닉네임이 설정되어있는 경우
 	}
 
-	const userInfo = await getUserInfo(userId);
-	if (userInfo == -1) return response(status.FORBIDDEN, {});
-	if (newUser && userInfo.email != email) return response(status.FORBIDDEN, {});
-
 	const result = await setUserNickname(userId, nickname);
-
 	if (result == -1) {
-		return response(status.BAD_REQUEST, {});
+		throw new BaseError(status.BAD_REQUEST);
 	} else {
-		const userInfo = await getUserInfo(userId);
+		const userInfo = await getUserInfos(userId);
 		const tokenInfo = setUserJwt(userId);
 		if (newUser) {
-			return response(status.SUCCESS, {
-				userId: userInfo.id,
+			return {
+				userId: userInfo.userId,
 				email: userInfo.email,
 				gender: userInfo.gender,
 				nickname: userInfo.nickname,
 				...tokenInfo,
-			});
+			};
 		} else {
-			return response(status.SUCCESS, {
-				userId: userInfo.id,
+			return {
+				userId: userInfo.userId,
 				nickname: userInfo.nickname,
-			});
+			};
 		}
 	}
 };
 
-export const getUserInfos = async (body) => {
-	const userId = body.userId;
-	const userInfo = await getUserInfo(userId);
-	if (userInfo == -1)
-		return response(status.BAD_REQUEST, { err: "잘못된 유저 정보입니다." });
-	else {
-		return response(status.SUCCESS, {
-			userId: userInfo.id,
-			email: userInfo.email,
-			gender: userInfo.gender,
-			nickname: userInfo.nickname,
-		});
+export const changeUserStatus = async (userId, userStatus) => {
+	if (!userId) throw new BaseError(status.BAD_REQUEST);
+
+	const userData = await getuserStatus(userId);
+	if (userData.status == userStatus) {
+		throw new BaseError(status.CURRENT_STATUS);
+	} else {
+		const result = await setUserStatus(userId, userStatus);
+		if (result == -1) {
+			throw new BaseError(status.BAD_REQUEST);
+		} else {
+			return await getuserStatus(userId);
+		}
 	}
 };

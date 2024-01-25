@@ -33,6 +33,12 @@ export const status = {
 		code: "USER004",
 		message: "권한이 거부되었습니다.",
 	},
+	CURRENT_STATUS: {
+		status: StatusCodes.BAD_REQUEST,
+		isSuccess: false,
+		code: "USER006",
+		message: "계정 상태를 변경할 수 없습니다.",
+	},
 
 	BAD_REQUEST: {
 		status: StatusCodes.BAD_REQUEST,
