@@ -14,7 +14,8 @@ const upload = multer({
          cb(null, `${Date.now()}_${path.basename(file.originalname)}`);
       },
    }),
-//    limits: { fileSize: 5 * 1024 * 1024 },
+//    limits: { fileSize: 5 * 1024 * 1024 }, 5mb 용량 제한 (이건 나중에 필요할듯)
+
 });
 
 export default upload;
