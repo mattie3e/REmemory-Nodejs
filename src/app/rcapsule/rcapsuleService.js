@@ -3,8 +3,8 @@
 import { pool } from "../../../config/dbConfig.js";
 import { status } from "../../../config/responseStatus.js";
 import { readNumNUrl_d, 
-        //readCapsuleCnt_d,
         readDear_d,
+        createText_d,
 } from "./rcapsuleDao.js";
 
 //캡슐 번호 및 url 가져오기
@@ -33,32 +33,6 @@ export const readNumnUrl_s = async (capsuleNumber) => {
     }
 };
 
-// X
-// //리다이렉트 부분
-// export const readCapsuleCnt_s = async(rCapsuleNumber) => {
-//     try{
-//         //DAO를 통해 캡슐Cnt 조회
-//         const rCapsuleData = await readCapsuleCnt_d(connection, rCapsuleNumber);
-//         const resCnt = {
-//             capsule_cnt : rCapsuleData.capsule_cnt,
-//         }
-//         //조회된 값이 있다면 해당 값을 반환
-//         if(resCnt){
-//             return resCnt;
-//         } else{
-//             // 조회된 값이 없다면..!  * 추가
-//             throw new BaseError(status.CAPSULE_NOT_FOUND);
-//         }
-//     }catch (error){
-//         //에러 발생 시 롤백
-//         await connection.rollback();
-//         throw error;
-//     } finally {
-//         //모든 경우에 연결 반환
-//         connection.release();
-//     }
-// };
-
 // capsulenumber, 
 export const readDear_s = async(capsuleNumber) => {
     const connection = await pool.getConnection(async (conn) => conn);
@@ -83,20 +57,22 @@ export const readDear_s = async(capsuleNumber) => {
 };
 
 //post textNphotos
-export const creatText_s = async(body) => {
+export const createText_s = async(body) => {
     const connection = await pool.getConnection(async(conn) => conn);
     try{
         await connection.beginTransaction();
-        //create TextNPhoto capsule
-        await creatText_d(connection, body);
 
-        
+        //create TextNPhoto capsule : 함수를 호출하여 데이터 생성
+        const rCapsuleData = await createText_d(connection, body);
+
+        //rcapsuleData를 확인하여 예외 처리 또는 추가 작업 수행
         if(!rCapsuleData) {
             throw new BaseError(status.CAPSULE_NOT_FOUND);
         }
-        const insertData = [
-            rCapsuleData
-        ]
+        
+        await connection.commit();
+
+        return ({data: rCapsuleData, });
     }catch (error){
         //에러 발생 시 롤백
         await connection.rollback();
