@@ -43,21 +43,6 @@ export const updateOpenedStatus_d = async () => {
 	await connection.query(query);
 };
 
-//유저id로 pcapsule 가져오기
-export const getPcapsulesByUserId = async (connection, userId) => {
-    const query = `SELECT capsule_number FROM pcapsule WHERE capsule_number LIKE ?`;
-    const userCapsules = await connection.query(query, [`${userId}%`]);
-    return userCapsules;
-};
-
-
-//삭제(status 바꾸기)
-export const updateCapsuleStatus = async (connection, status, capsule_number) => {
-    const query = 'UPDATE pcapsule SET status = ? WHERE capsule_number = ?';
-    await connection.query(query, [status, capsule_number]);
-};
-
-
 export const retrieveCapsule_d = async (connection, capsule_number) => {
 	const query = `SELECT * FROM pcapsule WHERE capsule_number = ?`;
 	const [retrieveCapsuleRow] = await connection.query(query, capsule_number);
