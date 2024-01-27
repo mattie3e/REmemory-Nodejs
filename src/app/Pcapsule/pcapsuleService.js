@@ -11,7 +11,6 @@ import {
 	checkPasswordValidity,
 	retrieveText_image,
 	retrieveVoice,
-	updateCapsuleStatus,
 } from "./pcapsuleDao.js";
 
 // 캡슐 생성
@@ -208,43 +207,4 @@ export const readDetailPcs_s = async (capsuleNumber, capsulePassword) => {
 	} finally {
 		connection.release();
 	}
-};
-
-
-export const updatePcapsuleStatus_s = async (capsuleNumber, newStatus) => {
-    const connection = await pool.getConnection(async (conn) => conn);
-
-    try {
-        await connection.beginTransaction();
-
-        const isExistCapsule = await checkCapsuleNum_d(connection, capsuleNumber);
-
-        if (!isExistCapsule) {
-			connection.release();
-            throw new BaseError(status.CAPSULE_NOT_FOUND);
-        }
-
-        await updateCapsuleStatus(newStatus,capsuleNumber);
-
-
-        await connection.commit();
-
-        const updatedCapsuleData = await retrieveCapsule_d(connection, capsuleNumber);
-
-        const responseData = {
-            capsule_number: updatedCapsuleData.capsule_number,
-            pcapsule_name: updatedCapsuleData.pcapsule_name,
-            open_date: updatedCapsuleData.open_date,
-            dear_name: updatedCapsuleData.dear_name,
-            theme: updatedCapsuleData.theme,
-			status: updatedCapsuleData.status,
-        };
-
-        return responseData;
-    } catch (error) {
-        await connection.rollback();
-        throw error;
-    } finally {
-        connection.release();
-    }
 };

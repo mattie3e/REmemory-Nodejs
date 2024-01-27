@@ -68,25 +68,3 @@ export const createContent_p = async (content_type, content) => {
 export const updateOpenedStatus_p = async () => {
 	await updateOpenedStatus_d();
 };
-
-//유저의 capsule list 가져오기
-export const getUserCapsules_p = async (user_id) => {
-    const connection = await pool.getConnection(async (conn) => conn);
-
-    try {
-        const userId = user_id;
-        const data = await getPcapsulesByUserId(connection, userId);
-
-        console.log(data);
-
-        return data;
-    } catch (error) {
-        console.error('Error in getUserCapsules_p:', error);
-        throw error; 
-    } finally {
-
-        if (connection) {
-            connection.release();
-        }
-    }
-};
