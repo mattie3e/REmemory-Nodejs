@@ -5,7 +5,7 @@ import {
 	userSetNickname,
 	userSign,
 	userStatusChange,
-} from "./UserController.js";
+} from "./userController.js";
 import { tokenAuthMiddleware } from "../../../config/tokenAuthMiddleware.js";
 
 export const userRouter = express.Router();

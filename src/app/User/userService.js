@@ -7,7 +7,7 @@ import {
 	insertUser,
 	setUserNickname,
 	setUserStatus,
-} from "./UserDao.js";
+} from "./userDao.js";
 import { getUserInfos, getuserStatus, setUserJwt } from "./userProvider.js";
 
 export const userSignAction = async (userCheck, userInfo) => {
