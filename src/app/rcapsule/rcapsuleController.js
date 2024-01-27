@@ -16,12 +16,15 @@ export const readNumNUrl_c = async (req, res, next) => {
     //데이터 베이스에서 정보 조회
     const capsuleNumber = req.body.capsule_number;
 	const capsuleUrl = req.body.url;
-
+    
     const data = await readNumnUrl_s(capsuleNumber); 
-
-    //받은 정보를 응답으로 보내기 .. status * 추가
-    res.send({numNUrl : data});
-
+    
+    //받은 정보를 응답으로 -> response에 넣기
+    res.send(
+        response(status.SUCCESS,{
+                numNUrl : data
+             }),
+        );
     } catch(error) { //에러 처리
         next(error);
         console.log(error);
@@ -39,8 +42,11 @@ export const readDear_c = async(req, res, next) => {
         
         const data = await readDear_s(capsuleNumber);
         
-        res.send({dearNid : data, });
-
+        res.send(
+            response(status.SUCCESS, {
+                dearNid : data
+            }),
+        );
     }catch (error){
         next(error);
         console.log(error);

@@ -12,20 +12,30 @@ export const readNumnUrl_s = async (capsuleNumber) => {
     const connection = await pool.getConnection(async (conn) => conn);
     try {
         connection.beginTransaction();
-    //캡슐 존재 확인
-    //..
-    //DAO를 통해 캡슐 정보 조회
-    const rcapsuleData = await readNumNUrl_d(connection, capsuleNumber);
 
-    const resNumNUrl = {
-        capsule_number: rcapsuleData.capsule_number,
-        capsule_url : rcapsuleData.capsule_url,
-    }
+        //캡슐 존재 확인
+        const isExistCapsule = await checkCapsuleNum_d(connection, capsuleNumber);
+        if (isExistCapsule){
+            throw new BaseError(status.CAPSULE_NOT_FOUND);
+        }
 
-    return( {numNurl : resNumNUrl, });
+        //캡슐 정보 조회
+        const rcapsuleData = await readNumNUrl_d(connection, capsuleNumber);
+        
+        const resNumNUrl = {
+            capsule_number: rcapsuleData.capsule_number,
+            capsule_url : rcapsuleData.capsule_url,
+        }
+        
+        await connection.commit();
+
+        res.send(
+            response(status.SUCCESS, {
+                numNUrl : resNumNUrl,
+            }),
+        );
     } catch (error){
-        //에러 발생 시 롤백
-        await connection.rollback();
+        await connection.rollback(); //실패 시 롤백
         throw error;
     } finally {
         //모든 경우에 연결 반환
@@ -33,11 +43,18 @@ export const readNumnUrl_s = async (capsuleNumber) => {
     }
 };
 
-// capsulenumber, 
+// url 들어왔을 시 화면
 export const readDear_s = async(capsuleNumber) => {
     const connection = await pool.getConnection(async (conn) => conn);
     try {
         connection.beginTransaction();
+
+        //캡슐 존재 확인
+        const isExistCapsule = await checkCapsuleNum_d(connection, capsuleNumber);
+        if (isExistCapsule){
+            throw new BaseError(status.CAPSULE_NOT_FOUND);
+        }
+
         //DAO를 총해 캡슐 정보 조회
         const rCapsuleData = await readDear_d(connection, capsuleNumber);
 
@@ -45,7 +62,11 @@ export const readDear_s = async(capsuleNumber) => {
             dear_name : rCapsuleData.dear_name,
             capsule_id : rCapsuleData.capsule_id,
         }
-        return ({rcapsule : resdata});
+        res.send(
+            response(status.SUCCESS,{
+                dearNid : resdata,
+            }),
+        );
     }catch (error){
         //에러 발생 시 롤백
         await connection.rollback();
@@ -61,18 +82,19 @@ export const createText_s = async(body) => {
     const connection = await pool.getConnection(async(conn) => conn);
     try{
         await connection.beginTransaction();
-
-        //create TextNPhoto capsule : 함수를 호출하여 데이터 생성
-        const rCapsuleData = await createText_d(connection, body);
-
-        //rcapsuleData를 확인하여 예외 처리 또는 추가 작업 수행
-        if(!rCapsuleData) {
+        
+        //capsule이 없다면
+        const isExistCapsule = await checkCapsuleNum_d(connection, capsuleNumber);
+        if(isExistCapsule){
             throw new BaseError(status.CAPSULE_NOT_FOUND);
         }
         
         await connection.commit();
-
-        return ({data: rCapsuleData, });
+        res.send(
+            response(status.SUCCESS,{
+                data : rCapsuleData,
+            }),
+        );
     }catch (error){
         //에러 발생 시 롤백
         await connection.rollback();
