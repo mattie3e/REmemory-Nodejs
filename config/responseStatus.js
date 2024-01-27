@@ -59,6 +59,12 @@ export const status = {
 		code: "COMMON001",
 		message: "잘못된 요청입니다.",
 	},
+	NOT_FOUND: {
+		status: StatusCodes.NOT_FOUND,
+		isSuccess: false,
+		code: "COMMON002",
+		message: "찾을 수 없습니다.",
+	},
 
 	// capsule err
 	CAPSULE_NOT_FOUND: {
