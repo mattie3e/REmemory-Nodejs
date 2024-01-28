@@ -6,7 +6,8 @@ import {
 	createPcs_c,
 	readPcs_c,
 	readDetailPcs_c,
-} from "./pcapsuleController.js";
+} from "";
+// ./pcapsuleController.js";
 
 export const pcapsuleRouter = express.Router();
 
