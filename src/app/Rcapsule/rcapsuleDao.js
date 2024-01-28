@@ -80,3 +80,14 @@ export const setRcapsuleWriter = async (connection, rcapsule_id, from_name, them
     ]);
     return result[0];
 };
+
+export const updateOpenedStatus_d = async (connection) => {
+    const query = `UPDATE rcapsule SET status = 'OPENED' WHERE open_date <= CURDATE() AND status = 'LOCKED';`;
+    await connection.query(query);
+};
+
+export const getRcapsuleStatus = async () => {
+    const query = `SELECT IF(status = 'ACTIVE', 1, 0) AS status_indicator FROM rcapsule;`;
+    const [result] = await connection.query(query);
+    return result[0].status_indicator;
+}

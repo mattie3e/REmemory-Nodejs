@@ -66,5 +66,8 @@ export const createContent_p = async (content_type, content) => {
 
 // 캡슐 상태변경
 export const updateOpenedStatus_p = async () => {
-	await updateOpenedStatus_d();
+	const connection = await pool.getConnection(async (conn) => conn);
+	await updateOpenedStatus_d(connection);
+
+	
 };
