@@ -76,24 +76,6 @@ export const createPcs_s = async (body, nickname) => {
 	}
 };
 
-// // 캡슐 상태변경
-// export const getPcs_s = async (capsule_number, pcapsule_password) => {
-// 	const pcapsule = await getPcs_d(capsule_number, pcapsule_password);
-// 	if (!pcapsule) {
-// 		throw new Error("Capsule not found");
-// 	}
-// 	// 조회할 때만 비교해서 status 변경 -> 차후 변경
-// 	if (new Date(pcapsule.open_date) <= new Date()) {
-// 		await updatePcsStatus_d(capsule_number, "OPENED");
-// 		pcapsule.status = "OPENED";
-// 	}
-// 	if (pcapsule.status === "LOCKED") {
-// 		return { message: "The capsule is locked." };
-// 	} else {
-// 		return pcapsule;
-// 	}
-// };
-
 //캡슐 조회
 export const readPcs_s = async (capsuleNumber, capsulePassword) => {
 	const connection = await pool.getConnection(async (conn) => conn);

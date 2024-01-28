@@ -33,6 +33,12 @@ export const status = {
 		code: "USER004",
 		message: "권한이 거부되었습니다.",
 	},
+	CURRENT_STATUS: {
+		status: StatusCodes.BAD_REQUEST,
+		isSuccess: false,
+		code: "USER006",
+		message: "계정 상태를 변경할 수 없습니다.",
+	},
 
 	CAPSULE_NOT_FOUND: {
 		status: StatusCodes.NOT_FOUND,
@@ -52,6 +58,12 @@ export const status = {
 		isSuccess: false,
 		code: "COMMON001",
 		message: "잘못된 요청입니다.",
+	},
+	NOT_FOUND: {
+		status: StatusCodes.NOT_FOUND,
+		isSuccess: false,
+		code: "COMMON002",
+		message: "찾을 수 없습니다.",
 	},
 
 	// capsule err

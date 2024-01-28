@@ -1,8 +1,7 @@
-// Controller
 import { response } from "../../../config/response.js";
 import { status } from "../../../config/responseStatus.js";
 
-import { getUserInfos } from "../User/userService.js";
+import { getUserInfos } from "../User/userProvider.js";
 
 import { createPcs_s, readPcs_s, readDetailPcs_s } from "./pcapsuleService.js";
 import { savePassword_p } from "./pcapsuleProvider.js";
