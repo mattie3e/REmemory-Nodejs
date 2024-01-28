@@ -1,6 +1,5 @@
 import { response } from "../../../config/response.js";
 import { status } from "../../../config/responseStatus.js";
-import baseResponse from "../../../config/response.js"; // 추가해야함
 
 import { readNumnUrl_s, 
          readDear_s,
@@ -59,19 +58,26 @@ export const readDear_c = async(req, res, next) => {
  */
 export const createText_c = async(req, res, next) => {
     //body : from_name, content_type, image_url, body
+    // params인지 body인지 햇갈리는데 차이는?!
     try{
+        //aws s3에 업로드 된 파일 url 접근 및 db 저장
+        //console.log(req.file.locatiron); // aws s3에 올려진 파일 url
+
         const {from_name, content_type, image_url, body} = req.body;
         
-        //형식적 validation 처리
+        //형식적 validation 처리 *이 부분 추가 수정하기
+        if(!req.params.rcapsule_number){
+            return res.send(response(status.BAD_REQUEST))
+        }
         if(!from_name){
-            return res.send(errResponse(baseResponse.TEXTCAPSULE_FROM_NAME_EMPTY));
+            return res.send(response(status.NOT_FOUND));
         } else if(!content_type){
-            return res.send(errResponse(baseResponse.TEXTCAPSULE_CONTENT_TYPE_EMPTY));
+            return res.send(response(status.NOT_FOUND));
         } else if(!image_url && !body){
-            return res.send(errResponse(baseResponse.TEXTCAPSULE_IMAGEBODY_EMPTY));
+            return res.send(response(status.NOT_FOUND));
         }        
         //처리 결과를 클라이언트에게 응답
-        const result = await createText_s(req.body);
+        const result = await createText_s(req.file.location, req.params.rcapsule_number, req.body);
 
         res.send(
             response(status.SUCCESS, {
@@ -80,6 +86,7 @@ export const createText_c = async(req, res, next) => {
             })
         );
     }catch (error){ // * 추가
+        res.send(status.INTERNAL_SERVER_ERROR, { error: "텍스트 및 사진 파일 업로드 실패.", detail: error});
         next(error);
         console.log(error);
     }

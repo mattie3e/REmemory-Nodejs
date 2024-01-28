@@ -4,7 +4,8 @@ import { pool } from "../../../config/dbConfig.js";
 import { status } from "../../../config/responseStatus.js";
 import { readNumNUrl_d, 
         readDear_d,
-        createText_d,
+        addTextImage_d,
+        setRcapsuleWriter,
 } from "./rcapsuleDao.js";
 
 //캡슐 번호 및 url 가져오기
@@ -77,19 +78,40 @@ export const readDear_s = async(capsuleNumber) => {
     }
 };
 
-//post textNphotos
-export const createText_s = async(body) => {
+//post textNphotos * photo 파일 변환하기 * error
+export const createText_s = async(imageurl, capsule_number, body) => {
     const connection = await pool.getConnection(async(conn) => conn);
+    const {from_name, content_type} = body;
+
+    const requiredFields = [
+        "from_name",
+        "content_type"
+    ];
+
+    requiredFields.forEach((field) => {
+        if(!body.hasOwnProperty(field)){
+            throw new Error ('Missing required filed: ${field}');
+        }
+    });
     try{
-        await connection.beginTransaction();
+        connection.beginTransaction();
         
-        //capsule이 없다면
+        //capsule 존재 확인
         const isExistCapsule = await checkCapsuleNum_d(connection, capsuleNumber);
         if(isExistCapsule){
             throw new BaseError(status.CAPSULE_NOT_FOUND);
         }
         
+        const rcapsule_id = await getRcapsuleId(connection, capsule_number);
+        
+        await setRcapsuleWriter(connection, rcapsule_id, from_name, content_type);
+
+        const writer_id = await getWriterId(connection, rcapsule_id);
+
+        await addTextImage_d(connection, imageurl, writer_id);
+
         await connection.commit();
+
         res.send(
             response(status.SUCCESS,{
                 data : rCapsuleData,

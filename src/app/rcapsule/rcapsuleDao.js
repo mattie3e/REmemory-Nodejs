@@ -1,5 +1,17 @@
 // dao.js
 
+export const getRcapsuleId = async(connection, capsule_number) => {
+    const query = `SELECT id FROM rcapsule WHERE capsule_number = ?;`;
+    const [result] = await connection.query(query, capsule_number);
+    return result[0].id;
+}
+
+export const getWriterId = async (connection, rcapsule_id) => {
+    const query = `SELECT id FROM rcapsule_writer WHERE rcapsule_id = ?;`;
+    const [result] = await connection.query(query, rcapsule_id);
+    return result[0].id;
+};
+
 //캡슐 번호 및 url 조회
 export const readNumNUrl_d = async(connection, capsuleNumber) => {
         //삽입한 데이터의 id를 이용하여 조회
@@ -26,39 +38,26 @@ export const readDear_d = async(connection, capsuleNumber) => {
 
 //createText_d
 //body : from_name, content_type, image_url, body
-export const createText_d = async(connection, body) => {
-    const {from_name, content_type, image_url, body: textBody} = body;
+export const addTextImage_d = async (connection, image_url, writer_id) => {
+    const query = `INSERT INTO voice (id, pcapsule_id, rwcapsule_id, image_url, created_at, updated_at)
+    VALUES (null, null, ?, ?, ?, ?);`;
+    const [result] = await connection.query(query, [
+        writer_id,
+        voiceUrl,
+        new Date(),
+        new Date(),
+    ])
+};
 
-    await connection.beginTransaction();
-
-    //쿼리 작성하기(from_name, content_type) *여기도 쿼리문 체크
-    const writerQuery = `INSERT INTO rcapsule_writer (from_name, content_type) VALUES (?, ?)`;
-
-    const [writerResult] = await connection.query(writerQuery, [
+export const setRcapsuleWriter = async (connection, rcapsule_id, from_name, content_type) => {
+    const query = `INSERT INTO rcapsule_writer (id, rcapsule_id, from_name, content_type, created_at, updated_at) 
+    VALUES (null, ?, ?, ?, ?);`;
+    const [result] = await connection.query(query, [
+        rcapsule_id,
         from_name,
         content_type,
+        new Date(),
+        new Date(),
     ]);
-    const writerId = writerResult.insertId;
-
-    //쿼리 작성하기(image_url, textBody)
-    const textImageQuery = `INSERT INTO text_image (image_url, body, rwcapsule_id)
-        VALUES (?, ?, ?)`;
-        
-    const [textImageResult] = await connection.query(textImageQuery, [
-        image_url,
-        textBody,
-        writerId,
-    ]);
-    const textImageId = textImageResult.insertId;
-
-    await connection.commit();
-
-    return {
-        rcapsule_writer_id: writerId,
-        text_image_id: textImageId,
-        from_name,
-        content_type,
-        image_url,
-        body: textBody,
-    };
-}
+    return result[0];
+};
