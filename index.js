@@ -24,9 +24,9 @@ app.get("/", (req, res, next) => {
 	res.send(response(status.SUCCESS, "루트 페이지!"));
 });
 
-app.use("/user", userRouter);
-app.use("/pcapsule", pcapsuleRouter);
-app.use("/rcapsule", rcapsuleRouter);
+// app.use("/user", userRouter);
+// app.use("/pcapsule", pcapsuleRouter);
+// app.use("/rcapsule", rcapsuleRouter);
 
 startSchedulers();
 
