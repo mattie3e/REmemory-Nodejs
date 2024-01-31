@@ -18,4 +18,3 @@ pcapsuleRouter.get("/retrieveDetail", asyncHandler(readDetailPcs_c));
 
 pcapsuleRouter.patch("/delete/:id", asyncHandler(updatePcs_c));
 //삭제하기 전에 status를 비활성화시키기
-
