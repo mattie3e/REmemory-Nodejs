@@ -15,7 +15,24 @@ const upload = multer({
       },
    }),
 //    limits: { fileSize: 5 * 1024 * 1024 }, 5mb 용량 제한 (이건 나중에 필요할듯)
-
 });
 
-export default upload;
+const allowedExtensions = ['.png', '.jpg', '.jpeg', '.bmp', ]
+
+const imageupload = multer({
+    storage: multerS3({
+       s3: new AWS.S3(),
+       bucket: process.env.S3_BUCKET_NAME,
+       acl: 'public-read-write',
+       key(req, file, callback) {
+        const extension = path.extname(file.originalname)
+        //extension확인을 위한 코드
+        if(!allowedExtensions.includes(extension)){
+            return callback(new Error('wrong extension'))
+        }
+          cb(null, `${Date.now()}_${path.basename(file.originalname)}`);
+       },
+    }),
+});
+
+export default imageupload
