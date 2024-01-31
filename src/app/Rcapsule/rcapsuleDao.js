@@ -1,3 +1,5 @@
+import { sendNotificationEmail } from "./rcapsuleProvider";
+
 export const checkCapsuleNum_d = async (connection, capsule_number) => {
 	const query = `SELECT EXISTS(SELECT 1 FROM time_capsule WHERE capsule_number = ?) as isExistCapsule;`;
 	const [checkCapsuleNumRow] = await connection.query(query, capsule_number);
@@ -82,12 +84,37 @@ export const setRcapsuleWriter = async (connection, rcapsule_id, from_name, them
 };
 
 export const updateOpenedStatus_d = async (connection) => {
-    const query = `UPDATE rcapsule SET status = 'OPENED' WHERE open_date <= CURDATE() AND status = 'LOCKED';`;
-    await connection.query(query);
+    const query = `UPDATE rcapsule SET status = 'OPENED', updated_at = NOW() WHERE open_date <= CURDATE() AND status = 'LOCKED';`;
+    const [result] = await connection.query(query);
+    
+    if (result.affectedRows > 0) {
+        //변경된 행이 있을 경우 메일 발송
+        sendNotificationEmail();
+    }
+    return result;
 };
 
-export const getRcapsuleStatus = async () => {
-    const query = `SELECT IF(status = 'ACTIVE', 1, 0) AS status_indicator FROM rcapsule;`;
-    const [result] = await connection.query(query);
-    return result[0].status_indicator;
-}
+// export const getRcapsuleStatus = async () => {
+//     const query = `SELECT IF(status = 'ACTIVE', 1, 0) AS status_indicator FROM rcapsule;`;
+//     const [result] = await connection.query(query);
+//     return result[0].status_indicator;
+// };
+
+export const checkUpdatedRows = async (connection, oneDayAgo) => {
+    const query = `SELECT capsule_number, rcapsule_name, rcapsule_password FROM rcapsule WHERE status = 'OPENED' AND updated_at >= ?;`;
+
+    const [rows] = await connection.query(query, [oneDayAgo]);
+
+    return rows;
+};
+
+export const getUserEmail = async (connection, capsule_number) => {
+    const query = `SELECT m.email AS userEmail
+    FROM member AS m
+    JOIN time_capsule AS tc ON m.id = tc.member_id
+    WHERE tc.capsule_number = ?;`;
+
+    const [result] = await connection.query(query, [capsule_number]);
+
+    return result[0].userEmail;
+};
