@@ -1,10 +1,10 @@
 import express from "express";
 import asyncHandler from "express-async-handler";
 
-import { 
-    readNumNUrl_c,
-    readDear_c,
-    createText_c,
+import {
+	readNumNUrl_c,
+	readDear_c,
+	createText_c,
 } from "./rcapsuleController.js";
 
 export const rcapsuleRouter = express.Router();
@@ -16,4 +16,4 @@ rcapsuleRouter.get("/rcapsule/info", asyncHandler(readNumNUrl_c));
 rcapsuleRouter.get("/rcapsule_number", asyncHandler(readDear_c));
 
 //글&사진 쓰기
-rcapsuleRouter.post("/rcapsule_number/text_photo",asyncHandler(createText_c));
+rcapsuleRouter.post("/rcapsule_number/text_photo", asyncHandler(createText_c));
