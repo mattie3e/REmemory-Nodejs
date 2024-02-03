@@ -1,0 +1,494 @@
+paths:
+  /pcapsule/create:
+    post:
+      tags:
+        - Pcapsule
+      summary: Create a new pcapsule
+      parameters:
+        - name: create
+          in: body
+          required: true
+          schema:
+            type: object
+            properties:
+              pcapsule_name:
+                type: string
+                description: Name of the pcapsule
+                example: "캡슐 1"
+              open_date:
+                type: string
+                format: date
+                description: Opening date of the pcapsule
+                example: "2025-01-01"
+              dear_name:
+                type: string
+                description: Name of the recipient
+                example: "위트"
+              theme:
+                type: integer
+                description: Theme of the pcapsule
+                example: 1
+              content_type:
+                type: integer
+                description: Type of content (1 for text/image, 2 for voice)
+                example: 1
+              content:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    body:
+                      type: string
+                      description: Content text
+                      example: "너랑 함께해서 어쩌고저쩌고"
+                    image_url:
+                      type: string
+                      description: URL of the image
+                      example: "이미지url"
+                    sort:
+                      type: integer
+                      description: Sort order of the content
+                      example: 1
+      responses:
+        '200':
+          description: Pcapsule creation successful
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: integer
+                    example: 200
+                  isSuccess:
+                    type: boolean
+                    example: true
+                  code:
+                    type: integer
+                    example: 2000
+                  message:
+                    type: string
+                    example: "success!"
+                  data:
+                    type: object
+                    example: {
+                      "pcapsule_name": "캡슐 1",
+                      "open_date": "2025-01-01",
+                      "dear_name": "위트",
+                      "theme": 1,
+                      "content_type": 1,
+                      "content": [
+                        {
+                          "body": "너랑 함께해서 어쩌고저쩌고",
+                          "image_url": "이미지url",
+                          "sort": 1
+                        }
+                      ]
+                    }
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: integer
+                    example: 400
+                  isSuccess:
+                    type: boolean
+                    example: false
+                  code:
+                    type: integer
+                    example: COMMON001
+                  message:
+                    type: string
+                    example: "Bad Request"
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: integer
+                    example: 500
+                  isSuccess:
+                    type: boolean
+                    example: false
+                  code:
+                    type: integer
+                    example: COMMON000
+                  message:
+                    type: string
+                    example: "Internal Server Error, please contact the administrator."
+  /pcapsule/create/savePassword:
+    post:
+      tags:
+        - Pcapsule
+      summary: Save password for a pcapsule
+      parameters:
+        - name: savePassword
+          in: body
+          required: true
+          schema:
+            type: object
+            properties:
+              capsule_number:
+                type: string
+                description: Capsule number
+                example: "WIT_1004"
+              pcapsule_password:
+                type: integer
+                description: Password for the pcapsule
+                example: 012345
+      responses:
+        '200':
+          description: Password saved successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: integer
+                    example: 200
+                  isSuccess:
+                    type: boolean
+                    example: true
+                  code:
+                    type: integer
+                    example: 2000
+                  message:
+                    type: string
+                    example: "success!"
+                  data:
+                    type: object
+                    example: {
+                      "capsule_number": "WIT_1004",
+                      "pcapsule_password": 012345
+                    }
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: integer
+                    example: 400
+                  isSuccess:
+                    type: boolean
+                    example: false
+                  code:
+                    type: integer
+                    example: COMMON001
+                  message:
+                    type: string
+                    example: "Bad Request"
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: integer
+                    example: 500
+                  isSuccess:
+                    type: boolean
+                    example: false
+                  code:
+                    type: integer
+                    example: COMMON000
+                  message:
+                    type: string
+                    example: "Internal Server Error, please contact the administrator."
+  /pcapsule/retrieve:
+    get:
+      tags:
+        - Pcapsule
+      summary: Retrieve pcapsule information
+      parameters:
+        - name: retrieve
+          in: body
+          required: true
+          schema:
+            type: object
+            properties:
+              capsule_number:
+                type: string
+                description: Capsule number
+                example: "WIT_1004"
+              pcapsule_password:
+                type: integer
+                description: Password for the pcapsule
+                example: 012345
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    capsule_number:
+                      type: string
+                      example: "user123_2432432"
+                    password:
+                      type: string
+                      example: "1568185"
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: integer
+                    example: 400
+                  isSuccess:
+                    type: boolean
+                    example: false
+                  code:
+                    type: integer
+                    example: COMMON001
+                  message:
+                    type: string
+                    example: "Bad Request"
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: integer
+                    example: 500
+                  isSuccess:
+                    type: boolean
+                    example: false
+                  code:
+                    type: integer
+                    example: COMMON000
+                  message:
+                    type: string
+                    example: "Internal Server Error, please contact the administrator."
+      examples:
+        success:
+          value:
+            - capsule_number: "user123_2432432"
+              password: "1568185"
+            - capsule_number: "user123_2432433"
+              password: "9876543"
+        error:
+          value:
+            status: 400
+            isSuccess: false
+            code: COMMON001
+            message: "Bad Request"
+  /pcapsule/retrieveDetail:
+    get:
+      tags:
+        - Pcapsule
+      summary: Retrieve detailed pcapsule information
+      parameters:
+        - name: retrieve
+          in: body
+          required: true
+          schema:
+            type: object
+            properties:
+              capsule_number:
+                type: string
+                description: Capsule number
+                example: "WIT_1004"
+              pcapsule_password:
+                type: integer
+                description: Password for the pcapsule
+                example: 012345
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    capsule_name:
+                      type: string
+                      example: "user123_2432432"
+                    password:
+                      type: string
+                      example: "1568185"
+                    capsules:
+                      type: array
+                      items:
+                        type: object
+                        properties:
+                          capsule_number:
+                            type: string
+                            example: "user123_2432432"
+                          pcapsule_name:
+                            type: string
+                            example: "캡슐 1"
+                          open_date:
+                            type: string
+                            format: date
+                            example: "2025-01-01"
+                          dear_name:
+                            type: string
+                            example: "위트"
+                          theme:
+                            type: string
+                            example: "1"
+                          content_type:
+                            type: string
+                            example: "1"
+                          body:
+                            type: string
+                            example: "너랑 함께해서 어쩌고저쩌고"
+                          text_image_id:
+                            type: string
+                            example: "123456"
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: integer
+                    example: 400
+                  isSuccess:
+                    type: boolean
+                    example: false
+                  code:
+                    type: integer
+                    example: COMMON001
+                  message:
+                    type: string
+                    example: "Bad Request"
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: integer
+                    example: 500
+                  isSuccess:
+                    type: boolean
+                    example: false
+                  code:
+                    type: integer
+                    example: COMMON000
+                  message:
+                    type: string
+                    example: "Internal Server Error, please contact the administrator."
+      examples:
+        success:
+          value:
+            - capsule_name: "user123_2432432"
+              password: "1568185"
+              capsules:
+                - capsule_number: "user123_2432432"
+                  pcapsule_name: "캡슐 1"
+                  open_date: "2025-01-01"
+                  dear_name: "위트"
+                  theme: "1"
+                  content_type: "1"
+                  body: "너랑 함께해서 어쩌고저쩌고"
+                  text_image_id: "123456"
+        error:
+          value:
+            status: 400
+            isSuccess: false
+            code: COMMON001
+            message: "Bad Request"
+  /pcapsule/delete/{capsuleid}:
+    patch:
+      tags:
+        - Pcapsule
+      summary: Delete a pcapsule by ID
+      parameters:
+        - name: capsuleid
+          in: path
+          required: true
+          description: ID of the pcapsule to delete
+          schema:
+            type: string
+            example: "user123_2432432"
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    user_id:
+                      type: string
+                      example: "user_123"
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: integer
+                    example: 400
+                  isSuccess:
+                    type: boolean
+                    example: false
+                  code:
+                    type: integer
+                    example: COMMON001
+                  message:
+                    type: string
+                    example: "Bad Request"
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: integer
+                    example: 500
+                  isSuccess:
+                    type: boolean
+                    example: false
+                  code:
+                    type: integer
+                    example: COMMON000
+                  message:
+                    type: string
+                    example: "Internal Server Error, please contact the administrator."
+      examples:
+        success:
+          value:
+            - user_id: "user_123"
+        error:
+          value:
+            status: 400
+            isSuccess: false
+            code: COMMON001
+            message: "Bad Request"
