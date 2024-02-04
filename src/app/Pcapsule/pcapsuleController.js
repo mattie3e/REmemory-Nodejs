@@ -42,8 +42,10 @@ export const savePassword_c = async (req, res, next) => {
 // [GET] /retrieve
 export const readPcs_c = async (req, res, next) => {
 	try {
-		const capsuleNumber = req.body.capsule_number;
-		const capsulePassword = req.body.password;
+		const capsuleNumber = req.query.capsule_number;
+		const capsulePassword = req.query.pcapsule_password;
+		console.log(capsuleNumber);
+		console.log(capsulePassword);
 
 		const data = await readPcs_s(capsuleNumber, capsulePassword);
 
@@ -53,6 +55,7 @@ export const readPcs_c = async (req, res, next) => {
 			}),
 		);
 	} catch (error) {
+		console.log(error);
 		next(error);
 	}
 };
@@ -61,8 +64,8 @@ export const readPcs_c = async (req, res, next) => {
 // [GET] /retrieveDetail
 export const readDetailPcs_c = async (req, res, next) => {
 	try {
-		const capsuleNumber = req.body.capsule_number;
-		const capsulePassword = req.body.password;
+		const capsuleNumber = req.query.capsule_number;
+		const capsulePassword = req.query.pcapsule_password;
 
 		const data = await readDetailPcs_s(capsuleNumber, capsulePassword);
 

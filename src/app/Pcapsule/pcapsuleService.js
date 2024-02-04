@@ -85,8 +85,9 @@ export const readPcs_s = async (capsuleNumber, capsulePassword) => {
 
 		// 캡슐 존재 확인
 		const isExistCapsule = await checkCapsuleNum_d(connection, capsuleNumber);
+		console.log(isExistCapsule);
 
-		if (isExistCapsule) {
+		if (!isExistCapsule) {
 			throw new BaseError(status.CAPSULE_NOT_FOUND);
 		}
 
@@ -122,7 +123,7 @@ export const readPcs_s = async (capsuleNumber, capsulePassword) => {
 		);
 	} catch (error) {
 		await connection.rollback();
-		next(error);
+		throw error;
 	} finally {
 		connection.release();
 	}
@@ -137,7 +138,7 @@ export const readDetailPcs_s = async (capsuleNumber, capsulePassword) => {
 		// 캡슐 존재 확인
 		const isExistCapsule = await checkCapsuleNum_d(connection, capsuleNumber);
 
-		if (isExistCapsule) {
+		if (!isExistCapsule) {
 			throw new BaseError(status.CAPSULE_NOT_FOUND);
 		}
 
@@ -204,7 +205,7 @@ export const readDetailPcs_s = async (capsuleNumber, capsulePassword) => {
 		);
 	} catch (error) {
 		await connection.rollback();
-		next(error);
+		throw error;
 	} finally {
 		connection.release();
 	}
