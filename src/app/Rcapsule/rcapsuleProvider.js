@@ -5,21 +5,21 @@ import { status } from "../../../config/responseStatus.js";
 import { checkCapsuleNum_d } from "./rcapsuleDao.js";
 
 export const createCapsuleNum_r = async (nickname) => {
-    const connection = await pool.getConnection(async (conn) => conn);
-    let capsule_number;
+	const connection = await pool.getConnection(async (conn) => conn);
+	let capsule_number;
 
-    while (true) {
-        const random_number = Math.floor(Math.random() * 100000 + 1); // 1~100000 사이의 랜덤 숫자
-        capsule_number = `${nickname}_${random_number}`;
+	while (true) {
+		const random_number = Math.floor(Math.random() * 100000 + 1); // 1~100000 사이의 랜덤 숫자
+		capsule_number = `${nickname}_${random_number}`;
 
-        const isExistCapsule = await checkCapsuleNum_d(connection, capsule_number);
-        if (!isExistCapsule) {
-            break;
-        }
-    }
+		const isExistCapsule = await checkCapsuleNum_d(connection, capsule_number);
+		if (!isExistCapsule) {
+			break;
+		}
+	}
 
-    connection.release();
-    return capsule_number;
+	connection.release();
+	return capsule_number;
 };
 
 // export const createRcapsule_p = async (capsule_number, rcapsule_name, open_date, dear_name, theme) => {

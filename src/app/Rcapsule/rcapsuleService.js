@@ -1,139 +1,126 @@
+// Service
+//db 연결
 import { pool } from "../../../config/dbConfig.js";
-import { BaseError } from "../../../config/error.js";
 import { status } from "../../../config/responseStatus.js";
+import {
+	readNumNUrl_d,
+	readDear_d,
+	addTextImage_d,
+	setRcapsuleWriter,
+} from "./rcapsuleDao.js";
 
-import { createCapsuleNum_r } from "./rcapsuleProvider.js";
+//캡슐 번호 및 url 가져오기
+export const readNumnUrl_s = async (capsuleNumber) => {
+	const connection = await pool.getConnection(async (conn) => conn);
+	try {
+		connection.beginTransaction();
 
-import { 
-    insertTimeCapsule, 
-    getTimeCapsuleId, 
-    insertRcapsule,
-    updatePassword,
-    getRcapsuleId,
-    addVoiceLetter_d,
-    getWriterId,
-    setRcapsuleWriter
- } from "./rcapsuleDao.js";
-import { response } from "express";
+		//캡슐 존재 확인
+		const isExistCapsule = await checkCapsuleNum_d(connection, capsuleNumber);
+		if (isExistCapsule) {
+			throw new BaseError(status.CAPSULE_NOT_FOUND);
+		}
 
-export const postRcapsule = async (body, nickname, userId) => {
-     // 값이 제대로 전송 안된 경우
-    const { rcapsule_name, open_date, dear_name } = body;
-    const requiredFields = [
-        "rcapsule_name",
-        "open_date",
-        "dear_name",
-        // "theme",
-    ];
+		//캡슐 정보 조회
+		const rcapsuleData = await readNumNUrl_d(connection, capsuleNumber);
 
-    requiredFields.forEach((field) => {
-        if(!body.hasOwnProperty(field)) {
-            throw new Error(`Missing required field: ${field}`);
-        }
-    });
+		const resNumNUrl = {
+			capsule_number: rcapsuleData.capsule_number,
+			capsule_url: rcapsuleData.capsule_url,
+		};
 
-    const capsule_number = await createCapsuleNum_r(nickname);
-    const rcapsule_url = `${process.env.FRONT_DOMAIN}/rcapsule_number=${capsule_number}`;
+		await connection.commit();
 
-    const connection = await pool.getConnection(async (conn) => conn);
-    try {       
-        await connection.beginTransaction();
-
-        //create time_capsule
-        await insertTimeCapsule(connection, capsule_number, userId);
-
-        //create rcapsule
-        const time_capsule_id = await getTimeCapsuleId(connection, capsule_number);
-
-        if (!time_capsule_id) {
-            throw new BaseError(status.CAPSULE_NOT_FOUND);
-        }
-        const insertData = [
-            time_capsule_id,
-            capsule_number,
-            rcapsule_name,
-            open_date,
-            dear_name,
-            rcapsule_url,
-        ];
-
-        const createRcsData = await insertRcapsule(connection, insertData);
-
-        const newRcapsuleId = await getRcapsuleId(connection, capsule_number);
-
-        await connection.commit();
-
-        return { ...createRcsData, capsule_number, newRcapsuleId };
-    }
-    catch (error) {
-        await connection.rollback(); // 실패 시 롤백
-        throw new BaseError(status.INTERNAL_SERVER_ERROR);
-    }
-    finally {
-        connection.release();
-    }
+		res.send(
+			response(status.SUCCESS, {
+				numNUrl: resNumNUrl,
+			}),
+		);
+	} catch (error) {
+		await connection.rollback(); //실패 시 롤백
+		throw error;
+	} finally {
+		//모든 경우에 연결 반환
+		connection.release();
+	}
 };
 
-export const setPassword_s = async (body, rcapsule_id) => {
-    const { rcapsule_password } = body;
+// url 들어왔을 시 화면
+export const readDear_s = async (capsuleNumber) => {
+	const connection = await pool.getConnection(async (conn) => conn);
+	try {
+		connection.beginTransaction();
 
-    if (!rcapsule_password) {
-        throw new BaseError(status.BAD_REQUEST);
-    }
+		//캡슐 존재 확인
+		const isExistCapsule = await checkCapsuleNum_d(connection, capsuleNumber);
+		if (isExistCapsule) {
+			throw new BaseError(status.CAPSULE_NOT_FOUND);
+		}
 
-    const connection = await pool.getConnection(async (conn) => conn);
+		//DAO를 총해 캡슐 정보 조회
+		const rCapsuleData = await readDear_d(connection, capsuleNumber);
 
-    try {
-        connection.beginTransaction();
-
-        await updatePassword(connection, rcapsule_password, rcapsule_id);
-
-        await connection.commit();
-
-        return response(status.SUCCESS);
-    } catch (error) {
-        await connection.rollback();
-        throw new BaseError(status.INTERNAL_SERVER_ERROR);
-    } finally {
-        connection.release();
-    }
+		const resdata = {
+			dear_name: rCapsuleData.dear_name,
+			capsule_id: rCapsuleData.capsule_id,
+		};
+		res.send(
+			response(status.SUCCESS, {
+				dearNid: resdata,
+			}),
+		);
+	} catch (error) {
+		//에러 발생 시 롤백
+		await connection.rollback();
+		throw error;
+	} finally {
+		//모든 경우에 연결 반환
+		connection.release();
+	}
 };
 
-export const addVoiceLetter_s = async (voiceUrl, capsule_number, body) => {
-    const connection = await pool.getConnection(async (conn) => conn);
-    
-    const { from_name, theme, content_type } = body;
+//post textNphotos * photo 파일 변환하기 * error
+export const createText_s = async (imageurl, capsule_number, body) => {
+	const connection = await pool.getConnection(async (conn) => conn);
+	const { from_name, content_type } = body;
 
-    const requiredFields = [
-        "from_name",
-        "theme",
-        "content_type"
-    ];
+	const requiredFields = ["from_name", "content_type"];
 
-    requiredFields.forEach((field) => {
-        if(!body.hasOwnProperty(field)) {
-            throw new Error(`Missing required field: ${field}`);
-        }
-    });
+	requiredFields.forEach((field) => {
+		if (!body.hasOwnProperty(field)) {
+			throw new Error("Missing required filed: ${field}");
+		}
+	});
+	try {
+		connection.beginTransaction();
 
-    try {
-        connection.beginTransaction();
+		//capsule 존재 확인
+		const isExistCapsule = await checkCapsuleNum_d(connection, capsuleNumber);
+		if (isExistCapsule) {
+			throw new BaseError(status.CAPSULE_NOT_FOUND);
+		}
 
-        const rcapsule_id = await getRcapsuleId(connection, capsule_number);
+		const rcapsule_id = await getRcapsuleId(connection, capsule_number);
 
-        await setRcapsuleWriter(connection, rcapsule_id, from_name, theme, content_type);
+		await setRcapsuleWriter(connection, rcapsule_id, from_name, content_type);
 
-        const writer_id = await getWriterId(connection, rcapsule_id);
+		const writer_id = await getWriterId(connection, rcapsule_id);
 
-        await addVoiceLetter_d(connection, voiceUrl, writer_id);
+		await addTextImage_d(connection, imageurl, writer_id);
 
-        await connection.commit();
+		await connection.commit();
 
-        return response(status.SUCCESS);
-    } catch (error) {
-        await connection.rollback();
-        throw error;
-    } finally {
-        connection.release();
-    }
+		res.send(
+			response(status.SUCCESS, {
+				data: rCapsuleData,
+			}),
+		);
+	} catch (error) {
+		//에러 발생 시 롤백
+		await connection.rollback();
+		throw error;
+	} finally {
+		//모든 경우에 연결 반환
+		connection.release();
+	}
 };
