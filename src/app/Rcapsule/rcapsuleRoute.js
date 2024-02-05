@@ -1,5 +1,6 @@
 import express from "express";
 import asyncHandler from "express-async-handler";
+// import upload from "../../../config/multer.js";
 
 import {
 	createRcapsule,
@@ -31,3 +32,8 @@ rcapsuleRouter.get("/rcapsule_number", asyncHandler(readDear_c));
 
 //글&사진 쓰기
 rcapsuleRouter.post("/rcapsule_number/text_photo", asyncHandler(createText_c));
+// rcapsuleRouter.post(
+// 	"/:rcapsule_number/voice",
+// 	upload.single("voice_rcapsule"),
+// 	asyncHandler(addVoiceLetter_c),
+// );
