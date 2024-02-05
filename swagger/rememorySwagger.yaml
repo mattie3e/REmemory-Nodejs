@@ -207,26 +207,27 @@ paths:
                   message:
                     type: string
                     example: "Internal Server Error, please contact the administrator."
+  
   /pcapsule/retrieve:
     get:
       tags:
         - Pcapsule
       summary: Retrieve pcapsule information
       parameters:
-        - name: retrieve
-          in: body
+        - in: query
+          name: capsule_number
           required: true
+          description: Capsule number
           schema:
-            type: object
-            properties:
-              capsule_number:
-                type: string
-                description: Capsule number
-                example: "WIT_1004"
-              pcapsule_password:
-                type: integer
-                description: Password for the pcapsule
-                example: 012345
+            type: string
+            example: "WIT_1004"
+        - in: query
+          name: pcapsule_password
+          required: true
+          description: Password for the pcapsule
+          schema:
+            type: integer
+            example: 12345
       responses:
         '200':
           description: Success
@@ -257,8 +258,27 @@ paths:
                     type: boolean
                     example: false
                   code:
+                    type: string
+                    example: "COMMON001"
+                  message:
+                    type: string
+                    example: "Bad Request"
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
                     type: integer
-                    example: COMMON001
+                    example: 404
+                  isSuccess:
+                    type: boolean
+                    example: false
+                  code:
+                    type: string
+                    example: "CAPSULE4001"
                   message:
                     type: string
                     example: "Bad Request"
@@ -276,8 +296,8 @@ paths:
                     type: boolean
                     example: false
                   code:
-                    type: integer
-                    example: COMMON000
+                    type: string
+                    example: "COMMON000"
                   message:
                     type: string
                     example: "Internal Server Error, please contact the administrator."
@@ -292,7 +312,7 @@ paths:
           value:
             status: 400
             isSuccess: false
-            code: COMMON001
+            code: "COMMON001"
             message: "Bad Request"
   /pcapsule/retrieveDetail:
     get:
@@ -300,20 +320,20 @@ paths:
         - Pcapsule
       summary: Retrieve detailed pcapsule information
       parameters:
-        - name: retrieve
-          in: body
+        - in: query
+          name: capsule_number
           required: true
+          description: Capsule number
           schema:
-            type: object
-            properties:
-              capsule_number:
-                type: string
-                description: Capsule number
-                example: "WIT_1004"
-              pcapsule_password:
-                type: integer
-                description: Password for the pcapsule
-                example: 012345
+            type: string
+            example: "WIT_1004"
+        - in: query
+          name: pcapsule_password
+          required: true
+          description: Password for the pcapsule
+          schema:
+            type: integer
+            example: 12345
       responses:
         '200':
           description: Success
