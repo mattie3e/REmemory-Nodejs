@@ -3,7 +3,12 @@ import { status } from "../../../config/responseStatus.js";
 
 import { getUserInfos } from "../User/userProvider.js";
 
-import { createPcs_s, readPcs_s, readDetailPcs_s, updatePcapsuleStatus_s } from "./pcapsuleService.js";
+import {
+	createPcs_s,
+	readPcs_s,
+	readDetailPcs_s,
+	updatePcapsuleStatus_s,
+} from "./pcapsuleService.js";
 import { savePassword_p } from "./pcapsuleProvider.js";
 
 // API Name : pcapsule 생성 API
@@ -76,23 +81,22 @@ export const readDetailPcs_c = async (req, res, next) => {
 	}
 };
 
-
 // API Name : pcapsule 상태변경 API
 // [PATCH] /delete/:id
 export const updatePcs_c = async (req, res, next) => {
-    try {
-        const capsuleId = req.params.id;  // URL 파라미터에서 id를 추출
-        const newStatus = 'unactivated';  // 하드코딩된 값으로 새로운 상태를 설정
+	try {
+		const capsuleId = req.params.id; // URL 파라미터에서 id를 추출
+		const newStatus = "unactivated"; // 하드코딩된 값으로 새로운 상태를 설정
 		//const newStatus = req.body.status;
 
-        const data = await updatePcapsuleStatus_s(capsuleId, newStatus);
+		const data = await updatePcapsuleStatus_s(capsuleId, newStatus);
 
-        res.send(
-            response(status.SUCCESS, {
-                pcapsule: data,  // 변경된 pcapsule 정보를 응답에 포함
-            }),
-        );
-    } catch (error) {
-        next(error);
-    }
+		res.send(
+			response(status.SUCCESS, {
+				pcapsule: data, // 변경된 pcapsule 정보를 응답에 포함
+			}),
+		);
+	} catch (error) {
+		next(error);
+	}
 };
