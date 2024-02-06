@@ -45,8 +45,8 @@ export const createPcs_s = async (body, nickname, userId) => {
 		const pcapsule_password=null;
 		const insertData = [
 			capsule_Id,
-			pcapsule_password,
 			capsule_number,
+			pcapsule_password,
 			pcapsule_name,
 			open_date,
 			dear_name,
