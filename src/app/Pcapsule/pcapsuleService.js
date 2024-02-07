@@ -15,7 +15,7 @@ import {
 } from "./pcapsuleDao.js";
 
 // 캡슐 생성
-export const createPcs_s = async (body, nickname) => {
+export const createPcs_s = async (body, nickname, userId) => {
 	const { pcapsule_name, open_date, dear_name, theme, content_type, content } =
 		body;
 	const requiredFields = [
@@ -34,41 +34,41 @@ export const createPcs_s = async (body, nickname) => {
 	});
 
 	const capsule_number = await createCapsuleNum_p(nickname);
-
-	const { text_image_id, voice_id } = await createContent_p(
-		content_type,
-		content,
-	);
-
+	
 	const connection = await pool.getConnection(async (conn) => conn);
 
 	try {
 		connection.beginTransaction();
 
-		const isExistCapsule = await checkCapsuleNum_d(connection, capsule_number);
+		const capsule_Id=await insertCapsuleNum_d(connection, capsule_number, userId);
 
-		if (isExistCapsule) {
-			connection.release();
-			throw new BaseError(status.CAPSULE_NOT_FOUND);
-		}
-
-		await insertCapsuleNum_d(connection, capsule_number);
-
+		const pcapsule_password=null;
 		const insertData = [
+			capsule_Id,
+			pcapsule_password,
 			capsule_number,
 			pcapsule_name,
 			open_date,
 			dear_name,
 			theme,
 			content_type,
-			content_type === 1 ? text_image_id : null,
-			content_type === 2 ? voice_id : null,
+			//content_type === 1 ? text_image_id : null,
+			//content_type === 2 ? voice_id : null,
 		];
-		const createPcsData = await insertPcapsule_d(connection, insertData);
+		const pcapsule_id = await insertPcapsule_d(connection, insertData);
+
+		await connection.commit();
+		const { text_image_id, voice_id } = await createContent_p(
+			content_type,
+			content,
+			pcapsule_id,
+		);
+
+
 
 		await connection.commit();
 
-		return { ...createPcsData, capsule_number };
+		return { capsule_number };
 	} catch (error) {
 		await connection.rollback();
 		throw error;
