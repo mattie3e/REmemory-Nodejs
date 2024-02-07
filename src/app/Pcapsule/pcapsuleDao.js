@@ -67,11 +67,11 @@ export const checkPasswordValidity = async (
 	capsuleNumber,
 	capsulePassword,
 ) => {
-	const query = `SELECT EXISTS(SELECT 1 FROM pcapsule WHERE capsule_number = ? AND password = ?) as isValidPassword;`;
+	const query = `SELECT EXISTS(SELECT 1 FROM pcapsule WHERE capsule_number = ? AND pcapsule_password = ?) as isValidPassword;`;
 	const [passwordResult] = await connection.query(
 		query,
-		capsuleNumber,
-		capsulePassword,
+		[capsuleNumber,
+		capsulePassword],
 	);
 	return passwordResult[0].isValidPassword;
 };

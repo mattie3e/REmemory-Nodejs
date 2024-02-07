@@ -116,11 +116,7 @@ export const readPcs_s = async (capsuleNumber, capsulePassword) => {
 
 		await connection.commit();
 
-		res.send(
-			response(status.SUCCESS, {
-				pcapsule: responseData,
-			}),
-		);
+		return responseData;
 	} catch (error) {
 		await connection.rollback();
 		throw error;
@@ -198,11 +194,7 @@ export const readDetailPcs_s = async (capsuleNumber, capsulePassword) => {
 
 		await connection.commit();
 
-		res.send(
-			response(status.SUCCESS, {
-				pcapsule: retrieveData,
-			}),
-		);
+		return retrieveData;
 	} catch (error) {
 		await connection.rollback();
 		throw error;
