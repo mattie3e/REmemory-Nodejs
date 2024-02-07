@@ -3,6 +3,7 @@ import asyncHandler from "express-async-handler";
 
 import {
 	createPcs_c,
+	savePassword_c,
 	readPcs_c,
 	readDetailPcs_c,
 	updatePcs_c,
@@ -11,6 +12,8 @@ import {
 export const pcapsuleRouter = express.Router();
 
 pcapsuleRouter.post("/create", asyncHandler(createPcs_c));
+
+pcapsuleRouter.post("/create/savePassword", asyncHandler(savePassword_c));
 
 pcapsuleRouter.get("/retrieve", asyncHandler(readPcs_c));
 

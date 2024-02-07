@@ -35,7 +35,6 @@ export const savePassword_p = async (capsule_number, pcapsule_password) => {
 		connection.beginTransaction();
 
 		await savePassword_d(connection, capsule_number, pcapsule_password);
-
 		await connection.commit();
 
 		return { message: "Password saved successfully." };
