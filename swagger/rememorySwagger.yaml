@@ -333,7 +333,7 @@ paths:
           description: Capsule number
           schema:
             type: string
-            example: "WIT_1004"
+            example: "leeyseo_17126"
         - in: query
           name: pcapsule_password
           required: true
@@ -457,7 +457,7 @@ paths:
           description: ID of the pcapsule to delete
           schema:
             type: string
-            example: "user123_2432432"
+            example: "leeyseo_17126"
       responses:
         '200':
           description: Success
