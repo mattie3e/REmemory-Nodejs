@@ -10,7 +10,7 @@ export const insertPcapsule_d = async (connection, data) => {
 	]);
 	return insertPcapsuleRow.insertId;//, ...insertPcapsuleRow[0] };
 };
-
+///////
 // 캡슐 비밀번호 생성
 export const savePassword_d = async (
 	connection,
