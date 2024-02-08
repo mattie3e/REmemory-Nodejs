@@ -6,8 +6,12 @@ import {
 	readDear_s, 
 	createText_s,
 	postRcapsule,
-	setPassword_s
+	setPassword_s,
+	addVoiceLetter_s,
  } from "./rcapsuleService.js";
+
+import { getUserInfos } from "../User/userProvider.js";
+// import { Url } from "url"
 
 //-> winnie part
 
@@ -112,9 +116,18 @@ export const createText_c = async (req, res, next) => {
 // API Name : 롤링페이퍼(rcapsule) 생성 API
 // [POST] /rcapsule/create
 export const createRcapsule = async (req, res, next) => {
-	//body : rcapsule_name, open_date, dear_name, theme
+	//body : rcapsule_name, open_date, dear_name, theme(제외)
 	try {
-		const userId = req.user ? req.user.userId : null; //userId를 어떻게 가져올 수 있을까..?
+		// const userId = req.user ? req.user.userId : null; //userId를 어떻게 가져올 수 있을까..?
+
+		console.log(req.url);
+		// const paramsRegex = /userId=(.*?)/; //swagger 테스트용 임시
+		// const [, userId] = paramsRegex.exec(req.url);
+		// console.log('userID : ', userId);
+		const paramsRegex = /[?&]userId=([^&]+)/;
+		const match = paramsRegex.exec(req.url);
+		const userId = match && decodeURIComponent(match[1]);
+		console.log('userID : ', userId);
 
 		if (!userId) {
 			return res.send(
@@ -122,8 +135,9 @@ export const createRcapsule = async (req, res, next) => {
 			); // 또는 로그인 페이지로 리다이렉트 등의 처리
 		}
 
-		const userInfos = await getUserInfos({ userId: userId });
-		const nickname = userInfos.result.nickname; // userInfos -> 이거 userInfo 함수 없어져서 수정 필요 *****
+		const userInfos = await getUserInfos(userId);
+		console.log('userInfos : ', userInfos);
+		const nickname = userInfos.nickname; // userInfos -> 이거 userInfo 함수 없어져서 수정 필요 *****
 
         const data = await postRcapsule(req.body, nickname, userId);
         res.send(
@@ -158,6 +172,9 @@ export const createRcapsule = async (req, res, next) => {
 export const setRcapsulePw = async (req, res, next) => {
     // body: rcapsule_password
     const rcapsule_id = req.params.rcapsule_id;
+	console.log('rcapsuleController.js, req.params.rcapsule_id', rcapsule_id);
+	console.log('req.body! : \n', req.body);
+
 
     try {
         if (!rcapsule_id) {
@@ -165,6 +182,7 @@ export const setRcapsulePw = async (req, res, next) => {
         }
 
         const result = await setPassword_s(req.body, rcapsule_id);
+		console.log('rcapsuleController.js, result: ', result);
         res.send(result);
     } catch (error) {
         res.send(response(status.INTERNAL_SERVER_ERROR, { error: error.message }));
@@ -177,19 +195,35 @@ export const addVoiceLetter_c = async (req, res, next) => {
     // body : from_name, content_type, theme, voice (formdata)
     try {
         // aws s3에 업로드 된 파일 url 접근 및 db 저장
-        // console.log(req.file.location); // aws s3에 올려진 파일 url
+        console.log(req.file.location); // aws s3에 올려진 파일 url
+		console.log('req.params.rcapsule_number : ', req.params.rcapsule_number);
+		// console.log('req', req.url);
+
+		const paramsRegex = /from_name=(.*?)&content_type=(.*?)&theme=(.*)/;
+		const [, fromName, contentType, theme] = paramsRegex.exec(req.url);
+		
+		const body = {
+			"from_name" : fromName,
+			"content_type" : contentType,
+			"theme" : theme
+		};
+		console.log('body : ', body);
+
         if(!req.file.location) {
-            throw error;
+			console.log('file x')
+            // throw error;
+			return res.send(response(status.BAD_REQUEST, { err: "파일 업로드 실패."}))
         }
 
         if(!req.params.rcapsule_number) {
-            return res.send(response(status.BAD_REQUEST), { err: "rcapsule_number가 없습니다." });
+            return res.send(response(status.BAD_REQUEST, { err: "rcapsule_number가 없습니다." }));
         }
 
-        const result = await addVoiceLetter_s(req.file.location, req.params.rcapsule_number, req.body);
+        const result = await addVoiceLetter_s(req.file.location, req.params.rcapsule_number, body);
         res.send(result);
 
     } catch (error) {
-        res.send(status.INTERNAL_SERVER_ERROR, { error: "음성 파일 업로드 실패.", detail: error });
+        // res.send(status.INTERNAL_SERVER_ERROR, { error: "음성 파일 업로드 실패.", detail: error });
+		res.send(response(status.INTERNAL_SERVER_ERROR, {err: "음성 메세지 쓰기 실패", detail: error}));
     }
 };

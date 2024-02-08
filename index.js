@@ -43,8 +43,10 @@ app.use((err, req, res, next) => {
 	res.locals.error = process.env.NODE_ENV !== "production" ? err : {};
 	console.error(err);
 	res
-		.status(err.data.status || status.INTERNAL_SERVER_ERROR)
-		.send(response(err.data));
+		// .status(err.data.status || status.INTERNAL_SERVER_ERROR)
+		// .status(status.INTERNAL_SERVER_ERROR)
+		// .send(response(err.data));
+		.send(response(status.INTERNAL_SERVER_ERROR))
 });
 
 app.listen(port, () => {

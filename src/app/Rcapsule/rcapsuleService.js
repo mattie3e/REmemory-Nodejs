@@ -153,6 +153,8 @@ export const postRcapsule = async (body, nickname, userId) => {
 	   }
    });
 
+   console.log('body 추출 : ', rcapsule_name, open_date, dear_name);
+
    const capsule_number = await createCapsuleNum_r(nickname);
    const rcapsule_url = `${process.env.FRONT_DOMAIN}/rcapsule_number=${capsule_number}`;
    //url 생성 (프론트 배포 링크 기준이 되어야 할듯)
@@ -160,12 +162,14 @@ export const postRcapsule = async (body, nickname, userId) => {
    const connection = await pool.getConnection(async (conn) => conn);
    try {       
 	   await connection.beginTransaction();
-
+	   console.log('transaction start!');
 	   //create time_capsule
 	   await insertTimeCapsule(connection, capsule_number, userId);
+	   console.log('insertTimeCapsule 성공');
 
 	   //create rcapsule
 	   const time_capsule_id = await getTimeCapsuleId(connection, capsule_number);
+	   console.log('time_capsule_id : ', time_capsule_id);
 
 	   if (!time_capsule_id) {
 		   throw new BaseError(status.CAPSULE_NOT_FOUND);
@@ -180,8 +184,10 @@ export const postRcapsule = async (body, nickname, userId) => {
 	   ];
 
 	   const createRcsData = await insertRcapsule(connection, insertData);
+	   console.log('insertRcapsule성공');
 
 	   const newRcapsuleId = await getRcapsuleId(connection, capsule_number);
+	   console.log('getRcapsuleId 성공');
 
 	   await connection.commit();
 
@@ -198,6 +204,7 @@ export const postRcapsule = async (body, nickname, userId) => {
 
 export const setPassword_s = async (body, rcapsule_id) => {
     const { rcapsule_password } = body;
+	console.log('rcapsuleService.js, body :', body, 'rcapusle_id', rcapsule_id);
 
     if (!rcapsule_password) {
         throw new BaseError(status.BAD_REQUEST);
@@ -225,7 +232,8 @@ export const setPassword_s = async (body, rcapsule_id) => {
 export const addVoiceLetter_s = async (voiceUrl, capsule_number, body) => {
     const connection = await pool.getConnection(async (conn) => conn);
     
-    const { from_name, theme, content_type } = body;
+    const { from_name, content_type, theme } = body;
+	console.log('***rcapsuleService.js***\n\n voiceUrl :', voiceUrl, 'capsule_number :', capsule_number, 'body: ', body);
 
     const requiredFields = [
         "from_name",
@@ -243,10 +251,12 @@ export const addVoiceLetter_s = async (voiceUrl, capsule_number, body) => {
         connection.beginTransaction();
 
         const rcapsule_id = await getRcapsuleId(connection, capsule_number);
+		console.log('rcapsule_id', rcapsule_id);
 
         await setRcapsuleWriter_n(connection, rcapsule_id, from_name, theme, content_type);
 
         const writer_id = await getWriterId(connection, rcapsule_id);
+		console.log('writer_id : ', writer_id);
 
         await addVoiceLetter_d(connection, voiceUrl, writer_id);
 
@@ -255,6 +265,7 @@ export const addVoiceLetter_s = async (voiceUrl, capsule_number, body) => {
         return response(status.SUCCESS);
     } catch (error) {
         await connection.rollback();
+		console.log('rcapsuleService.js error : ', error);
         throw error;
     } finally {
         connection.release();

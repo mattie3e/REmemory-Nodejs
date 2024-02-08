@@ -3,12 +3,14 @@
 export const getRcapsuleId = async (connection, capsule_number) => {
 	const query = `SELECT id FROM rcapsule WHERE capsule_number = ?;`;
 	const [result] = await connection.query(query, capsule_number);
+    console.log('getRcapsuleId : ', result[0]);
 	return result[0].id;
 };
 
 export const getWriterId = async (connection, rcapsule_id) => {
 	const query = `SELECT id FROM rcapsule_writer WHERE rcapsule_id = ?;`;
 	const [result] = await connection.query(query, rcapsule_id);
+    console.log('getWriterId', result[0]);
 	return result[0].id;
 };
 
@@ -70,11 +72,12 @@ export const setRcapsuleWriter = async (
 };
 
 export const insertTimeCapsule = async (connection, capsule_number, userId) => {
-    const query = `INSERT INTO time_capsule (id, member_id, total_cnt, capsule_number) VALUES (NULL, ?, NULL, ?)`;
+    const query = `INSERT INTO time_capsule (id, member_id, total_cnt, capsule_number) VALUES (NULL, ?, 0, ?);`;
     const [insertTimeCapsuleRow] = await connection.query(query, [
-        capsule_number,
         userId,
+        capsule_number,
     ]);
+    console.log(insertTimeCapsuleRow[0]);
     return insertTimeCapsuleRow[0];
 };
 
@@ -100,12 +103,14 @@ export const insertRcapsule = async (connection, insertData) => {
 };
 
 export const updatePassword = async(connection, rcapsule_password, rcapsule_id) => {
-    const query = `UPDATE rcapsule SET rcapsule_password = ?, updated_at = ? WHERE id = ?;`;
+    console.log('rcapsuleDao.js, rcs_pw : ', rcapsule_password, '\nrcapsule_id : ', rcapsule_id);
+    const query = `UPDATE rcapsule SET rcapsule_password = ?, updated_at = ? WHERE capsule_number = ?;`;
     const [result] = await connection.query(query, [
         rcapsule_password,
         new Date(),
         rcapsule_id,
     ]);
+    console.log('쿼리문 실행 결과 : ', result);
     return result[0];
 };
 
@@ -120,6 +125,7 @@ export const setRcapsuleWriter_n = async (connection, rcapsule_id, from_name, th
         new Date(),
         new Date(),
     ]);
+    console.log('setRcapsuleWriter_n : ', result[0])
     return result[0];
 };
 
@@ -131,14 +137,16 @@ export const addVoiceLetter_d = async (connection, voiceUrl, writer_id) => {
         voiceUrl,
         new Date(),
         new Date(),
-    ])
+    ]);
+    console.log('addVoiceLetter_d', result[0]);
+    return result[0];
 };
 
 export const updateOpenedStatus_d = async (connection) => {
     const query = `UPDATE rcapsule SET status = 'OPENED', updated_at = NOW() WHERE open_date <= CURDATE() AND status = 'LOCKED';`;
     const [result] = await connection.query(query);
     
-    if (result.affectedRows > 0) {
+    if (result.changedRows > 0) {
         //변경된 행이 있을 경우 메일 발송
         sendNotificationEmail();
     }
