@@ -62,6 +62,20 @@ export const retrieveCapsule_d = async (connection, capsule_number) => {
 	return retrieveCapsuleRow[0];
 };
 
+export const retrievetxt_img_idBypcapsule_id = async (connection, pcapsule_id) => {
+	const query = `SELECT * FROM text_image WHERE pcapsule_id = ?`;
+	const [retrieveCapsuleRow] = await connection.query(query, pcapsule_id);
+	return retrieveCapsuleRow[0];
+};
+
+export const retrievevoice_idBypcapsule_id = async (connection, pcapsule_id) => {
+	const query = `SELECT * FROM voice WHERE pcapsule_id = ?`;
+	const [retrieveCapsuleRow] = await connection.query(query, pcapsule_id);
+	return retrieveCapsuleRow[0];
+};
+
+
+
 export const checkPasswordValidity = async (
 	connection,
 	capsuleNumber,

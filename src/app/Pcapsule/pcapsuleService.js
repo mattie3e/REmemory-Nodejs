@@ -12,6 +12,8 @@ import {
 	retrieveText_image,
 	retrieveVoice,
 	updateCapsuleStatus,
+	retrievetxt_img_idBypcapsule_id,
+	retrievevoice_idBypcapsule_id,
 } from "./pcapsuleDao.js";
 
 // 캡슐 생성
@@ -151,6 +153,18 @@ export const readDetailPcs_s = async (capsuleNumber, capsulePassword) => {
 
 		// 캡슐 정보 조회
 		const pcapsuleData = await retrieveCapsule_d(connection, capsuleNumber);
+		let txt_img_Id=null;
+		let voice_Id=null;
+		if (pcapsuleData.content_type ===1) {
+			const txtData= await retrievetxt_img_idBypcapsule_id(connection, pcapsuleData.id);
+			txt_img_Id=txtData.id;
+		}
+		else {
+			const voiceData= await retrievevoice_idBypcapsule_id(connection, pcapsuleData.id);
+			voice_Id=voiceData.id;
+		}
+		
+		
 
 		const retrieveData = {
 			capsule_number: pcapsuleData.capsule_number,
@@ -159,8 +173,8 @@ export const readDetailPcs_s = async (capsuleNumber, capsulePassword) => {
 			dear_name: pcapsuleData.dear_name,
 			theme: pcapsuleData.theme,
 			content_type: pcapsuleData.content_type,
-			text_image_id: pcapsuleData.text_image_id,
-			voice_id: pcapsuleData.voice_id,
+			txt_img_Id,
+			voice_Id,
 		};
 
 		//content 가져오기
@@ -217,7 +231,7 @@ export const updatePcapsuleStatus_s = async (capsuleNumber, newStatus) => {
             throw new BaseError(status.CAPSULE_NOT_FOUND);
         }
 
-        await updateCapsuleStatus(newStatus,capsuleNumber);
+        await updateCapsuleStatus(connection, newStatus,capsuleNumber);
 
 
         await connection.commit();
