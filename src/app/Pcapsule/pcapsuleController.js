@@ -16,10 +16,10 @@ import { savePassword_p } from "./pcapsuleProvider.js";
 export const createPcs_c = async (req, res, next) => {
 	// body: pcapsule_name, open_date, dear_name, theme, content_type, content
 	try {
-		const userId = req.user.userId;
-		const userInfos = await getUserInfos({ userId: userId });
-		const nickname = userInfos.data.nickname;
-		const data = await createPcs_s(req.body, nickname);
+		const userId = req.query.userId;
+		const userInfos = await getUserInfos(userId);
+		const nickname = userInfos.nickname;
+		const data = await createPcs_s(req.body, nickname, userId);
 		res.send(
 			response(status.SUCCESS, {
 				...data,

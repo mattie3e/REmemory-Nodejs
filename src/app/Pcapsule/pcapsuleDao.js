@@ -1,17 +1,16 @@
 export const insertPcapsule_d = async (connection, data) => {
 	const query = `INSERT INTO pcapsule 
-    (capsule_number, pcapsule_name, open_date, dear_name, theme, content_type, 
-      text_image_id, voice_id, created_at, updated_at, status) 
-    VALUES (?,?,?,?,?,?,?,?,?,?);`;
+    (time_capsule_id, capsule_number, pcapsule_password, pcapsule_name, open_date, dear_name, theme, content_type, status, created_at, updated_at) 
+    VALUES (?,?,?,?,?,?,?,?,?,?,?);`;
 	const [insertPcapsuleRow] = await connection.query(query, [
 		...data,
+		"LOCKED",// status 추가
 		new Date(),
 		new Date(),
-		"LOCKED", // status 추가
 	]);
-	return insertPcapsuleRow[0];
+	return insertPcapsuleRow.insertId;//, ...insertPcapsuleRow[0] };
 };
-
+///////
 // 캡슐 비밀번호 생성
 export const savePassword_d = async (
 	connection,
@@ -26,10 +25,10 @@ export const savePassword_d = async (
 	return updatePasswordRow[0];
 };
 
-export const insertCapsuleNum_d = async (connection, capsule_number) => {
-	const query = `INSERT INTO time_capsule (capsule_number) VALUES (?);`;
-	const [insertTimeCapsuleRow] = await connection.query(query, capsule_number);
-	return insertTimeCapsuleRow[0];
+export const insertCapsuleNum_d = async (connection, capsule_number, member_id) => {//member_id 있어야합니다. 어디선가 로그인되어 있는 현재 유저의 memeber id 가져와서 같이 넣어줘야 해요.
+	const query = `INSERT INTO time_capsule (member_id, capsule_number, total_cnt) VALUES (?,?,?);`;
+	const [insertTimeCapsuleRow] = await connection.query(query, [member_id, capsule_number, 1]);//total_cnt는 그냥 1넣었는데 나중에 수정해야해요.
+	return insertTimeCapsuleRow.insertId;
 };
 
 export const checkCapsuleNum_d = async (connection, capsule_number) => {
@@ -63,16 +62,30 @@ export const retrieveCapsule_d = async (connection, capsule_number) => {
 	return retrieveCapsuleRow[0];
 };
 
+export const retrievetxt_img_idBypcapsule_id = async (connection, pcapsule_id) => {
+	const query = `SELECT * FROM text_image WHERE pcapsule_id = ?`;
+	const [retrieveCapsuleRow] = await connection.query(query, pcapsule_id);
+	return retrieveCapsuleRow[0];
+};
+
+export const retrievevoice_idBypcapsule_id = async (connection, pcapsule_id) => {
+	const query = `SELECT * FROM voice WHERE pcapsule_id = ?`;
+	const [retrieveCapsuleRow] = await connection.query(query, pcapsule_id);
+	return retrieveCapsuleRow[0];
+};
+
+
+
 export const checkPasswordValidity = async (
 	connection,
 	capsuleNumber,
 	capsulePassword,
 ) => {
-	const query = `SELECT EXISTS(SELECT 1 FROM pcapsule WHERE capsule_number = ? AND password = ?) as isValidPassword;`;
+	const query = `SELECT EXISTS(SELECT 1 FROM pcapsule WHERE capsule_number = ? AND pcapsule_password = ?) as isValidPassword;`;
 	const [passwordResult] = await connection.query(
 		query,
-		capsuleNumber,
-		capsulePassword,
+		[capsuleNumber,
+		capsulePassword],
 	);
 	return passwordResult[0].isValidPassword;
 };
@@ -91,9 +104,10 @@ export const retrieveVoice = async (connection, voice_id) => {
 };
 
 // 이건 공통으로 사용될거같은데 공통으로 사용되는 함수들 파일 필요할듯
-export const saveTextImage = async (connection, body, image_url, sort) => {
-	const query = `INSERT INTO text_image (body, image_url, sort, created_at, updated_at) VALUES (?, ?, ?, ?, ?);`;
+export const saveTextImage = async (connection, pcapsule_id, body, image_url, sort) => {
+	const query = `INSERT INTO text_image (pcapsule_id, body, image_url, sort, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?);`;
 	const [result] = await connection.query(query, [
+		pcapsule_id,
 		body,
 		image_url,
 		sort,
@@ -103,9 +117,10 @@ export const saveTextImage = async (connection, body, image_url, sort) => {
 	return result.insertId;
 };
 
-export const saveVoice = async (connection, voice_url) => {
-	const query = `INSERT INTO voice (voice_url, created_at, updated_at) VALUES (?, ?, ?);`;
+export const saveVoice = async (connection, pcapsule_id, voice_url) => {
+	const query = `INSERT INTO voice (pcapsule_id, voice_url, created_at, updated_at) VALUES (?, ?, ?, ?);`;
 	const [result] = await connection.query(query, [
+		pcapsule_id,
 		voice_url,
 		new Date(),
 		new Date(),

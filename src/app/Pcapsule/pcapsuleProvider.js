@@ -7,6 +7,7 @@ import {
 	saveTextImage,
 	saveVoice,
 	updateOpenedStatus_d,
+	checkCapsuleNum_d
 } from "./pcapsuleDao.js";
 
 // 캡슐넘버 생성
@@ -17,10 +18,11 @@ export const createCapsuleNum_p = async (nickname) => {
 	while (true) {
 		const random_number = Math.floor(Math.random() * 100000 + 1); // 1~100000 사이의 랜덤 숫자
 		capsule_number = `${nickname}_${random_number}`;
-		const isExistCapsule = await checkNumber(connection, capsule_number);
+		const isExistCapsule = await checkCapsuleNum_d(connection, capsule_number);
 		if (!isExistCapsule) {
 			break;
 		}
+
 	}
 	connection.release();
 	return capsule_number;
@@ -33,7 +35,6 @@ export const savePassword_p = async (capsule_number, pcapsule_password) => {
 		connection.beginTransaction();
 
 		await savePassword_d(connection, capsule_number, pcapsule_password);
-
 		await connection.commit();
 
 		return { message: "Password saved successfully." };
@@ -46,20 +47,20 @@ export const savePassword_p = async (capsule_number, pcapsule_password) => {
 };
 
 // text_image or voice data 생성
-export const createContent_p = async (content_type, content) => {
+export const createContent_p = async (content_type, content, pcapsule_id) => {
 	const connection = await pool.getConnection(async (conn) => conn);
 
 	let text_image_id = null;
 	let voice_id = null;
 
 	if (content_type === 1) {
-		const { body, image_url, sort } = content;
-		text_image_id = await saveTextImage(connection, body, image_url, sort);
+		const { body, image_url, sort } = content[0];
+		text_image_id = await saveTextImage(connection, pcapsule_id, body, image_url, sort);
 	} else if (content_type === 2) {
 		const { voice_url } = content;
-		voice_id = await saveVoice(connection, voice_url);
+		voice_id = await saveVoice(connection, pcapsule_id, voice_url);
 	}
-
+	await connection.commit();
 	connection.release();
 	return { text_image_id, voice_id };
 };
