@@ -179,6 +179,6 @@ export const checkRcapsule_d = async (connection, capsule_number) => {
     ) THEN 1 ELSE 0 END AS RESULT;`;
 
     const [result] = await connection.query(query, [capsule_number]);
-    console.log(result);
+    // console.log(result); -> [ { RESULT: 0 } ] 형태로 옴
     return result[0].result;
 }

@@ -230,6 +230,10 @@ export const addVoiceLetter_c = async (req, res, next) => {
 
     } catch (error) {
         // res.send(status.INTERNAL_SERVER_ERROR, { error: "음성 파일 업로드 실패.", detail: error });
-		res.send(response(status.INTERNAL_SERVER_ERROR, {err: "음성 메세지 쓰기 실패", detail: error}));
+		if (error.data.code == 'CAPSULE4001') {
+			res.send(response(status.CAPSULE_NOT_FOUND, {error: "존재하지 않는 롤링페이퍼 캡슐입니다."}))
+		} else {
+			res.send(response(status.INTERNAL_SERVER_ERROR, {err: "음성 메세지 쓰기 실패", detail: error}));
+		}
     }
 };

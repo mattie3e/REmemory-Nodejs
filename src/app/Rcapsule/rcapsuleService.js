@@ -254,6 +254,12 @@ export const addVoiceLetter_s = async (voiceUrl, capsule_number, body) => {
         }
     });
 
+	const check_rcapsule = await checkRcapsule_d(connection, capsule_number);
+
+	if(!check_rcapsule) {
+		throw new BaseError(status.CAPSULE_NOT_FOUND);
+	}
+
     try {
         connection.beginTransaction();
 
