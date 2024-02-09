@@ -17,6 +17,7 @@ import {
 	setRcapsuleWriter_n,
 	getWriterId,
 	addVoiceLetter_d,
+	checkRcapsule_d,
 } from "./rcapsuleDao.js";
 
 import { createCapsuleNum_r } from "./rcapsuleProvider.js";
@@ -212,8 +213,14 @@ export const setPassword_s = async (body, rcapsule_id) => {
 
     const connection = await pool.getConnection(async (conn) => conn);
 
+	const check_rcapsule = await checkRcapsule_d(connection, rcapsule_id);
+
+	if(!check_rcapsule) {
+		throw new BaseError(status.CAPSULE_NOT_FOUND);
+	}
+
     try {
-        connection.beginTransaction();
+        connection.beginTransaction();		
 
         await updatePassword(connection, rcapsule_password, rcapsule_id);
 

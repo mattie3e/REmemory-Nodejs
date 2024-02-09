@@ -172,3 +172,13 @@ export const getUserEmail = async (connection, capsule_number) => {
 
     return result[0].userEmail;
 };
+
+export const checkRcapsule_d = async (connection, capsule_number) => {
+    const query = `SELECT CASE WHEN EXISTS (
+        SELECT capsule_number FROM rcapsule WHERE capsule_number = ?
+    ) THEN 1 ELSE 0 END AS RESULT;`;
+
+    const [result] = await connection.query(query, [capsule_number]);
+    console.log(result);
+    return result[0].result;
+}
