@@ -144,7 +144,7 @@ export const createRcapsule = async (req, res, next) => {
             response(status.SUCCESS, {
                 // ...data,
                 capsule_number: data.capsule_number,
-                rcapsule_id: data.newRcapsuleId,
+                // rcapsule_id: data.newRcapsuleId,
             })
         );
     } catch (error) {

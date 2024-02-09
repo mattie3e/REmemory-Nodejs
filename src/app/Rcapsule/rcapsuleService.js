@@ -185,7 +185,7 @@ export const postRcapsule = async (body, nickname, userId) => {
 	   ];
 
 	   const createRcsData = await insertRcapsule(connection, insertData);
-	   console.log('insertRcapsule성공');
+	   console.log('insertRcapsule성공', createRcsData);
 
 	   const newRcapsuleId = await getRcapsuleId(connection, capsule_number);
 	   console.log('getRcapsuleId 성공');
@@ -214,7 +214,7 @@ export const setPassword_s = async (body, rcapsule_id) => {
     const connection = await pool.getConnection(async (conn) => conn);
 
 	const check_rcapsule = await checkRcapsule_d(connection, rcapsule_id);
-
+	// console.log(check_rcapsule);
 	if(!check_rcapsule) {
 		throw new BaseError(status.CAPSULE_NOT_FOUND);
 	}

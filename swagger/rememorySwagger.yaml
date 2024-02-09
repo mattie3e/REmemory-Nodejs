@@ -5,13 +5,6 @@ paths:
         - Pcapsule
       summary: Create a new pcapsule
       parameters:
-        - in: query
-          name: userId
-          required: true
-          description: User Id
-          schema:
-            type: integer
-            example: 1
         - name: create
           in: body
           required: true
@@ -145,7 +138,7 @@ paths:
               capsule_number:
                 type: string
                 description: Capsule number
-                example: "leeyseo_17126"
+                example: "WIT_1004"
               pcapsule_password:
                 type: integer
                 description: Password for the pcapsule
@@ -227,14 +220,14 @@ paths:
           description: Capsule number
           schema:
             type: string
-            example: "leeyseo_17126"
+            example: "WIT_1004"
         - in: query
           name: pcapsule_password
           required: true
           description: Password for the pcapsule
           schema:
             type: integer
-            example: 012345
+            example: 12345
       responses:
         '200':
           description: Success
@@ -333,7 +326,7 @@ paths:
           description: Capsule number
           schema:
             type: string
-            example: "leeyseo_17126"
+            example: "WIT_1004"
         - in: query
           name: pcapsule_password
           required: true
@@ -457,7 +450,7 @@ paths:
           description: ID of the pcapsule to delete
           schema:
             type: string
-            example: "leeyseo_17126"
+            example: "user123_2432432"
       responses:
         '200':
           description: Success
