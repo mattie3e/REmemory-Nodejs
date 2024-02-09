@@ -178,9 +178,9 @@ export const postRcapsule = async (body, nickname, userId) => {
 		   time_capsule_id,
 		   capsule_number,
 		   rcapsule_name,
+		   rcapsule_url,
 		   open_date,
 		   dear_name,
-		   rcapsule_url,
 	   ];
 
 	   const createRcsData = await insertRcapsule(connection, insertData);

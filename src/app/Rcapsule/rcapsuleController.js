@@ -172,9 +172,8 @@ export const createRcapsule = async (req, res, next) => {
 export const setRcapsulePw = async (req, res, next) => {
     // body: rcapsule_password
     const rcapsule_id = req.params.rcapsule_id;
-	console.log('rcapsuleController.js, req.params.rcapsule_id', rcapsule_id);
-	console.log('req.body! : \n', req.body);
-
+	// console.log('rcapsuleController.js, req.params.rcapsule_id', rcapsule_id);
+	// console.log('req.body! : \n', req.body);
 
     try {
         if (!rcapsule_id) {
@@ -186,7 +185,6 @@ export const setRcapsulePw = async (req, res, next) => {
         res.send(result);
     } catch (error) {
         res.send(response(status.INTERNAL_SERVER_ERROR, { error: error.message }));
-        // next(error);
     }
 };
 
