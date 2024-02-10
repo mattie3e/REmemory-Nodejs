@@ -40,13 +40,6 @@ export const status = {
 		message: "계정 상태를 변경할 수 없습니다.",
 	},
 
-	CAPSULE_NOT_FOUND: {
-		status: StatusCodes.NOT_FOUND,
-		isSuccess: false,
-		code: "CAP001",
-		message: "캡슐을 찾을 수 없습니다.",
-	},
-
 	INTERNAL_SERVER_ERROR: {
 		status: StatusCodes.INTERNAL_SERVER_ERROR,
 		isSuccess: false,
@@ -75,7 +68,7 @@ export const status = {
 	},
 
 	CAPSULE_PASSWORD_WRONG: {
-		status: StatusCodes.NOT_FOUND,
+		status: StatusCodes.BAD_REQUEST,
 		isSuccess: false,
 		code: "CAPSULE4002",
 		message: "패스워드가 잘못되었습니다.",
