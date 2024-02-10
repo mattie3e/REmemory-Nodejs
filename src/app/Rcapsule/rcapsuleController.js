@@ -1,14 +1,14 @@
 import { response } from "../../../config/response.js";
 import { status } from "../../../config/responseStatus.js";
 
-import { 
-	readNumnUrl_s, 
-	readDear_s, 
+import {
+	readNumnUrl_s,
+	readDear_s,
 	createText_s,
 	postRcapsule,
 	setPassword_s,
 	addVoiceLetter_s,
- } from "./rcapsuleService.js";
+} from "./rcapsuleService.js";
 
 import { getUserInfos } from "../User/userProvider.js";
 // import { Url } from "url"
@@ -127,7 +127,7 @@ export const createRcapsule = async (req, res, next) => {
 		const paramsRegex = /[?&]userId=([^&]+)/;
 		const match = paramsRegex.exec(req.url);
 		const userId = match && decodeURIComponent(match[1]);
-		console.log('userID : ', userId);
+		console.log("userID : ", userId);
 
 		if (!userId) {
 			return res.send(
@@ -136,94 +136,104 @@ export const createRcapsule = async (req, res, next) => {
 		}
 
 		const userInfos = await getUserInfos(userId);
-		console.log('userInfos : ', userInfos);
+		console.log("userInfos : ", userInfos);
 		const nickname = userInfos.nickname; // userInfos -> 이거 userInfo 함수 없어져서 수정 필요 *****
 
-        const data = await postRcapsule(req.body, nickname, userId);
-        res.send(
-            response(status.SUCCESS, {
-                // ...data,
-                capsule_number: data.capsule_number,
-                rcapsule_id: data.newRcapsuleId,
-            })
-        );
-    } catch (error) {
-        // next(e);//보류
+		const data = await postRcapsule(req.body, nickname, userId);
+		res.send(
+			response(status.SUCCESS, {
+				// ...data,
+				capsule_number: data.capsule_number,
+				rcapsule_id: data.newRcapsuleId,
+			}),
+		);
+	} catch (error) {
+		// next(e);//보류
 		console.log(error);
-        if (error instanceof BaseError) {
-            // BaseError를 캐치한 경우
-            next(error);
-        } 
-        else if(error.message.includes("Missing required field")) {
-            // 필수 필드가 누락된 경우의 오류 처리
-            res.send(response(status.BAD_REQUEST, error.message));
-        }
-        else {
-            // 그 외의 오류 처리
-            console.error("Error creating rcapsule:", error);
-            res.status(500).send("Internal Server Error");
-        }
-    }
+		if (error instanceof BaseError) {
+			// BaseError를 캐치한 경우
+			next(error);
+		} else if (error.message.includes("Missing required field")) {
+			// 필수 필드가 누락된 경우의 오류 처리
+			res.send(response(status.BAD_REQUEST, error.message));
+		} else {
+			// 그 외의 오류 처리
+			console.error("Error creating rcapsule:", error);
+			res.status(500).send("Internal Server Error");
+		}
+	}
 };
-
 
 // API Name : 롤링페이퍼(rcapsule) 비밀번호 설정 API
 // [PATCH] /rcapsule/:rcapsule_id
 export const setRcapsulePw = async (req, res, next) => {
-    // body: rcapsule_password
-    const rcapsule_id = req.params.rcapsule_id;
-	console.log('rcapsuleController.js, req.params.rcapsule_id', rcapsule_id);
-	console.log('req.body! : \n', req.body);
+	// body: rcapsule_password
+	const rcapsule_id = req.params.rcapsule_id;
+	console.log("rcapsuleController.js, req.params.rcapsule_id", rcapsule_id);
+	console.log("req.body! : \n", req.body);
 
+	try {
+		if (!rcapsule_id) {
+			return res.send(response(status.BAD_REQUEST), {
+				err: "rcapsule_id가 없습니다.",
+			});
+		}
 
-    try {
-        if (!rcapsule_id) {
-            return res.send(response(status.BAD_REQUEST), { err: "rcapsule_id가 없습니다." });
-        }
-
-        const result = await setPassword_s(req.body, rcapsule_id);
-		console.log('rcapsuleController.js, result: ', result);
-        res.send(result);
-    } catch (error) {
-        res.send(response(status.INTERNAL_SERVER_ERROR, { error: error.message }));
-        // next(error);
-    }
+		const result = await setPassword_s(req.body, rcapsule_id);
+		console.log("rcapsuleController.js, result: ", result);
+		res.send(result);
+	} catch (error) {
+		res.send(response(status.INTERNAL_SERVER_ERROR, { error: error.message }));
+		// next(error);
+	}
 };
 
 // API Name : 롤링페이퍼 음성 편지 쓰기
 export const addVoiceLetter_c = async (req, res, next) => {
-    // body : from_name, content_type, theme, voice (formdata)
-    try {
-        // aws s3에 업로드 된 파일 url 접근 및 db 저장
-        console.log(req.file.location); // aws s3에 올려진 파일 url
-		console.log('req.params.rcapsule_number : ', req.params.rcapsule_number);
+	// body : from_name, content_type, theme, voice (formdata)
+	try {
+		// aws s3에 업로드 된 파일 url 접근 및 db 저장
+		console.log(req.file.location); // aws s3에 올려진 파일 url
+		console.log("req.params.rcapsule_number : ", req.params.rcapsule_number);
 		// console.log('req', req.url);
 
 		const paramsRegex = /from_name=(.*?)&content_type=(.*?)&theme=(.*)/;
 		const [, fromName, contentType, theme] = paramsRegex.exec(req.url);
-		
+
 		const body = {
-			"from_name" : fromName,
-			"content_type" : contentType,
-			"theme" : theme
+			from_name: fromName,
+			content_type: contentType,
+			theme: theme,
 		};
-		console.log('body : ', body);
+		console.log("body : ", body);
 
-        if(!req.file.location) {
-			console.log('file x')
-            // throw error;
-			return res.send(response(status.BAD_REQUEST, { err: "파일 업로드 실패."}))
-        }
+		if (!req.file.location) {
+			console.log("file x");
+			// throw error;
+			return res.send(
+				response(status.BAD_REQUEST, { err: "파일 업로드 실패." }),
+			);
+		}
 
-        if(!req.params.rcapsule_number) {
-            return res.send(response(status.BAD_REQUEST, { err: "rcapsule_number가 없습니다." }));
-        }
+		if (!req.params.rcapsule_number) {
+			return res.send(
+				response(status.BAD_REQUEST, { err: "rcapsule_number가 없습니다." }),
+			);
+		}
 
-        const result = await addVoiceLetter_s(req.file.location, req.params.rcapsule_number, body);
-        res.send(result);
-
-    } catch (error) {
-        // res.send(status.INTERNAL_SERVER_ERROR, { error: "음성 파일 업로드 실패.", detail: error });
-		res.send(response(status.INTERNAL_SERVER_ERROR, {err: "음성 메세지 쓰기 실패", detail: error}));
-    }
+		const result = await addVoiceLetter_s(
+			req.file.location,
+			req.params.rcapsule_number,
+			body,
+		);
+		res.send(result);
+	} catch (error) {
+		// res.send(status.INTERNAL_SERVER_ERROR, { error: "음성 파일 업로드 실패.", detail: error });
+		res.send(
+			response(status.INTERNAL_SERVER_ERROR, {
+				err: "음성 메세지 쓰기 실패",
+				detail: error,
+			}),
+		);
+	}
 };

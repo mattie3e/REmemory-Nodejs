@@ -15,6 +15,7 @@ import {
 	retrievetxt_img_idBypcapsule_id,
 	retrievevoice_idBypcapsule_id,
 } from "./pcapsuleDao.js";
+import { BADFAMILY } from "dns";
 
 // 캡슐 생성
 export const createPcs_s = async (body, nickname, userId) => {
@@ -36,15 +37,19 @@ export const createPcs_s = async (body, nickname, userId) => {
 	});
 
 	const capsule_number = await createCapsuleNum_p(nickname);
-	
+
 	const connection = await pool.getConnection(async (conn) => conn);
 
 	try {
 		connection.beginTransaction();
 
-		const capsule_Id=await insertCapsuleNum_d(connection, capsule_number, userId);
+		const capsule_Id = await insertCapsuleNum_d(
+			connection,
+			capsule_number,
+			userId,
+		);
 
-		const pcapsule_password=null;
+		const pcapsule_password = null;
 		const insertData = [
 			capsule_Id,
 			capsule_number,
@@ -65,8 +70,6 @@ export const createPcs_s = async (body, nickname, userId) => {
 			content,
 			pcapsule_id,
 		);
-
-
 
 		await connection.commit();
 
@@ -148,23 +151,29 @@ export const readDetailPcs_s = async (capsuleNumber, capsulePassword) => {
 		);
 
 		if (!isPasswordValid) {
-			throw new BaseError(status.CAPSULE_PASSWORD_WRONG);
+			throw new BaseError(
+				status.CAPSULE_PASSWORD_WRONG,
+				"패스워드가 잘못되었습니다.",
+			);
 		}
 
 		// 캡슐 정보 조회
 		const pcapsuleData = await retrieveCapsule_d(connection, capsuleNumber);
-		let txt_img_Id=null;
-		let voice_Id=null;
-		if (pcapsuleData.content_type ===1) {
-			const txtData= await retrievetxt_img_idBypcapsule_id(connection, pcapsuleData.id);
-			txt_img_Id=txtData.id;
+		let txt_img_Id = null;
+		let voice_Id = null;
+		if (pcapsuleData.content_type === 1) {
+			const txtData = await retrievetxt_img_idBypcapsule_id(
+				connection,
+				pcapsuleData.id,
+			);
+			txt_img_Id = txtData.id;
+		} else {
+			const voiceData = await retrievevoice_idBypcapsule_id(
+				connection,
+				pcapsuleData.id,
+			);
+			voice_Id = voiceData.id;
 		}
-		else {
-			const voiceData= await retrievevoice_idBypcapsule_id(connection, pcapsuleData.id);
-			voice_Id=voiceData.id;
-		}
-		
-		
 
 		const retrieveData = {
 			capsule_number: pcapsuleData.capsule_number,
@@ -217,41 +226,42 @@ export const readDetailPcs_s = async (capsuleNumber, capsulePassword) => {
 	}
 };
 
-
 export const updatePcapsuleStatus_s = async (capsuleNumber, newStatus) => {
-    const connection = await pool.getConnection(async (conn) => conn);
+	const connection = await pool.getConnection(async (conn) => conn);
 
-    try {
-        await connection.beginTransaction();
+	try {
+		await connection.beginTransaction();
 
-        const isExistCapsule = await checkCapsuleNum_d(connection, capsuleNumber);
+		const isExistCapsule = await checkCapsuleNum_d(connection, capsuleNumber);
 
-        if (!isExistCapsule) {
+		if (!isExistCapsule) {
 			connection.release();
-            throw new BaseError(status.CAPSULE_NOT_FOUND);
-        }
+			throw new BaseError(status.CAPSULE_NOT_FOUND);
+		}
 
-        await updateCapsuleStatus(connection, newStatus,capsuleNumber);
+		await updateCapsuleStatus(connection, newStatus, capsuleNumber);
 
+		await connection.commit();
 
-        await connection.commit();
+		const updatedCapsuleData = await retrieveCapsule_d(
+			connection,
+			capsuleNumber,
+		);
 
-        const updatedCapsuleData = await retrieveCapsule_d(connection, capsuleNumber);
-
-        const responseData = {
-            capsule_number: updatedCapsuleData.capsule_number,
-            pcapsule_name: updatedCapsuleData.pcapsule_name,
-            open_date: updatedCapsuleData.open_date,
-            dear_name: updatedCapsuleData.dear_name,
-            theme: updatedCapsuleData.theme,
+		const responseData = {
+			capsule_number: updatedCapsuleData.capsule_number,
+			pcapsule_name: updatedCapsuleData.pcapsule_name,
+			open_date: updatedCapsuleData.open_date,
+			dear_name: updatedCapsuleData.dear_name,
+			theme: updatedCapsuleData.theme,
 			status: updatedCapsuleData.status,
-        };
+		};
 
-        return responseData;
-    } catch (error) {
-        await connection.rollback();
-        throw error;
-    } finally {
-        connection.release();
-    }
+		return responseData;
+	} catch (error) {
+		await connection.rollback();
+		throw error;
+	} finally {
+		connection.release();
+	}
 };

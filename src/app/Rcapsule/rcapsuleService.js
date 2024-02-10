@@ -139,135 +139,142 @@ export const createText_s = async (imageurl, capsule_number, body) => {
 
 export const postRcapsule = async (body, nickname, userId) => {
 	// 값이 제대로 전송 안된 경우
-   const { rcapsule_name, open_date, dear_name } = body;
-   const requiredFields = [
-	   "rcapsule_name",
-	   "open_date",
-	   "dear_name",
-	   // "theme", //DB 테이블에 맞춰서 rcapsule은 theme 제외
-   ];
+	const { rcapsule_name, open_date, dear_name } = body;
+	const requiredFields = [
+		"rcapsule_name",
+		"open_date",
+		"dear_name",
+		// "theme", //DB 테이블에 맞춰서 rcapsule은 theme 제외
+	];
 
-   requiredFields.forEach((field) => {
-	   if(!body.hasOwnProperty(field)) {
-		   throw new Error(`Missing required field: ${field}`);
-	   }
-   });
+	requiredFields.forEach((field) => {
+		if (!body.hasOwnProperty(field)) {
+			throw new Error(`Missing required field: ${field}`);
+		}
+	});
 
-   console.log('body 추출 : ', rcapsule_name, open_date, dear_name);
+	console.log("body 추출 : ", rcapsule_name, open_date, dear_name);
 
-   const capsule_number = await createCapsuleNum_r(nickname);
-   const rcapsule_url = `${process.env.FRONT_DOMAIN}/rcapsule_number=${capsule_number}`;
-   //url 생성 (프론트 배포 링크 기준이 되어야 할듯)
+	const capsule_number = await createCapsuleNum_r(nickname);
+	const rcapsule_url = `${process.env.FRONT_DOMAIN}/rcapsule_number=${capsule_number}`;
+	//url 생성 (프론트 배포 링크 기준이 되어야 할듯)
 
-   const connection = await pool.getConnection(async (conn) => conn);
-   try {       
-	   await connection.beginTransaction();
-	   console.log('transaction start!');
-	   //create time_capsule
-	   await insertTimeCapsule(connection, capsule_number, userId);
-	   console.log('insertTimeCapsule 성공');
+	const connection = await pool.getConnection(async (conn) => conn);
+	try {
+		await connection.beginTransaction();
+		console.log("transaction start!");
+		//create time_capsule
+		await insertTimeCapsule(connection, capsule_number, userId);
+		console.log("insertTimeCapsule 성공");
 
-	   //create rcapsule
-	   const time_capsule_id = await getTimeCapsuleId(connection, capsule_number);
-	   console.log('time_capsule_id : ', time_capsule_id);
+		//create rcapsule
+		const time_capsule_id = await getTimeCapsuleId(connection, capsule_number);
+		console.log("time_capsule_id : ", time_capsule_id);
 
-	   if (!time_capsule_id) {
-		   throw new BaseError(status.CAPSULE_NOT_FOUND);
-	   }
-	   const insertData = [
-		   time_capsule_id,
-		   capsule_number,
-		   rcapsule_name,
-		   open_date,
-		   dear_name,
-		   rcapsule_url,
-	   ];
+		if (!time_capsule_id) {
+			throw new BaseError(status.CAPSULE_NOT_FOUND);
+		}
+		const insertData = [
+			time_capsule_id,
+			capsule_number,
+			rcapsule_name,
+			open_date,
+			dear_name,
+			rcapsule_url,
+		];
 
-	   const createRcsData = await insertRcapsule(connection, insertData);
-	   console.log('insertRcapsule성공');
+		const createRcsData = await insertRcapsule(connection, insertData);
+		console.log("insertRcapsule성공");
 
-	   const newRcapsuleId = await getRcapsuleId(connection, capsule_number);
-	   console.log('getRcapsuleId 성공');
+		const newRcapsuleId = await getRcapsuleId(connection, capsule_number);
+		console.log("getRcapsuleId 성공");
 
-	   await connection.commit();
+		await connection.commit();
 
-	   return { ...createRcsData, capsule_number, newRcapsuleId };
-   }
-   catch (error) {
-	   await connection.rollback(); // 실패 시 롤백
-	   throw new BaseError(status.INTERNAL_SERVER_ERROR);
-   }
-   finally {
-	   connection.release();
-   }
+		return { ...createRcsData, capsule_number, newRcapsuleId };
+	} catch (error) {
+		await connection.rollback(); // 실패 시 롤백
+		throw new BaseError(status.INTERNAL_SERVER_ERROR);
+	} finally {
+		connection.release();
+	}
 };
 
 export const setPassword_s = async (body, rcapsule_id) => {
-    const { rcapsule_password } = body;
-	console.log('rcapsuleService.js, body :', body, 'rcapusle_id', rcapsule_id);
+	const { rcapsule_password } = body;
+	console.log("rcapsuleService.js, body :", body, "rcapusle_id", rcapsule_id);
 
-    if (!rcapsule_password) {
-        throw new BaseError(status.BAD_REQUEST);
-    }
+	if (!rcapsule_password) {
+		throw new BaseError(status.BAD_REQUEST);
+	}
 
-    const connection = await pool.getConnection(async (conn) => conn);
+	const connection = await pool.getConnection(async (conn) => conn);
 
-    try {
-        connection.beginTransaction();
+	try {
+		connection.beginTransaction();
 
-        await updatePassword(connection, rcapsule_password, rcapsule_id);
+		await updatePassword(connection, rcapsule_password, rcapsule_id);
 
-        await connection.commit();
+		await connection.commit();
 
-        return response(status.SUCCESS);
-    } catch (error) {
-        await connection.rollback();
-        throw new BaseError(status.INTERNAL_SERVER_ERROR);
-    } finally {
-        connection.release();
-    }
+		return response(status.SUCCESS);
+	} catch (error) {
+		await connection.rollback();
+		throw new BaseError(status.INTERNAL_SERVER_ERROR);
+	} finally {
+		connection.release();
+	}
 };
 
 //음성 파일 url db에 추가
 export const addVoiceLetter_s = async (voiceUrl, capsule_number, body) => {
-    const connection = await pool.getConnection(async (conn) => conn);
-    
-    const { from_name, content_type, theme } = body;
-	console.log('***rcapsuleService.js***\n\n voiceUrl :', voiceUrl, 'capsule_number :', capsule_number, 'body: ', body);
+	const connection = await pool.getConnection(async (conn) => conn);
 
-    const requiredFields = [
-        "from_name",
-        "theme",
-        "content_type"
-    ];
+	const { from_name, content_type, theme } = body;
+	console.log(
+		"***rcapsuleService.js***\n\n voiceUrl :",
+		voiceUrl,
+		"capsule_number :",
+		capsule_number,
+		"body: ",
+		body,
+	);
 
-    requiredFields.forEach((field) => {
-        if(!body.hasOwnProperty(field)) {
-            throw new Error(`Missing required field: ${field}`);
-        }
-    });
+	const requiredFields = ["from_name", "theme", "content_type"];
 
-    try {
-        connection.beginTransaction();
+	requiredFields.forEach((field) => {
+		if (!body.hasOwnProperty(field)) {
+			throw new Error(`Missing required field: ${field}`);
+		}
+	});
 
-        const rcapsule_id = await getRcapsuleId(connection, capsule_number);
-		console.log('rcapsule_id', rcapsule_id);
+	try {
+		connection.beginTransaction();
 
-        await setRcapsuleWriter_n(connection, rcapsule_id, from_name, theme, content_type);
+		const rcapsule_id = await getRcapsuleId(connection, capsule_number);
+		console.log("rcapsule_id", rcapsule_id);
 
-        const writer_id = await getWriterId(connection, rcapsule_id);
-		console.log('writer_id : ', writer_id);
+		await setRcapsuleWriter_n(
+			connection,
+			rcapsule_id,
+			from_name,
+			theme,
+			content_type,
+		);
 
-        await addVoiceLetter_d(connection, voiceUrl, writer_id);
+		const writer_id = await getWriterId(connection, rcapsule_id);
+		console.log("writer_id : ", writer_id);
 
-        await connection.commit();
+		await addVoiceLetter_d(connection, voiceUrl, writer_id);
 
-        return response(status.SUCCESS);
-    } catch (error) {
-        await connection.rollback();
-		console.log('rcapsuleService.js error : ', error);
-        throw error;
-    } finally {
-        connection.release();
-    }
+		await connection.commit();
+
+		return response(status.SUCCESS);
+	} catch (error) {
+		await connection.rollback();
+		console.log("rcapsuleService.js error : ", error);
+		throw error;
+	} finally {
+		connection.release();
+	}
 };
