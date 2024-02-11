@@ -17,6 +17,7 @@ import {
 	setRcapsuleWriter_n,
 	getWriterId,
 	addVoiceLetter_d,
+	checkRcapsule_d,
 } from "./rcapsuleDao.js";
 
 import { createCapsuleNum_r } from "./rcapsuleProvider.js";
@@ -178,9 +179,9 @@ export const postRcapsule = async (body, nickname, userId) => {
 		   time_capsule_id,
 		   capsule_number,
 		   rcapsule_name,
+		   rcapsule_url,
 		   open_date,
 		   dear_name,
-		   rcapsule_url,
 	   ];
 
 	   const createRcsData = await insertRcapsule(connection, insertData);
@@ -212,8 +213,14 @@ export const setPassword_s = async (body, rcapsule_id) => {
 
     const connection = await pool.getConnection(async (conn) => conn);
 
+	const check_rcapsule = await checkRcapsule_d(connection, rcapsule_id);
+
+	if(!check_rcapsule) {
+		throw new BaseError(status.CAPSULE_NOT_FOUND);
+	}
+
     try {
-        connection.beginTransaction();
+        connection.beginTransaction();		
 
         await updatePassword(connection, rcapsule_password, rcapsule_id);
 
@@ -246,6 +253,12 @@ export const addVoiceLetter_s = async (voiceUrl, capsule_number, body) => {
             throw new Error(`Missing required field: ${field}`);
         }
     });
+
+	const check_rcapsule = await checkRcapsule_d(connection, capsule_number);
+
+	if(!check_rcapsule) {
+		throw new BaseError(status.CAPSULE_NOT_FOUND);
+	}
 
     try {
         connection.beginTransaction();

@@ -91,13 +91,13 @@ export const getTimeCapsuleId = async(connection, capsule_number) => {
 
 export const insertRcapsule = async (connection, insertData) => {
     const query = `INSERT INTO rcapsule 
-    (id, time_capsule_id, capsule_number, rcapsule_name, rcapsule_password, rcapsule_cnt, url, open_date, dear_name, created_at, updated_at, status)
+    (id, time_capsule_id, capsule_number, rcapsule_name, rcapsule_password, rcapsule_cnt, url, open_date, dear_name, status, created_at, updated_at)
     VALUES (NULL, ?, ?, ?, NULL, NULL, ?, ?, ?, ?, ?, ?);`;
     const [insertRcapsuleRow] = await connection.query(query, [
         ...insertData,
-        new Date(),
-        new Date(),
         "LOCKED", // status
+        new Date(),
+        new Date(),
     ]);
     return insertRcapsuleRow[0];
 };
@@ -132,13 +132,14 @@ export const setRcapsuleWriter_n = async (connection, rcapsule_id, from_name, th
 export const addVoiceLetter_d = async (connection, voiceUrl, writer_id) => {
     const query = `INSERT INTO voice (id, pcapsule_id, rwcapsule_id, voice_url, created_at, updated_at)
     VALUES (null, null, ?, ?, ?, ?);`;
+    console.log('최종 voiceUrl:', voiceUrl);
     const [result] = await connection.query(query, [
         writer_id,
         voiceUrl,
         new Date(),
         new Date(),
     ]);
-    console.log('addVoiceLetter_d', result[0]);
+    console.log('addVoiceLetter_d', result);
     return result[0];
 };
 
@@ -171,3 +172,13 @@ export const getUserEmail = async (connection, capsule_number) => {
 
     return result[0].userEmail;
 };
+
+export const checkRcapsule_d = async (connection, capsule_number) => {
+    const query = `SELECT CASE WHEN EXISTS (
+        SELECT capsule_number FROM rcapsule WHERE capsule_number = ?
+    ) THEN 1 ELSE 0 END AS RESULT;`;
+
+    const [result] = await connection.query(query, [capsule_number]);
+    // console.log(result); -> [ { RESULT: 0 } ] 형태로 옴
+    return result[0].result;
+}
