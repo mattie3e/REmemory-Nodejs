@@ -17,7 +17,11 @@ rcapsuleRouter.post("/create", asyncHandler(createRcapsule));
 
 rcapsuleRouter.patch("/:rcapsule_id", asyncHandler(setRcapsulePw));
 
-rcapsuleRouter.post("/voice/:rcapsule_number", upload.single('voice_rcapsule'), asyncHandler(addVoiceLetter_c));
+rcapsuleRouter.post(
+	"/voice/:rcapsule_number",
+	upload.single("voice_rcapsule"),
+	asyncHandler(addVoiceLetter_c),
+);
 
 //캡슐번호, 롤링페이퍼 url 받기
 rcapsuleRouter.get("/rcapsule/info", asyncHandler(readNumNUrl_c));
