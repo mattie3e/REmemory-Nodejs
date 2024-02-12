@@ -185,12 +185,12 @@ export const setRcapsulePw = async (req, res, next) => {
     } catch (error) {
 		console.log(error.data);
 		if (error.data.status == 400) {
-			res.send(response(status.BAD_REQUEST, {error: "입력된 password가 없습니다."}));
+			res.status(400).send(response(status.BAD_REQUEST, {error: "입력된 password가 없습니다."}));
 		} else if (error.data.code == 'CAPSULE4001') {
-			res.send(response(status.CAPSULE_NOT_FOUND, {error: "존재하지 않는 롤링페이퍼 캡슐입니다."}))
+			res.status(400).send(response(status.CAPSULE_NOT_FOUND, {error: "존재하지 않는 롤링페이퍼 캡슐입니다."}))
 		}
         else {
-			res.send(response(status.INTERNAL_SERVER_ERROR, { error: error.message }));
+			res.status(500).send(response(status.INTERNAL_SERVER_ERROR, { error: error.message }));
 		}
     }
 };
@@ -217,13 +217,13 @@ export const addVoiceLetter_c = async (req, res, next) => {
 		if (!req.file.location) {
 			console.log("file x");
 			// throw error;
-			return res.send(
+			return res.status(500).send(
 				response(status.BAD_REQUEST, { err: "파일 업로드 실패." }),
 			);
 		}
 
 		if (!req.params.rcapsule_number) {
-			return res.send(
+			return res.status(400).send(
 				response(status.BAD_REQUEST, { err: "rcapsule_number가 없습니다." }),
 			);
 		}
@@ -237,9 +237,9 @@ export const addVoiceLetter_c = async (req, res, next) => {
 	} catch (error) {
 		// res.send(status.INTERNAL_SERVER_ERROR, { error: "음성 파일 업로드 실패.", detail: error });
 		if (error.data.code == 'CAPSULE4001') {
-			res.send(response(status.CAPSULE_NOT_FOUND, {error: "존재하지 않는 롤링페이퍼 캡슐입니다."}))
+			res.status(400).send(response(status.CAPSULE_NOT_FOUND, {error: "존재하지 않는 롤링페이퍼 캡슐입니다."}))
 		} else {
-			res.send(
+			res.status(500).send(
 			response(status.INTERNAL_SERVER_ERROR, {
 				err: "음성 메세지 쓰기 실패",
 				detail: error,
