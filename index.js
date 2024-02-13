@@ -42,11 +42,35 @@ app.use((err, req, res, next) => {
 	// 개발환경이면 에러를 출력하고 아니면 출력하지 않기
 	res.locals.error = process.env.NODE_ENV !== "production" ? err : {};
 	console.error(err);
-	res
-		// .status(err.data.status || status.INTERNAL_SERVER_ERROR)
-		// .status(status.INTERNAL_SERVER_ERROR)
-		// .send(response(err.data));
-		.send(response(status.INTERNAL_SERVER_ERROR))
+
+	// 에러 데이터가 있는 경우에만 해당 데이터를 사용하여 응답을 보냄
+	if (err.data) {
+		// BaseError 인스턴스인지 확인, 그에 맞는 HTTP 상태 코드를 설정 후 응답
+		if (err instanceof BaseError) {
+			const { status, isSuccess, code, message } = err.data;
+			res.status(status).send(response({ isSuccess, code, message }));
+		} else {
+			// BaseError가 아닌 다른 에러인 경우에는 기본적으로 500 상태 코드를 반환
+			res.status(500).send(response(status.INTERNAL_SERVER_ERROR));
+		}
+	} else {
+		// 에러 데이터가 없는 경우에는 기본적으로 500 상태 코드를 반환
+		res.status(500).send(response(status.INTERNAL_SERVER_ERROR));
+	}
+
+	// // // res.send(response(status(err.data.status)));
+	// // // res.send(response(status(err.data.status || status.INTERNAL_SERVER_ERROR)));
+	// res
+	// 	// .status(status.INTERNAL_SERVER_ERROR)
+	// 	// .send(response(err.data));
+	// 	.send(response(err.data));
+	// // 에러 데이터가 있는 경우에만 해당 데이터를 사용하여 응답을 보냄
+	// // if (err.data) {
+	// // 	res.send(response(err.data));
+	// // } else {
+	// // 	// 에러 데이터가 없는 경우에는 기본적으로 INTERNAL_SERVER_ERROR를 응답으로 설정
+	// // 	res.send(response(status.INTERNAL_SERVER_ERROR));
+	// // }
 });
 
 app.listen(port, () => {
