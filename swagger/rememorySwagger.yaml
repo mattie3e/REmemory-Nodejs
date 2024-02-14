@@ -736,7 +736,7 @@ paths:
             example: "1"
       responses:
         "200":
-          description: success
+          description: 성공
           content:
             application/json:
               schema:
@@ -901,3 +901,178 @@ paths:
                   message:
                     type: string
                     example: "Internal Server Error. 관리자에게 문의하세요."
+  # User
+  /user/auth:
+    get:
+      tags:
+        - User
+      summary: "카카오 회원가입/로그인"
+      parameters:
+        - in: query
+          name: code
+          description: 카카오 인가 코드
+          schema:
+            type: string
+      responses:
+        "200":
+          description: User 로그인/회원가입 성공
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  isSuccess:
+                    type: boolean
+                    example: true
+                  code:
+                    type: string
+                    example: "USER002"
+                  message:
+                    type: string
+                    example: "회원가입에 성공했습니다. 닉네임을 설정해주세요."
+  /user:
+    patch:
+      tags:
+        - User
+      summary: "회원가입 후 닉네임 설정"
+      parameters:
+        - in: body
+          name: 닉네임 설정
+          required: true
+          schema:
+            type: object
+            properties:
+              userId:
+                type: int
+                example: 2
+              email:
+                type: string
+                example: ateahyun@naver.com
+              nickname:
+                type: string
+                example: "티티"
+      responses:
+        "200":
+          description: 성공
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: integer
+                    example: 200
+                  isSuccess:
+                    type: boolean
+                    example: true
+                  code:
+                    type: integer
+                    example: 2000
+                  message:
+                    type: string
+                    example: "success!"
+  /user/nickname:
+    patch:
+      tags:
+        - User
+      summary: "기존유저 닉네임 설정"
+      parameters:
+        - in: body
+          name: 닉네임 설정
+          required: true
+          schema:
+            type: object
+            properties:
+              userId:
+                type: int
+                example: 2
+              nickname:
+                type: string
+                example: "티티티"
+      responses:
+        "200":
+          description: 성공
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: integer
+                    example: 200
+                  isSuccess:
+                    type: boolean
+                    example: true
+                  code:
+                    type: integer
+                    example: 2000
+                  message:
+                    type: string
+                    example: "success!"
+  /user/{userId}:
+    get:
+      tags:
+        - User
+      summary: 유저 정보 불러오기
+      parameters:
+        - name: userId
+          in: path
+          required: true
+          schema:
+            type: int
+            example: 1
+      responses:
+        "200":
+          description: 성공
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: integer
+                    example: 200
+                  isSuccess:
+                    type: boolean
+                    example: true
+                  code:
+                    type: integer
+                    example: 2000
+                  message:
+                    type: string
+                    example: "success!"
+  /user/deactivate:
+    patch:
+      tags:
+        - User
+      summary: "계정 비활성화"
+      parameters:
+        - in: body
+          name: 계정 비활성화
+          required: true
+          schema:
+            type: object
+            properties:
+              userId:
+                type: int
+                example: 1
+      responses:
+        "200":
+          description: 성공
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: integer
+                    example: 200
+                  isSuccess:
+                    type: boolean
+                    example: true
+                  code:
+                    type: integer
+                    example: 2000
+                  message:
+                    type: string
+                    example: "success!"

@@ -32,7 +32,7 @@ export const kakaoGetUserInfo = async (code) => {
 
 		return userInfo;
 	} catch (err) {
-		throw new BaseError(status.FORBIDDEN);
+		throw new BaseError(status.KAKAO_REJECTION);
 	}
 };
 

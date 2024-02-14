@@ -56,7 +56,8 @@ export const setNickname = async (body, newUser) => {
 	if (newUser) {
 		if (!email) throw new BaseError(status.BAD_REQUEST);
 		if (userInfoCheck.email != email) throw new BaseError(status.FORBIDDEN);
-		if (userInfoCheck.nickname !== null) throw new BaseError(status.FORBIDDEN); // 이미 닉네임이 설정되어있는 경우
+		console.log(userInfoCheck.nickname);
+		if (userInfoCheck.nickname !== "") throw new BaseError(status.FORBIDDEN); // 이미 닉네임이 설정되어있는 경우
 	}
 
 	const result = await setUserNickname(userId, nickname);

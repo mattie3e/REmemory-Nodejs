@@ -33,6 +33,12 @@ export const status = {
 		code: "USER004",
 		message: "권한이 거부되었습니다.",
 	},
+	KAKAO_REJECTION: {
+		status: StatusCodes.FORBIDDEN,
+		isSuccess: false,
+		code: "USER005",
+		message: "권한이 거부되었습니다. 다시 로그인해주세요.",
+	},
 	CURRENT_STATUS: {
 		status: StatusCodes.BAD_REQUEST,
 		isSuccess: false,
