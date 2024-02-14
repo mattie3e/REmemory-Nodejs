@@ -46,7 +46,12 @@ export const savePassword_p = async (capsule_number, pcapsule_password) => {
 };
 
 // text_image or voice data 생성
-export const createContent_p = async (content_type, contents, pcapsule_id) => {
+export const createContent_p = async (
+	content_type,
+	contents,
+	pcapsule_id,
+	align_type,
+) => {
 	const connection = await pool.getConnection(async (conn) => conn);
 
 	let text_image_id = null;
@@ -59,7 +64,7 @@ export const createContent_p = async (content_type, contents, pcapsule_id) => {
 			for (let i = 0; i < contents.length; i++) {
 				const content = contents[i];
 				if (content.type === "text") {
-					const { body, image_url, sort, align_type } = content;
+					const { body, image_url, sort } = content;
 					text_image_id = await saveTextImage(
 						connection,
 						pcapsule_id,
@@ -70,12 +75,13 @@ export const createContent_p = async (content_type, contents, pcapsule_id) => {
 					);
 					if (!text_image_id) throw new Error("Failed to save text content");
 				} else if (content.type === "image") {
-					const { content: imageContent } = content;
+					const { image_url } = content;
 					text_image_id = await saveImage(
 						connection,
 						pcapsule_id,
-						imageContent,
+						image_url,
 						i + 1,
+						align_type,
 					);
 					if (!text_image_id) throw new Error("Failed to save image content");
 				}
