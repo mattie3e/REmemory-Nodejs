@@ -11,6 +11,7 @@ import {
 } from "./rcapsuleService.js";
 
 import { getUserInfos } from "../User/userProvider.js";
+import { StatusCodes } from "http-status-codes";
 // import { Url } from "url"
 
 //-> winnie part
@@ -68,46 +69,95 @@ export const readDear_c = async (req, res, next) => {
  * [POST] : /rcapsule_number/text_photo
  */
 export const createText_c = async (req, res, next) => {
-	//body : from_name, content_type, image_url, body
-	// params인지 body인지 햇갈리는데 차이는?!
+	//body : from_name, content_type, theme, formData(image, text)
 	try {
 		//aws s3에 업로드 된 파일 url 접근 및 db 저장
 		//console.log(req.file.locatiron); // aws s3에 올려진 파일 url
+		console.log("글/사진 params", req.params); // -> { rcapsule_number: 'TEST_111111' }
+		console.log("글/사진 쿼리스트링", req.url); //-> 파싱 필요 /text_photo/TEST_111111?from_name=nahy&content_type=2&theme=1
+		console.log("글/사진 req.file", req.file); //req.file.location
+		console.log("req.body.text : ", req.body.text); // -> text 그대로 잘 담김
 
-		const { from_name, content_type, image_url, body } = req.body;
+		const paramsRegex = /from_name=(.*?)&content_type=(.*?)&theme=(.*)/;
+		const [, from_name, content_type, theme] = paramsRegex.exec(req.url);
+		// const image_url = req.file.location;
+		console.log(from_name, content_type, theme);
+
+		const body = {
+			from_name: from_name,
+			content_type: content_type,
+			theme : theme,
+			text : req.body.text,
+		};
+
+		// if (!req.file.location) {
+		// 	return res.status(500).send(
+		// 		response(status.INTERNAL_SERVER_ERROR, { err: "파일 업로드 실패." }),
+		// 	);
+		// }
+
+		if (!req.params.rcapsule_number) {
+			return res.status(400).send(
+				response(status.BAD_REQUEST, { err: "rcapsule_number가 없습니다." }),
+			);
+		}
+
+		// 글 , 사진 둘 다 없을 경우만
+		if (!req.body.text && !req.fil.location) {
+			return res.status(400).send(
+				response(status.BAD_REQUEST, { err: "capsule의 내용이 없습니다." }),
+			);
+		}
 
 		//형식적 validation 처리 *이 부분 추가 수정하기
-		if (!req.params.rcapsule_number) {
-			return res.send(response(status.BAD_REQUEST));
-		}
-		if (!from_name) {
-			return res.send(response(status.NOT_FOUND));
-		} else if (!content_type) {
-			return res.send(response(status.NOT_FOUND));
-		} else if (!image_url && !body) {
-			return res.send(response(status.NOT_FOUND));
-		}
+		// if (!req.params.rcapsule_number) {
+		// 	return res.send(response(status.BAD_REQUEST));
+		// }
+		// if (!from_name) {
+		// 	return res.send(response(status.NOT_FOUND));
+		// } else if (!content_type) {
+		// 	return res.send(response(status.NOT_FOUND));
+		// } else if (!image_url && !body) {
+		// 	return res.send(response(status.NOT_FOUND));
+		// }
 		//처리 결과를 클라이언트에게 응답
 		const result = await createText_s(
 			req.file.location,
 			req.params.rcapsule_number,
-			req.body,
+			body,
 		);
 
-		res.send(
-			response(status.SUCCESS, {
-				...req.body, // 원래의 데이터 복사
-				capsule_number: result.capsuleNumber,
-			}),
-		);
+		res.send(result);
+
+		// res.status(200).send(
+		// 	response(status.SUCCESS, {
+		// 		// ...req.body, // 원래의 데이터 복사
+		// 		capsule_number: result.capsuleNumber,
+		// 	}),
+		// );
 	} catch (error) {
 		// * 추가
-		res.send(status.INTERNAL_SERVER_ERROR, {
-			error: "텍스트 및 사진 파일 업로드 실패.",
-			detail: error,
-		});
-		next(error);
-		console.log(error);
+		// res.send(status.INTERNAL_SERVER_ERROR, {
+		// 	error: "텍스트 및 사진 파일 업로드 실패.",
+		// 	detail: error,
+		// });
+		// next(error);
+		console.log(error.data);
+		// if (error.data.code == 'CAPSULE4001') {
+		// 	res.status(400).send(response(status.CAPSULE_NOT_FOUND, {error: "존재하지 않는 롤링페이퍼 캡슐입니다."}))
+		// } else {
+		// 	res.status(500).send(
+		// 	response(status.INTERNAL_SERVER_ERROR, {
+		// 		err: "글/사진 메세지 쓰기 실패",
+		// 		detail: error,
+		// 	}),
+		// );
+		// }
+		res.status(500).send(
+			response(status.INTERNAL_SERVER_ERROR, {
+				err: "글/사진 메세지 쓰기 실패",
+				detail: error,
+			}));
 	}
 };
 
@@ -116,7 +166,7 @@ export const createText_c = async (req, res, next) => {
 // API Name : 롤링페이퍼(rcapsule) 생성 API
 // [POST] /rcapsule/create
 export const createRcapsule = async (req, res, next) => {
-	//body : rcapsule_name, open_date, dear_name, theme(제외)
+	//body : rcapsule_name, open_date, dear_name, theme
 	try {
 		// const userId = req.user ? req.user.userId : null; //userId를 어떻게 가져올 수 있을까..?
 
@@ -127,6 +177,7 @@ export const createRcapsule = async (req, res, next) => {
 		const paramsRegex = /[?&]userId=([^&]+)/;
 		const match = paramsRegex.exec(req.url);
 		const userId = match && decodeURIComponent(match[1]);
+
 		console.log("userID : ", userId);
 
 		if (!userId) {
@@ -149,18 +200,19 @@ export const createRcapsule = async (req, res, next) => {
 		);
 	} catch (error) {
 		// next(e);//보류
+		// if (error instanceof BaseError) {
+		// 	// BaseError를 캐치한 경우
+		// 	next(error);
+		// } else if (error.message.includes("Missing required field")) {
+		// 	// 필수 필드가 누락된 경우의 오류 처리
+		// 	res.send(response(status.BAD_REQUEST));
+		// } else {
+		// 	// 그 외의 오류 처리
+		// 	// console.error("Error creating rcapsule:", error);
+		// 	res.status(StatusCodes.INTERNAL_SERVER_ERROR).send(response(status.INTERNAL_SERVER_ERROR));
+		// }
 		console.log(error);
-		if (error instanceof BaseError) {
-			// BaseError를 캐치한 경우
-			next(error);
-		} else if (error.message.includes("Missing required field")) {
-			// 필수 필드가 누락된 경우의 오류 처리
-			res.send(response(status.BAD_REQUEST, error.message));
-		} else {
-			// 그 외의 오류 처리
-			console.error("Error creating rcapsule:", error);
-			res.status(500).send("Internal Server Error");
-		}
+		next(error);
 	}
 };
 
@@ -218,7 +270,7 @@ export const addVoiceLetter_c = async (req, res, next) => {
 			console.log("file x");
 			// throw error;
 			return res.status(500).send(
-				response(status.BAD_REQUEST, { err: "파일 업로드 실패." }),
+				response(status.INTERNAL_SERVER_ERROR, { err: "파일 업로드 실패." }),
 			);
 		}
 
@@ -236,6 +288,7 @@ export const addVoiceLetter_c = async (req, res, next) => {
 		res.send(result);
 	} catch (error) {
 		// res.send(status.INTERNAL_SERVER_ERROR, { error: "음성 파일 업로드 실패.", detail: error });
+		console.log(error);
 		if (error.data.code == 'CAPSULE4001') {
 			res.status(400).send(response(status.CAPSULE_NOT_FOUND, {error: "존재하지 않는 롤링페이퍼 캡슐입니다."}))
 		} else {

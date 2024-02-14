@@ -41,35 +41,38 @@ export const readDear_d = async (connection, capsuleNumber) => {
 
 //createText_d
 //body : from_name, content_type, image_url, body
-export const addTextImage_d = async (connection, image_url, writer_id) => {
-	const query = `INSERT INTO voice (id, pcapsule_id, rwcapsule_id, image_url, created_at, updated_at)
-VALUES (null, null, ?, ?, ?, ?);`;
+export const addTextImage_d = async (connection, imageurl, writer_id, text) => {
+	const query = `INSERT INTO text_image (id, pcapsule_id, rcapsule_id, body, image_url, sort, created_at, updated_at)
+VALUES (null, null, ?, ?, ?, 1, ?, ?);`;
 	const [result] = await connection.query(query, [
 		writer_id,
-		voiceUrl,
+        text,
+        imageurl,
 		new Date(),
 		new Date(),
 	]);
+    console.log("addTextImage_d : ", result[0]);
+    return result[0];
 };
 
 //theme이 왜 안 들어가 있는지..? -> 보류
-export const setRcapsuleWriter = async (
-	connection,
-	rcapsule_id,
-	from_name,
-	content_type,
-) => {
-	const query = `INSERT INTO rcapsule_writer (id, rcapsule_id, from_name, content_type, created_at, updated_at) 
-VALUES (null, ?, ?, ?, ?);`;
-	const [result] = await connection.query(query, [
-		rcapsule_id,
-		from_name,
-		content_type,
-		new Date(),
-		new Date(),
-	]);
-	return result[0];
-};
+// export const setRcapsuleWriter = async (
+// 	connection,
+// 	rcapsule_id,
+// 	from_name,
+// 	content_type,
+// ) => {
+// 	const query = `INSERT INTO rcapsule_writer (id, rcapsule_id, from_name, content_type, created_at, updated_at) 
+// VALUES (null, ?, ?, ?, ?);`;
+// 	const [result] = await connection.query(query, [
+// 		rcapsule_id,
+// 		from_name,
+// 		content_type,
+// 		new Date(),
+// 		new Date(),
+// 	]);
+// 	return result[0];
+// };
 
 export const insertTimeCapsule = async (connection, capsule_number, userId) => {
 	const query = `INSERT INTO time_capsule (id, member_id, total_cnt, capsule_number) VALUES (NULL, ?, 0, ?);`;
@@ -91,8 +94,8 @@ export const getTimeCapsuleId = async (connection, capsule_number) => {
 
 export const insertRcapsule = async (connection, insertData) => {
     const query = `INSERT INTO rcapsule 
-    (id, time_capsule_id, capsule_number, rcapsule_name, rcapsule_password, rcapsule_cnt, url, open_date, dear_name, status, created_at, updated_at)
-    VALUES (NULL, ?, ?, ?, NULL, NULL, ?, ?, ?, ?, ?, ?);`;
+    (id, time_capsule_id, capsule_number, rcapsule_name, rcapsule_password, rcapsule_cnt, url, open_date, dear_name, theme, status, created_at, updated_at)
+    VALUES (NULL, ?, ?, ?, NULL, NULL, ?, ?, ?, ?, ?, ?, ?);`;
     const [insertRcapsuleRow] = await connection.query(query, [
         ...insertData,
         "LOCKED", // status

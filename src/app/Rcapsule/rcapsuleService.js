@@ -95,39 +95,49 @@ export const readDear_s = async (capsuleNumber) => {
 //post textNphotos * photo 파일 변환하기 * error
 export const createText_s = async (imageurl, capsule_number, body) => {
 	const connection = await pool.getConnection(async (conn) => conn);
-	const { from_name, content_type } = body;
+	const { from_name, content_type, theme, text } = body;
 
-	const requiredFields = ["from_name", "content_type"];
+	const requiredFields = ["from_name", "content_type", "theme"];
 
 	requiredFields.forEach((field) => {
 		if (!body.hasOwnProperty(field)) {
-			throw new Error("Missing required filed: ${field}");
+			throw new Error(`Missing required filed: ${field}`);
 		}
 	});
+
+	const check_rcapsule = await checkRcapsule_d(connection, capsule_number);
+
+	if(!check_rcapsule) {
+		throw new BaseError(status.CAPSULE_NOT_FOUND);
+	}
+
 	try {
 		connection.beginTransaction();
 
 		//capsule 존재 확인
-		const isExistCapsule = await checkCapsuleNum_d(connection, capsuleNumber);
-		if (isExistCapsule) {
-			throw new BaseError(status.CAPSULE_NOT_FOUND);
-		}
+		// const isExistCapsule = await checkRcapsule_d(connection, capsule_number);
+		// if (!isExistCapsule) {
+		// 	throw new BaseError(status.CAPSULE_NOT_FOUND);
+		// }
 
 		const rcapsule_id = await getRcapsuleId(connection, capsule_number);
 
-		await setRcapsuleWriter(connection, rcapsule_id, from_name, content_type);
+		// await setRcapsuleWriter(connection, rcapsule_id, from_name, content_type);
+		await setRcapsuleWriter_n(connection, rcapsule_id, from_name, theme, content_type);
 
 		const writer_id = await getWriterId(connection, rcapsule_id);
+		console.log("writer_id : ", writer_id);
 
-		await addTextImage_d(connection, imageurl, writer_id);
+		await addTextImage_d(connection, imageurl, writer_id, text);
 
 		await connection.commit();
 
-		res.send(
-			response(status.SUCCESS, {
-				data: rCapsuleData,
-			}),
-		);
+		// res.send(
+		// 	response(status.SUCCESS, {
+		// 		data: rCapsuleData,
+		// 	}),
+		// );
+		return response(status.SUCCESS);
 	} catch (error) {
 		//에러 발생 시 롤백
 		await connection.rollback();
@@ -140,12 +150,12 @@ export const createText_s = async (imageurl, capsule_number, body) => {
 
 export const postRcapsule = async (body, nickname, userId) => {
 	// 값이 제대로 전송 안된 경우
-	const { rcapsule_name, open_date, dear_name } = body;
+	const { rcapsule_name, open_date, dear_name, theme } = body;
 	const requiredFields = [
 		"rcapsule_name",
 		"open_date",
 		"dear_name",
-		// "theme", //DB 테이블에 맞춰서 rcapsule은 theme 제외
+		"theme",
 	];
 
 	requiredFields.forEach((field) => {
@@ -154,7 +164,7 @@ export const postRcapsule = async (body, nickname, userId) => {
 		}
 	});
 
-	console.log("body 추출 : ", rcapsule_name, open_date, dear_name);
+	console.log("body 추출 : ", rcapsule_name, open_date, dear_name, theme);
 
 	const capsule_number = await createCapsuleNum_r(nickname);
 	const rcapsule_url = `${process.env.FRONT_DOMAIN}/rcapsule_number=${capsule_number}`;
@@ -163,7 +173,7 @@ export const postRcapsule = async (body, nickname, userId) => {
 	const connection = await pool.getConnection(async (conn) => conn);
 	try {
 		await connection.beginTransaction();
-		console.log("transaction start!");
+		// console.log("transaction start!");
 		//create time_capsule
 		await insertTimeCapsule(connection, capsule_number, userId);
 		console.log("insertTimeCapsule 성공");
@@ -182,6 +192,7 @@ export const postRcapsule = async (body, nickname, userId) => {
 		   rcapsule_url,
 		   open_date,
 		   dear_name,
+		   theme,
 	   ];
 
 	   const createRcsData = await insertRcapsule(connection, insertData);
@@ -238,14 +249,14 @@ export const addVoiceLetter_s = async (voiceUrl, capsule_number, body) => {
 	const connection = await pool.getConnection(async (conn) => conn);
 
 	const { from_name, content_type, theme } = body;
-	console.log(
-		"***rcapsuleService.js***\n\n voiceUrl :",
-		voiceUrl,
-		"capsule_number :",
-		capsule_number,
-		"body: ",
-		body,
-	);
+	// console.log(
+	// 	"***rcapsuleService.js***\n\n voiceUrl :",
+	// 	voiceUrl,
+	// 	"capsule_number :",
+	// 	capsule_number,
+	// 	"body: ",
+	// 	body,
+	// );
 
 	const requiredFields = ["from_name", "theme", "content_type"];
 

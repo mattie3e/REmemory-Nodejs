@@ -65,7 +65,7 @@ export const getUserInfo = async (userId) => {
 		const conn = await pool.getConnection();
 
 		const getUser =
-			"SELECT id, email, gender, nickname, status FROM member WHERE id = ?";
+			"SELECT id, email, nickname, status FROM member WHERE id = ?";
 		const [user] = await pool.query(getUser, [userId]);
 
 		if (user.length == 0) {

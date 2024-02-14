@@ -30,4 +30,7 @@ rcapsuleRouter.get("/rcapsule/info", asyncHandler(readNumNUrl_c));
 rcapsuleRouter.get("/rcapsule_number", asyncHandler(readDear_c));
 
 //글&사진 쓰기
-rcapsuleRouter.post("/rcapsule_number/text_photo", asyncHandler(createText_c));
+rcapsuleRouter.post(
+	"/text_photo/:rcapsule_number", 
+	upload.single("photo_rcapsule"),
+	asyncHandler(createText_c));
