@@ -17,7 +17,7 @@ userRouter.get("/auth", asyncHandler(userSign));
 userRouter.patch("/", asyncHandler(userSetNickname));
 
 // 회원정보 불러오기
-userRouter.get("/", tokenAuthMiddleware, asyncHandler(userGetInfo));
+userRouter.get("/:userId", tokenAuthMiddleware, asyncHandler(userGetInfo));
 
 // 기존회원 닉네임 변경
 userRouter.patch(
