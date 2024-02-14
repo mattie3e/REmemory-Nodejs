@@ -18,8 +18,16 @@ import {
 
 // 캡슐 생성
 export const createPcs_s = async (body, nickname, userId) => {
-	const { pcapsule_name, open_date, dear_name, theme, content_type, contents } =
-		body;
+	// align_type 추가
+	const {
+		pcapsule_name,
+		open_date,
+		dear_name,
+		theme,
+		content_type,
+		contents,
+		align_type,
+	} = body;
 	const requiredFields = [
 		"pcapsule_name",
 		"open_date",
@@ -27,6 +35,7 @@ export const createPcs_s = async (body, nickname, userId) => {
 		"theme",
 		"content_type",
 		"contents", // 글사진 or 음성 데이터
+		"align_type",
 	];
 
 	requiredFields.forEach((field) => {
@@ -68,6 +77,7 @@ export const createPcs_s = async (body, nickname, userId) => {
 			content_type,
 			contents,
 			pcapsule_id,
+			align_type,
 		);
 
 		await connection.commit();

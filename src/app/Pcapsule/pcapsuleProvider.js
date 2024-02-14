@@ -59,32 +59,34 @@ export const createContent_p = async (
 
 	try {
 		if (content_type === 1) {
-			// 글 + 사진 순서대로 저장해야함
-			// text일 때, image일 때 나눠서 저장
+			// 프론트 예시
+			// contents:
+			//  [
+			//    {type: 'text', content: '안녕'},
+			//    {type: 'image', content: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABMA…kakDsHxpPTEAbA/7800saP21M9FC5t1EGAAAAAElFTkSuQmCC'},
+			//    {type: 'image', content: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABMA…kakDsHxpPTEAbA/7800saP21M9FC5t1EGAAAAAElFTkSuQmCC'},
+			//    {type: 'text', content: '이 사진 기억나?'}
+			//  ]
 			for (let i = 0; i < contents.length; i++) {
-				const content = contents[i];
-				if (content.type === "text") {
-					const { body, image_url, sort } = content;
+				const value = contents[i];
+				if (value.type === "text") {
 					text_image_id = await saveTextImage(
 						connection,
 						pcapsule_id,
-						body,
-						image_url,
-						sort,
-						align_type,
+						value.content, // 텍스트인 경우 content를 사용
+						null, // 이미지인 경우 null로 처리
+						align_type, // align_type 전달
 					);
-					if (!text_image_id) throw new Error("Failed to save text content");
-				} else if (content.type === "image") {
-					const { image_url } = content;
-					text_image_id = await saveImage(
+				} else if (value.type === "image") {
+					text_image_id = await saveTextImage(
 						connection,
 						pcapsule_id,
-						image_url,
-						i + 1,
-						align_type,
+						null, // 텍스트인 경우 null로 처리
+						value.content, // 이미지인 경우 content를 사용
+						align_type, // align_type 전달
 					);
-					if (!text_image_id) throw new Error("Failed to save image content");
 				}
+				if (!text_image_id) throw new Error("Failed to save text content");
 			}
 		} else if (content_type === 2) {
 			const { voice_url } = contents;

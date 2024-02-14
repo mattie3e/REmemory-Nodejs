@@ -124,15 +124,13 @@ export const saveTextImage = async (
 	pcapsule_id,
 	body,
 	image_url,
-	sort,
 	align_type,
 ) => {
-	const query = `INSERT INTO text_image (pcapsule_id, body, image_url, sort, align_type, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?);`;
+	const query = `INSERT INTO text_image (pcapsule_id, body, image_url, align_type, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?);`;
 	const [result] = await connection.query(query, [
 		pcapsule_id,
 		body,
 		image_url,
-		sort,
 		align_type,
 		new Date(),
 		new Date(),
