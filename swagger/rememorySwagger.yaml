@@ -705,32 +705,32 @@ paths:
       parameters:
         - in: formData
           name: voice_rcapsule
-          required: true
+          # required: true
           type: file
           description: file to upload
         - in: path
           name: rcapsule_number
-          required: true
+          # required: true
           description: 음성 메세지를 쓰고 싶은 롤링페이퍼 고유번호
           schema:
             type: string
             example: "TEST_111111"
         - in: query
           name: from_name
-          required: true
+          # required: true
           description: 작성한 사람
           schema:
             type: string
             example: "nahy"
         - in: query
           name: content_type
-          required: true
+          # required: true
           schema:
             type: string
             example: "2"
         - in: query
           name: theme
-          required: true
+          # required: true
           schema:
             type: string
             example: "1"

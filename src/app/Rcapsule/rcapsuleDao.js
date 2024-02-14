@@ -42,8 +42,8 @@ export const readDear_d = async (connection, capsuleNumber) => {
 //createText_d
 //body : from_name, content_type, image_url, body
 export const addTextImage_d = async (connection, imageurl, writer_id, text) => {
-	const query = `INSERT INTO text_image (id, pcapsule_id, rcapsule_id, body, image_url, sort, created_at, updated_at)
-VALUES (null, null, ?, ?, ?, 1, ?, ?);`;
+	const query = `INSERT INTO text_image (id, pcapsule_id, rwcapsule_id, body, image_url, created_at, updated_at)
+VALUES (null, null, ?, ?, ?, ?, ?);`;
 	const [result] = await connection.query(query, [
 		writer_id,
         text,
