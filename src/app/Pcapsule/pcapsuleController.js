@@ -8,6 +8,8 @@ import {
 	readPcs_s,
 	readDetailPcs_s,
 	updatePcapsuleStatus_s,
+	addTextImage_s,
+	addVoice_s,
 } from "./pcapsuleService.js";
 import { savePassword_p } from "./pcapsuleProvider.js";
 
@@ -15,6 +17,7 @@ import { savePassword_p } from "./pcapsuleProvider.js";
 // [POST] /create
 export const createPcs_c = async (req, res, next) => {
 	// body: pcapsule_name, open_date, dear_name, theme, content_type, content
+	// content 지우기
 	try {
 		const userId = req.query.userId;
 		const userInfos = await getUserInfos(userId);
@@ -26,6 +29,31 @@ export const createPcs_c = async (req, res, next) => {
 				capsule_number: data.capsule_number,
 			}),
 		);
+	} catch (error) {
+		next(error);
+	}
+};
+
+// [POST] text_image/:pcapsule_number
+export const addTextImage_c = async (req, res, next) => {
+	try {
+		const textImageContent = req.body; // 클라이언트가 보낸 글사진 데이터
+		const pcapsuleNumber = req.params.pcapsule_number;
+
+		const result = await addTextImage_s(textImageContent, pcapsuleNumber);
+		res.send(result);
+	} catch (error) {
+		next(error);
+	}
+};
+
+// [POST] voice/:pcapsule_number
+export const addVoice_c = async (req, res, next) => {
+	try {
+		const voiceFile = req.file;
+		const pcapsuleNumber = req.params.pcapsule_number;
+		const result = await addVoice_s(voiceFile, pcapsuleNumber);
+		res.send(result);
 	} catch (error) {
 		next(error);
 	}
@@ -49,8 +77,6 @@ export const readPcs_c = async (req, res, next) => {
 	try {
 		const capsuleNumber = req.query.capsule_number;
 		const capsulePassword = req.query.pcapsule_password;
-		console.log(capsuleNumber);
-		console.log(capsulePassword);
 
 		const data = await readPcs_s(capsuleNumber, capsulePassword);
 
