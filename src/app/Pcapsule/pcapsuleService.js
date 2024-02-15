@@ -165,6 +165,12 @@ export const readDetailPcs_s = async (capsuleNumber, capsulePassword) => {
 
 		// 캡슐 정보 조회
 		const pcapsuleData = await retrieveCapsule_d(connection, capsuleNumber);
+
+		// 추가된 로직: opened 상태의 캡슐만 반환
+		if (pcapsuleData.status !== "OPENED") {
+			throw new BaseError(status.CAPSULE_NOT_OPENED);
+		}
+
 		let txt_img_Id = null;
 		let voice_Id = null;
 		if (pcapsuleData.content_type === 1) {
@@ -192,7 +198,7 @@ export const readDetailPcs_s = async (capsuleNumber, capsulePassword) => {
 			voice_Id,
 		};
 
-		//content 가져오기
+		// content 가져오기
 		if (pcapsuleData.content_type == 1 && pcapsuleData.text_image_id) {
 			const textImageData = await retrieveText_image(
 				connection,
