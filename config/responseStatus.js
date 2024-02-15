@@ -46,13 +46,6 @@ export const status = {
 		message: "계정 상태를 변경할 수 없습니다.",
 	},
 
-	CAPSULE_NOT_FOUND: {
-		status: StatusCodes.NOT_FOUND,
-		isSuccess: false,
-		code: "CAP001",
-		message: "캡슐을 찾을 수 없습니다.",
-	},
-
 	INTERNAL_SERVER_ERROR: {
 		status: StatusCodes.INTERNAL_SERVER_ERROR,
 		isSuccess: false,
@@ -87,17 +80,24 @@ export const status = {
 		message: "패스워드가 잘못되었습니다.",
 	},
 
+	CAPSULE_NOT_OPENED: {
+		status: StatusCodes.BAD_REQUEST,
+		isSuccess: false,
+		code: "CAPSULE4003",
+		message: "캡슐 오픈 시기가 아닙니다.",
+	},
+
 	TEXT_IMAGE_NOT_FOUND: {
 		status: StatusCodes.NOT_FOUND,
 		isSuccess: false,
-		code: "CAPSULE4003",
+		code: "CAPSULE4004",
 		message: "텍스트 및 이미지가 없습니다.",
 	},
 
 	VOICE_NOT_FOUND: {
 		status: StatusCodes.NOT_FOUND,
 		isSuccess: false,
-		code: "CAPSULE4004",
+		code: "CAPSULE4005",
 		message: "음성이 없습니다.",
 	},
 };
