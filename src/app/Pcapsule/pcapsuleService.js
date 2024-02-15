@@ -15,6 +15,7 @@ import {
 	retrievetxt_img_idBypcapsule_id,
 	retrievevoice_idBypcapsule_id,
 } from "./pcapsuleDao.js";
+import { BADFAMILY } from "dns";
 
 // 캡슐 생성
 export const createPcs_s = async (body, nickname, userId) => {
@@ -160,7 +161,10 @@ export const readDetailPcs_s = async (capsuleNumber, capsulePassword) => {
 		);
 
 		if (!isPasswordValid) {
-			throw new BaseError(status.CAPSULE_PASSWORD_WRONG);
+			throw new BaseError(
+				status.CAPSULE_PASSWORD_WRONG,
+				"패스워드가 잘못되었습니다.",
+			);
 		}
 
 		// 캡슐 정보 조회

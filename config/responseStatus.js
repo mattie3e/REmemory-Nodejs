@@ -74,7 +74,7 @@ export const status = {
 	},
 
 	CAPSULE_PASSWORD_WRONG: {
-		status: StatusCodes.NOT_FOUND,
+		status: StatusCodes.BAD_REQUEST,
 		isSuccess: false,
 		code: "CAPSULE4002",
 		message: "패스워드가 잘못되었습니다.",
