@@ -80,7 +80,8 @@ export const retrievetxt_img_idBypcapsule_id = async (
 ) => {
 	const query = `SELECT * FROM text_image WHERE pcapsule_id = ?`;
 	const [retrieveCapsuleRow] = await connection.query(query, pcapsule_id);
-	return retrieveCapsuleRow[0];
+	// 모든 행 가져오도록 변경
+	return retrieveCapsuleRow;
 };
 
 export const retrievevoice_idBypcapsule_id = async (
