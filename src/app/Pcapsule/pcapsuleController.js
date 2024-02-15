@@ -49,10 +49,18 @@ export const readPcs_c = async (req, res, next) => {
 	try {
 		const capsuleNumber = req.query.capsule_number;
 		const capsulePassword = req.query.pcapsule_password;
-		console.log(capsuleNumber);
-		console.log(capsulePassword);
 
 		const data = await readPcs_s(capsuleNumber, capsulePassword);
+
+		const pcapsulesArray = []; // 캡슐 데이터를 배열로 저장할 변수
+
+		// 데이터가 존재하면 배열로 변환하여 저장
+		if (data) {
+			const { pcapsules } = data;
+			for (const key in pcapsules) {
+				pcapsulesArray.push(pcapsules[key]);
+			}
+		}
 
 		res.send(
 			response(status.SUCCESS, {
