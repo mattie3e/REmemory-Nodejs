@@ -8,6 +8,8 @@ import {
 	insertPcapsule_d,
 	insertCapsuleNum_d,
 	retrieveCapsule_d,
+	retrievetxt_img_idBypcapsule_id,
+	retrievevoice_idBypcapsule_id,
 	checkPasswordValidity,
 	getPcapsuleId,
 	saveVoice,
@@ -210,16 +212,19 @@ export const readPcs_s = async (capsuleNumber, capsulePassword) => {
 
 //캡슐 상세조회
 export const readDetailPcs_s = async (capsuleNumber, capsulePassword) => {
+	console.log("readDetailPcs_s 시작");
 	const connection = await pool.getConnection(async (conn) => conn);
 	try {
 		await connection.beginTransaction();
 
 		// 캡슐 존재 확인
 		const isExistCapsule = await checkCapsuleNum_d(connection, capsuleNumber);
+		console.log("캡슐 존재 확인: ", isExistCapsule);
 
 		if (!isExistCapsule) {
 			throw new BaseError(status.CAPSULE_NOT_FOUND);
 		}
+		console.log("캡슐확인완료");
 
 		// 패스워드 확인
 		const isPasswordValid = await checkPasswordValidity(
@@ -227,6 +232,8 @@ export const readDetailPcs_s = async (capsuleNumber, capsulePassword) => {
 			capsuleNumber,
 			capsulePassword,
 		);
+
+		console.log("패스워드 확인: ", isPasswordValid);
 
 		if (!isPasswordValid) {
 			throw new BaseError(
@@ -237,7 +244,7 @@ export const readDetailPcs_s = async (capsuleNumber, capsulePassword) => {
 
 		// 캡슐 정보 조회
 		const pcapsuleData = await retrieveCapsule_d(connection, capsuleNumber);
-
+		console.log("캡슐 정보 조회: ", pcapsuleData);
 		// 추가된 로직: opened 상태의 캡슐만 반환
 		if (pcapsuleData.status !== "OPENED") {
 			throw new BaseError(status.CAPSULE_NOT_OPENED);

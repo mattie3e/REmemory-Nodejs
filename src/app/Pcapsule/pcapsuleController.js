@@ -98,7 +98,9 @@ export const readDetailPcs_c = async (req, res, next) => {
 		const capsuleNumber = req.query.capsule_number;
 		const capsulePassword = req.query.pcapsule_password;
 
+		console.log("readDetailPcs_c 데이터 보내기 전");
 		const data = await readDetailPcs_s(capsuleNumber, capsulePassword);
+		console.log("readDetailPcs_c 데이터 보낸 직후: ", data);
 
 		res.send(
 			response(status.SUCCESS, {
