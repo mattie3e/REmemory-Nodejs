@@ -19,7 +19,7 @@ paths:
                 type: string
                 format: date
                 description: Opening date of the pcapsule
-                example: "2025-01-01"
+                example: "2024-02-15"
               dear_name:
                 type: string
                 description: Name of the recipient
@@ -32,23 +32,27 @@ paths:
                 type: integer
                 description: Type of content (1 for text/image, 2 for voice)
                 example: 1
-              content:
+              contents:
                 type: array
                 items:
                   type: object
                   properties:
-                    body:
+                    type:
                       type: string
-                      description: Content text
-                      example: "너랑 함께해서 어쩌고저쩌고"
-                    image_url:
+                    content:
                       type: string
-                      description: URL of the image
-                      example: "이미지url"
-                    sort:
-                      type: integer
-                      description: Sort order of the content
-                      example: 1
+                example:
+                  [
+                    { type: "text", content: "안녕" },
+                    { type: "image", content: "이미지 URL" },
+                    { type: "image", content: "이미지 URL" },
+                    { type: "text", content: "이 사진 기억나?" },
+                  ]
+              align_type:
+                type: string
+                enum: ["left", "center", "right"]
+                description: Alignment type for the content
+                example: "left"
       responses:
         "200":
           description: Pcapsule creation successful
@@ -74,18 +78,24 @@ paths:
                     example:
                       {
                         "pcapsule_name": "캡슐 1",
-                        "open_date": "2025-01-01",
+                        "open_date": "2024-02-15",
                         "dear_name": "위트",
                         "theme": 1,
                         "content_type": 1,
-                        "content":
+                        "contents":
                           [
+                            { type: "text", content: "안녕" },
                             {
-                              "body": "너랑 함께해서 어쩌고저쩌고",
-                              "image_url": "이미지url",
-                              "sort": 1,
+                              type: "image",
+                              content: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABMA…kakDsHxpPTEAbA/7800saP21M9FC5t1EGAAAAAElFTkSuQmCC",
                             },
+                            {
+                              type: "image",
+                              content: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABMA…kakDsHxpPTEAbA/7800saP21M9FC5t1EGAAAAAElFTkSuQmCC",
+                            },
+                            { type: "text", content: "이 사진 기억나?" },
                           ],
+                        "align_type": "left",
                       }
         "400":
           description: Bad Request
@@ -223,14 +233,14 @@ paths:
           description: Capsule number
           schema:
             type: string
-            example: "WIT_1004"
+            example: "testMember1_74177"
         - in: query
           name: pcapsule_password
           required: true
           description: Password for the pcapsule
           schema:
             type: integer
-            example: 12345
+            example: 123456
       responses:
         "200":
           description: Success
@@ -329,60 +339,95 @@ paths:
           description: Capsule number
           schema:
             type: string
-            example: "WIT_1004"
+            example: "testMember1_74177"
         - in: query
           name: pcapsule_password
           required: true
           description: Password for the pcapsule
           schema:
             type: integer
-            example: 12345
+            example: 123456
       responses:
         "200":
           description: Success
           content:
             application/json:
               schema:
-                type: array
-                items:
-                  type: object
-                  properties:
-                    capsule_name:
-                      type: string
-                      example: "user123_2432432"
-                    password:
-                      type: string
-                      example: "1568185"
-                    capsules:
-                      type: array
-                      items:
-                        type: object
-                        properties:
-                          capsule_number:
-                            type: string
-                            example: "user123_2432432"
-                          pcapsule_name:
-                            type: string
-                            example: "캡슐 1"
-                          open_date:
-                            type: string
-                            format: date
-                            example: "2025-01-01"
-                          dear_name:
-                            type: string
-                            example: "위트"
-                          theme:
-                            type: string
-                            example: "1"
-                          content_type:
-                            type: string
-                            example: "1"
-                          body:
-                            type: string
-                            example: "너랑 함께해서 어쩌고저쩌고"
-                          text_image_id:
-                            type: string
-                            example: "123456"
+                type: object
+                properties:
+                  capsule_name:
+                    type: string
+                    example: "test 중인 캡슐1"
+                  password:
+                    type: string
+                    example: "123456"
+                  capsules:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        capsule_number:
+                          type: string
+                          example: "testMember1_74177"
+                        pcapsule_name:
+                          type: string
+                          example: "test 중인 캡슐1"
+                        open_date:
+                          type: string
+                          format: date
+                          example: "2024-02-16"
+                        dear_name:
+                          type: string
+                          example: "위트"
+                        theme:
+                          type: string
+                          example: "1"
+                        content_type:
+                          type: string
+                          example: "1"
+                        text_img_data:
+                          type: array
+                          items:
+                            - type: object
+                              properties:
+                                body:
+                                  type: string
+                                  example: "안녕"
+                                image_url:
+                                  type: string
+                                  example: null
+                            - type: object
+                              properties:
+                                body:
+                                  type: string
+                                  example: null
+                                image_url:
+                                  type: string
+                                  example: "이미지URL1"
+                            - type: object
+                              properties:
+                                body:
+                                  type: string
+                                  example: null
+                                image_url:
+                                  type: string
+                                  example: "이미지URL2"
+                            - type: object
+                              properties:
+                                body:
+                                  type: string
+                                  example: "이 사진들 기억나?"
+                                image_url:
+                                  type: string
+                                  example: null
+                        voice_data:
+                          type: array
+                          items:
+                            type: object
+                            properties:
+                              voice_url:
+                                type: string
+                                example: null
         "400":
           description: Bad Request
           content:
@@ -424,17 +469,25 @@ paths:
       examples:
         success:
           value:
-            - capsule_name: "user123_2432432"
-              password: "1568185"
-              capsules:
-                - capsule_number: "user123_2432432"
-                  pcapsule_name: "캡슐 1"
-                  open_date: "2025-01-01"
-                  dear_name: "위트"
-                  theme: "1"
-                  content_type: "1"
-                  body: "너랑 함께해서 어쩌고저쩌고"
-                  text_image_id: "123456"
+            capsule_name: "test 중인 캡슐1"
+            password: "123456"
+            capsules:
+              - capsule_number: "testMember1_74177"
+                pcapsule_name: "test 중인 캡슐1"
+                open_date: "2024-02-16"
+                dear_name: "위트"
+                theme: "1"
+                content_type: "1"
+                text_img_data:
+                  - body: "안녕"
+                    image_url: null
+                  - body: null
+                    image_url: "이미지URL1"
+                  - body: null
+                    image_url: "이미지URL2"
+                  - body: "이 사진들 기억나?"
+                    image_url: null
+                voice_data: []
         error:
           value:
             status: 400
@@ -793,7 +846,7 @@ paths:
                     type: string
                     example: "Internal Server Error. 관리자에게 문의하세요."
 
-# [POST] 롤링페이퍼 글/사진 메세지 추가
+  # [POST] 롤링페이퍼 글/사진 메세지 추가
   /rcapsule/text_photo/{rcapsule_number}:
     post:
       tags:

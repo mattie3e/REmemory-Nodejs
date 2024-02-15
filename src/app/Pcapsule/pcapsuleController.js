@@ -49,8 +49,6 @@ export const readPcs_c = async (req, res, next) => {
 	try {
 		const capsuleNumber = req.query.capsule_number;
 		const capsulePassword = req.query.pcapsule_password;
-		console.log(capsuleNumber);
-		console.log(capsulePassword);
 
 		const data = await readPcs_s(capsuleNumber, capsulePassword);
 
