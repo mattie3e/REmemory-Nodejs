@@ -53,7 +53,6 @@ export const getUserInfos = async (userId) => {
 		return {
 			userId: userInfo.id,
 			email: userInfo.email,
-			gender: userInfo.gender,
 			nickname: userInfo.nickname,
 		};
 	}
