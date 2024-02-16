@@ -13,10 +13,13 @@ import {
 
 export const rcapsuleRouter = express.Router();
 
+//캡슐 생성
 rcapsuleRouter.post("/create", asyncHandler(createRcapsule));
 
+//비밀번호 설정
 rcapsuleRouter.patch("/:rcapsule_id", asyncHandler(setRcapsulePw));
 
+//음성 쓰기
 rcapsuleRouter.post(
 	"/voice/:rcapsule_number",
 	upload.single("voice_rcapsule"),
@@ -27,7 +30,7 @@ rcapsuleRouter.post(
 rcapsuleRouter.get("/rcapsule/info", asyncHandler(readNumNUrl_c));
 
 //url 들어왔을 시
-rcapsuleRouter.get("/rcapsule_number", asyncHandler(readDear_c));
+rcapsuleRouter.get("/:rcapsule_number", asyncHandler(readDear_c));
 
 //글&사진 쓰기
 rcapsuleRouter.post(
