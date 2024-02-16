@@ -1,7 +1,7 @@
 export const insertPcapsule_d = async (connection, data) => {
 	const query = `INSERT INTO pcapsule 
-   (time_capsule_id, capsule_number, pcapsule_password, pcapsule_name, open_date, dear_name, theme, content_type, status, created_at, updated_at) 
-   VALUES (?,?,?,?,?,?,?,?,?,?,?);`;
+  (time_capsule_id, capsule_number, pcapsule_password, pcapsule_name, open_date, dear_name, theme, content_type, status, created_at, updated_at) 
+  VALUES (?,?,?,?,?,?,?,?,?,?,?);`;
 	const [insertPcapsuleRow] = await connection.query(query, [
 		...data,
 		"LOCKED", // status 추가
@@ -137,6 +137,7 @@ export const saveTextImage = async (
 		new Date(),
 		new Date(),
 	]);
+	console.log("Dao saveTextImage: ", result);
 	return result.insertId;
 };
 

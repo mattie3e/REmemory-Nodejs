@@ -16,14 +16,11 @@ export const pcapsuleRouter = express.Router();
 
 pcapsuleRouter.post("/create", asyncHandler(createPcs_c));
 
-pcapsuleRouter.post(
-	"/text_image/:pcapsule_number",
-	asyncHandler(addTextImage_c),
-);
+pcapsuleRouter.post("/create/text_image", asyncHandler(addTextImage_c));
 
 // 음성 저장 라우트
 pcapsuleRouter.post(
-	"/voice/:pcapsule_number",
+	"/create/voice",
 	upload.single("voice_pcapsule"),
 	asyncHandler(addVoice_c),
 );
