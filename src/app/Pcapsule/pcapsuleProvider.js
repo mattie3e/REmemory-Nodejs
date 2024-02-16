@@ -45,65 +45,6 @@ export const savePassword_p = async (capsule_number, pcapsule_password) => {
 	}
 };
 
-// text_image or voice data 생성
-export const createContent_p = async (
-	content_type,
-	contents,
-	pcapsule_id,
-	align_type,
-) => {
-	const connection = await pool.getConnection(async (conn) => conn);
-
-	let text_image_id = null;
-	let voice_id = null;
-
-	try {
-		if (content_type === 1) {
-			// 프론트 예시
-			// contents:
-			//  [
-			//    {type: 'text', content: '안녕'},
-			//    {type: 'image', content: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABMA…kakDsHxpPTEAbA/7800saP21M9FC5t1EGAAAAAElFTkSuQmCC'},
-			//    {type: 'image', content: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABMA…kakDsHxpPTEAbA/7800saP21M9FC5t1EGAAAAAElFTkSuQmCC'},
-			//    {type: 'text', content: '이 사진 기억나?'}
-			//  ]
-			for (let i = 0; i < contents.length; i++) {
-				const value = contents[i];
-				if (value.type === "text") {
-					text_image_id = await saveTextImage(
-						connection,
-						pcapsule_id,
-						value.content, // 텍스트인 경우 content를 사용
-						null, // 이미지인 경우 null로 처리
-						align_type, // align_type 전달
-					);
-				} else if (value.type === "image") {
-					text_image_id = await saveTextImage(
-						connection,
-						pcapsule_id,
-						null, // 텍스트인 경우 null로 처리
-						value.content, // 이미지인 경우 content를 사용
-						align_type, // align_type 전달
-					);
-				}
-				if (!text_image_id) throw new Error("Failed to save text content");
-			}
-		} else if (content_type === 2) {
-			const { voice_url } = contents;
-			voice_id = await saveVoice(connection, pcapsule_id, voice_url);
-		}
-
-		await connection.commit();
-	} catch (error) {
-		await connection.rollback();
-		throw error;
-	} finally {
-		connection.release();
-	}
-
-	return { text_image_id, voice_id };
-};
-
 // 캡슐 상태변경
 export const updateOpenedStatus_p = async () => {
 	await updateOpenedStatus_d();

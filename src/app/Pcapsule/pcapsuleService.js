@@ -8,14 +8,16 @@ import {
 	insertPcapsule_d,
 	insertCapsuleNum_d,
 	retrieveCapsule_d,
-	checkPasswordValidity,
-	retrieveText_image,
-	retrieveVoice,
-	updateCapsuleStatus,
 	retrievetxt_img_idBypcapsule_id,
 	retrievevoice_idBypcapsule_id,
+	checkPasswordValidity,
+	getPcapsuleId,
+	saveTextImage,
+	saveVoice,
+	updateCapsuleStatus,
 } from "./pcapsuleDao.js";
 import { BADFAMILY } from "dns";
+import { text } from "express";
 
 // 캡슐 생성
 export const createPcs_s = async (body, nickname, userId) => {
@@ -26,8 +28,8 @@ export const createPcs_s = async (body, nickname, userId) => {
 		dear_name,
 		theme,
 		content_type,
-		contents,
-		align_type,
+		// contents,
+		// align_type,
 	} = body;
 	const requiredFields = [
 		"pcapsule_name",
@@ -35,8 +37,8 @@ export const createPcs_s = async (body, nickname, userId) => {
 		"dear_name",
 		"theme",
 		"content_type",
-		"contents", // 글사진 or 음성 데이터
-		"align_type",
+		// "contents", // 글사진 or 음성 데이터
+		// "align_type",
 	];
 
 	requiredFields.forEach((field) => {
@@ -68,22 +70,101 @@ export const createPcs_s = async (body, nickname, userId) => {
 			dear_name,
 			theme,
 			content_type,
-			//content_type === 1 ? text_image_id : null,
-			//content_type === 2 ? voice_id : null,
 		];
-		const pcapsule_id = await insertPcapsule_d(connection, insertData);
-
-		await connection.commit();
-		const { text_image_id, voice_id } = await createContent_p(
-			content_type,
-			contents,
-			pcapsule_id,
-			align_type,
-		);
+		await insertPcapsule_d(connection, insertData);
 
 		await connection.commit();
 
 		return { capsule_number };
+	} catch (error) {
+		await connection.rollback();
+		throw error;
+	} finally {
+		connection.release();
+	}
+};
+
+export const addTextImage_s = async (
+	textImageContent,
+	capsule_number,
+	align_type,
+) => {
+	const connection = await pool.getConnection(async (conn) => conn);
+	try {
+		connection.beginTransaction();
+
+		// 캡슐 존재 확인
+		const isExistCapsule = await checkCapsuleNum_d(connection, capsule_number);
+
+		if (!isExistCapsule) {
+			throw new BaseError(status.CAPSULE_NOT_FOUND);
+		}
+
+		const pcapsuleId = await getPcapsuleId(connection, capsule_number);
+
+		let textImageId = null;
+		// 프론트 예시
+		// contents:
+		//  [
+		//    {type: 'text', content: '안녕'},
+		//    {type: 'image', content: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABMA…kakDsHxpPTEAbA/7800saP21M9FC5t1EGAAAAAElFTkSuQmCC'},
+		//    {type: 'image', content: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABMA…kakDsHxpPTEAbA/7800saP21M9FC5t1EGAAAAAElFTkSuQmCC'},
+		//    {type: 'text', content: '이 사진 기억나?'}
+		//  ]
+		for (let i = 0; i < textImageContent.length; i++) {
+			const value = textImageContent[i];
+			if (value.type === "text") {
+				textImageId = await saveTextImage(
+					connection,
+					pcapsuleId,
+					value.content, // 텍스트인 경우 값 저장
+					null,
+					align_type,
+				);
+			} else if (value.type === "image") {
+				textImageId = await saveTextImage(
+					connection,
+					pcapsuleId,
+					null,
+					value.content, // 이미지인 경우 값 저장
+					align_type,
+				);
+			}
+			if (!textImageId) throw new Error("Failed to save text content");
+		}
+
+		await connection.commit();
+
+		return { textImageId };
+	} catch (error) {
+		await connection.rollback();
+		throw error;
+	} finally {
+		connection.release();
+	}
+};
+
+export const addVoice_s = async (voiceFile, capsule_number) => {
+	// 파일 처리 및 pcapsule ID와 연결
+	const voiceUrl = voiceFile.location; // multer-s3를 사용할 경우 파일 UR
+
+	const connection = await pool.getConnection(async (conn) => conn);
+	try {
+		connection.beginTransaction();
+
+		// 캡슐 존재 확인
+		const isExistCapsule = await checkCapsuleNum_d(connection, capsule_number);
+
+		if (!isExistCapsule) {
+			throw new BaseError(status.CAPSULE_NOT_FOUND);
+		}
+
+		const pcapsuleId = await getPcapsuleId(connection, capsule_number); // pcapsuleNumber를 이용해 pcapsuleId를 찾는 함수
+
+		const result = await saveVoice(connection, pcapsuleId, voiceUrl);
+
+		await connection.commit();
+		return result;
 	} catch (error) {
 		await connection.rollback();
 		throw error;
@@ -120,15 +201,17 @@ export const readPcs_s = async (capsuleNumber, capsulePassword) => {
 		// 캡슐 정보 조회
 		const pcapsuleData = await retrieveCapsule_d(connection, capsuleNumber);
 
+		// 상세정보를 전부 반환하지 않고 일부만 반환
 		const responseData = {
 			capsule_number: pcapsuleData.capsule_number,
 			pcapsule_name: pcapsuleData.pcapsule_name,
 			open_date: pcapsuleData.open_date,
 			dear_name: pcapsuleData.dear_name,
 			theme: pcapsuleData.theme,
+			// content_type 반환하도록 추가
+			content_type: pcapsuleData.content_type,
 			// status 반환하도록 추가
 			status: pcapsuleData.status,
-			// 상세정보를 전부 반환하지 않고 일부만 반환
 		};
 
 		await connection.commit();
@@ -171,7 +254,6 @@ export const readDetailPcs_s = async (capsuleNumber, capsulePassword) => {
 
 		// 캡슐 정보 조회
 		const pcapsuleData = await retrieveCapsule_d(connection, capsuleNumber);
-
 		// 추가된 로직: opened 상태의 캡슐만 반환
 		if (pcapsuleData.status !== "OPENED") {
 			throw new BaseError(status.CAPSULE_NOT_OPENED);
@@ -179,6 +261,7 @@ export const readDetailPcs_s = async (capsuleNumber, capsulePassword) => {
 
 		let text_img_data = null;
 		let voice_data = null;
+		let align_type = null;
 
 		// 배열 형식으로 조회 값 저장, 반환하는 로직으로 변경
 		if (pcapsuleData.content_type === 1) {
@@ -186,6 +269,9 @@ export const readDetailPcs_s = async (capsuleNumber, capsulePassword) => {
 				connection,
 				pcapsuleData.id,
 			);
+
+			align_type = text_img_data[0].align_type;
+
 			text_img_data = text_img_data.map((row) => ({
 				body: row.body,
 				image_url: row.image_url,
@@ -195,7 +281,6 @@ export const readDetailPcs_s = async (capsuleNumber, capsulePassword) => {
 				connection,
 				pcapsuleData.id,
 			);
-			voice_data = voice_data.map((row) => ({ voice_url: row.voice_url }));
 		}
 
 		const retrieveData = {
@@ -207,6 +292,7 @@ export const readDetailPcs_s = async (capsuleNumber, capsulePassword) => {
 			content_type: pcapsuleData.content_type,
 			text_img_data,
 			voice_data,
+			align_type,
 		};
 
 		await connection.commit();

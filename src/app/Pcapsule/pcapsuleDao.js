@@ -1,16 +1,17 @@
 export const insertPcapsule_d = async (connection, data) => {
 	const query = `INSERT INTO pcapsule 
-    (time_capsule_id, capsule_number, pcapsule_password, pcapsule_name, open_date, dear_name, theme, content_type, status, created_at, updated_at) 
-    VALUES (?,?,?,?,?,?,?,?,?,?,?);`;
+  (time_capsule_id, capsule_number, pcapsule_password, pcapsule_name, open_date, dear_name, theme, content_type, status, created_at, updated_at) 
+  VALUES (?,?,?,?,?,?,?,?,?,?,?);`;
 	const [insertPcapsuleRow] = await connection.query(query, [
 		...data,
 		"LOCKED", // status 추가
 		new Date(),
 		new Date(),
 	]);
+	// return insertPcapsuleRow[0];
 	return insertPcapsuleRow.insertId; //, ...insertPcapsuleRow[0] };
 };
-///////
+
 // 캡슐 비밀번호 생성
 export const savePassword_d = async (
 	connection,
@@ -136,6 +137,7 @@ export const saveTextImage = async (
 		new Date(),
 		new Date(),
 	]);
+	console.log("Dao saveTextImage: ", result);
 	return result.insertId;
 };
 
@@ -148,4 +150,11 @@ export const saveVoice = async (connection, pcapsule_id, voice_url) => {
 		new Date(),
 	]);
 	return result.insertId;
+};
+
+export const getPcapsuleId = async (connection, capsule_number) => {
+	const query = `SELECT id FROM pcapsule WHERE capsule_number = ?;`;
+	const [result] = await connection.query(query, capsule_number);
+	console.log("getRcapsuleId : ", result[0]);
+	return result[0].id;
 };
