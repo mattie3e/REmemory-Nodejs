@@ -12,7 +12,6 @@ import {
 	addVoice_s,
 } from "./pcapsuleService.js";
 import { savePassword_p } from "./pcapsuleProvider.js";
-import { checkCapsuleNum_d } from "./pcapsuleDao.js";
 
 // API Name : pcapsule 생성 API
 // [POST] /create
@@ -47,7 +46,11 @@ export const addTextImage_c = async (req, res, next) => {
 			capsule_number,
 			align_type,
 		);
-		res.send(result);
+		res.send(
+			response(status.SUCCESS, {
+				result,
+			}),
+		);
 	} catch (error) {
 		next(error);
 	}
@@ -59,7 +62,11 @@ export const addVoice_c = async (req, res, next) => {
 		const voiceFile = req.file;
 		const capsule_number = req.body.capsule_number;
 		const result = await addVoice_s(voiceFile, capsule_number);
-		res.send(result);
+		res.send(
+			response(status.SUCCESS, {
+				result,
+			}),
+		);
 	} catch (error) {
 		next(error);
 	}

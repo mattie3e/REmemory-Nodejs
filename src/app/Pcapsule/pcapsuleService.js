@@ -146,7 +146,7 @@ export const addTextImage_s = async (
 
 export const addVoice_s = async (voiceFile, capsule_number) => {
 	// 파일 처리 및 pcapsule ID와 연결
-	const voiceUrl = voiceFile.location; // multer-s3를 사용할 경우 파일 URL
+	const voiceUrl = voiceFile.location; // multer-s3를 사용할 경우 파일 UR
 
 	const connection = await pool.getConnection(async (conn) => conn);
 	try {
@@ -160,7 +160,9 @@ export const addVoice_s = async (voiceFile, capsule_number) => {
 		}
 
 		const pcapsuleId = await getPcapsuleId(connection, capsule_number); // pcapsuleNumber를 이용해 pcapsuleId를 찾는 함수
+
 		const result = await saveVoice(connection, pcapsuleId, voiceUrl);
+
 		await connection.commit();
 		return result;
 	} catch (error) {
@@ -199,15 +201,17 @@ export const readPcs_s = async (capsuleNumber, capsulePassword) => {
 		// 캡슐 정보 조회
 		const pcapsuleData = await retrieveCapsule_d(connection, capsuleNumber);
 
+		// 상세정보를 전부 반환하지 않고 일부만 반환
 		const responseData = {
 			capsule_number: pcapsuleData.capsule_number,
 			pcapsule_name: pcapsuleData.pcapsule_name,
 			open_date: pcapsuleData.open_date,
 			dear_name: pcapsuleData.dear_name,
 			theme: pcapsuleData.theme,
+			// content_type 반환하도록 추가
+			content_type: pcapsuleData.content_type,
 			// status 반환하도록 추가
 			status: pcapsuleData.status,
-			// 상세정보를 전부 반환하지 않고 일부만 반환
 		};
 
 		await connection.commit();
@@ -277,7 +281,6 @@ export const readDetailPcs_s = async (capsuleNumber, capsulePassword) => {
 				connection,
 				pcapsuleData.id,
 			);
-			voice_data = voice_data.map((row) => ({ voice_url: row.voice_url }));
 		}
 
 		const retrieveData = {
