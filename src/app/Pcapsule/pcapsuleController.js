@@ -16,13 +16,16 @@ import { savePassword_p } from "./pcapsuleProvider.js";
 // API Name : pcapsule 생성 API
 // [POST] /create
 export const createPcs_c = async (req, res, next) => {
-	// body: pcapsule_name, open_date, dear_name, theme, content_type, content
-	// content 지우기
+	// body: pcapsule_name, open_date, dear_name, theme, content_type
 	try {
 		const userId = req.query.userId;
+		console.log("createPcs_c userId: ", userId);
 		const userInfos = await getUserInfos(userId);
+		console.log("createPcs_c userInfo: ", userInfos);
 		const nickname = userInfos.nickname;
+		console.log("createPcs_c nickname: ", nickname);
 		const data = await createPcs_s(req.body, nickname, userId);
+		console.log("createPcs_c data: ", data);
 		res.send(
 			response(status.SUCCESS, {
 				...data,

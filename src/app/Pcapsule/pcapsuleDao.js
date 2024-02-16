@@ -29,12 +29,11 @@ export const savePassword_d = async (
 export const insertCapsuleNum_d = async (
 	connection,
 	capsule_number,
-	member_id,
+	user_id,
 ) => {
-	//member_id 있어야합니다. 어디선가 로그인되어 있는 현재 유저의 memeber id 가져와서 같이 넣어줘야 해요.
 	const query = `INSERT INTO time_capsule (member_id, capsule_number, total_cnt) VALUES (?,?,?);`;
 	const [insertTimeCapsuleRow] = await connection.query(query, [
-		member_id,
+		user_id,
 		capsule_number,
 		1,
 	]); //total_cnt는 그냥 1넣었는데 나중에 수정해야해요.
