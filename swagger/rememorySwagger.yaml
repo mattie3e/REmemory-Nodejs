@@ -5,6 +5,12 @@ paths:
         - Pcapsule
       summary: Create a new pcapsule
       parameters:
+        - in: query
+          name: userId
+          description: 스웨거 테스트용 user ID 입력칸
+          schema:
+            type: int
+            example: 1
         - name: create
           in: body
           required: true
@@ -13,16 +19,16 @@ paths:
             properties:
               pcapsule_name:
                 type: string
-                description: Name of the pcapsule
+                description: pcapsule 이름
                 example: "캡슐 1"
               open_date:
                 type: string
                 format: date
-                description: Opening date of the pcapsule
-                example: "2024-02-15"
+                description: 캡슐 오픈 시기
+                example: "2024-02-17"
               dear_name:
                 type: string
-                description: Name of the recipient
+                description: 받는 사람
                 example: "위트"
               theme:
                 type: integer
@@ -30,29 +36,8 @@ paths:
                 example: 1
               content_type:
                 type: integer
-                description: Type of content (1 for text/image, 2 for voice)
+                description: (1 글사진, 2 음성)
                 example: 1
-              contents:
-                type: array
-                items:
-                  type: object
-                  properties:
-                    type:
-                      type: string
-                    content:
-                      type: string
-                example:
-                  [
-                    { type: "text", content: "안녕" },
-                    { type: "image", content: "이미지 URL1" },
-                    { type: "image", content: "이미지 URL2" },
-                    { type: "text", content: "이 사진 기억나?" },
-                  ]
-              align_type:
-                type: string
-                enum: ["left", "center", "right"]
-                description: Alignment type for the content
-                example: "left"
       responses:
         "200":
           description: Pcapsule creation successful
@@ -78,24 +63,10 @@ paths:
                     example:
                       {
                         "pcapsule_name": "캡슐 1",
-                        "open_date": "2024-02-15",
+                        "open_date": "2024-02-17",
                         "dear_name": "위트",
                         "theme": 1,
                         "content_type": 1,
-                        "contents":
-                          [
-                            { type: "text", content: "안녕" },
-                            {
-                              type: "image",
-                              content: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABMA…kakDsHxpPTEAbA/7800saP21M9FC5t1EGAAAAAElFTkSuQmCC",
-                            },
-                            {
-                              type: "image",
-                              content: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABMA…kakDsHxpPTEAbA/7800saP21M9FC5t1EGAAAAAElFTkSuQmCC",
-                            },
-                            { type: "text", content: "이 사진 기억나?" },
-                          ],
-                        "align_type": "left",
                       }
         "400":
           description: Bad Request
