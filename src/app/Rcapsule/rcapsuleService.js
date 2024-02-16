@@ -98,9 +98,10 @@ export const readDear_s = async (capsuleNumber) => {
 //post textNphotos * photo 파일 변환하기 * error
 export const createText_s = async (imageurl, capsule_number, body) => {
 	const connection = await pool.getConnection(async (conn) => conn);
-	const { from_name, content_type, theme, text } = body;
+	// const { from_name, content_type, theme, text } = body;
+	const { from_name, content_type, text } = body;
 
-	const requiredFields = ["from_name", "content_type", "theme"];
+	const requiredFields = ["from_name", "content_type"];
 
 	requiredFields.forEach((field) => {
 		if (!body.hasOwnProperty(field)) {
@@ -117,22 +118,10 @@ export const createText_s = async (imageurl, capsule_number, body) => {
 	try {
 		connection.beginTransaction();
 
-		//capsule 존재 확인
-		// const isExistCapsule = await checkRcapsule_d(connection, capsule_number);
-		// if (!isExistCapsule) {
-		//    throw new BaseError(status.CAPSULE_NOT_FOUND);
-		// }
-
 		const rcapsule_id = await getRcapsuleId(connection, capsule_number);
 
 		// await setRcapsuleWriter(connection, rcapsule_id, from_name, content_type);
-		await setRcapsuleWriter_n(
-			connection,
-			rcapsule_id,
-			from_name,
-			theme,
-			content_type,
-		);
+		await setRcapsuleWriter_n(connection, rcapsule_id, from_name, content_type);
 
 		const writer_id = await getWriterId(connection, rcapsule_id);
 		console.log("writer_id : ", writer_id);
@@ -171,8 +160,7 @@ export const postRcapsule = async (body, nickname, userId) => {
 	console.log("body 추출 : ", rcapsule_name, open_date, dear_name, theme);
 
 	const capsule_number = await createCapsuleNum_r(nickname);
-	const rcapsule_url = `${process.env.FRONT_DOMAIN}/rcapsule_number=${capsule_number}`;
-	//url 생성 (프론트 배포 링크 기준이 되어야 할듯)
+	const rcapsule_url = `${process.env.FRONT_DOMAIN}/capsule/write/rolling/rcapsule_number=${capsule_number}`;
 
 	const connection = await pool.getConnection(async (conn) => conn);
 	try {
@@ -252,7 +240,8 @@ export const setPassword_s = async (body, rcapsule_id) => {
 export const addVoiceLetter_s = async (voiceUrl, capsule_number, body) => {
 	const connection = await pool.getConnection(async (conn) => conn);
 
-	const { from_name, content_type, theme } = body;
+	// const { from_name, content_type, theme } = body;
+	const { from_name, content_type } = body;
 	// console.log(
 	//    "***rcapsuleService.js***\n\n voiceUrl :",
 	//    voiceUrl,
@@ -262,7 +251,8 @@ export const addVoiceLetter_s = async (voiceUrl, capsule_number, body) => {
 	//    body,
 	// );
 
-	const requiredFields = ["from_name", "theme", "content_type"];
+	// const requiredFields = ["from_name", "theme", "content_type"];
+	const requiredFields = ["from_name", "content_type"];
 
 	requiredFields.forEach((field) => {
 		if (!body.hasOwnProperty(field)) {
@@ -282,13 +272,14 @@ export const addVoiceLetter_s = async (voiceUrl, capsule_number, body) => {
 		const rcapsule_id = await getRcapsuleId(connection, capsule_number);
 		console.log("rcapsule_id", rcapsule_id);
 
-		await setRcapsuleWriter_n(
-			connection,
-			rcapsule_id,
-			from_name,
-			theme,
-			content_type,
-		);
+		// await setRcapsuleWriter_n(
+		// 	connection,
+		// 	rcapsule_id,
+		// 	from_name,
+		// 	theme,
+		// 	content_type,
+		// );
+		await setRcapsuleWriter_n(connection, rcapsule_id, from_name, content_type);
 
 		const writer_id = await getWriterId(connection, rcapsule_id);
 		console.log("writer_id : ", writer_id);

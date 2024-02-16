@@ -86,16 +86,16 @@ export const insertTimeCapsule = async (connection, capsule_number, userId) => {
 
 export const getTimeCapsuleId = async (connection, capsule_number) => {
 	const query = `SELECT id
-FROM time_capsule
-WHERE capsule_number = ?;`;
+  FROM time_capsule
+  WHERE capsule_number = ?;`;
 	const [result] = await connection.query(query, capsule_number);
 	return result[0].id;
 };
 
 export const insertRcapsule = async (connection, insertData) => {
 	const query = `INSERT INTO rcapsule 
- (id, time_capsule_id, capsule_number, rcapsule_name, rcapsule_password, rcapsule_cnt, url, open_date, dear_name, theme, status, created_at, updated_at)
- VALUES (NULL, ?, ?, ?, NULL, NULL, ?, ?, ?, ?, ?, ?, ?);`;
+  (id, time_capsule_id, capsule_number, rcapsule_name, rcapsule_password, rcapsule_cnt, url, open_date, dear_name, theme, status, created_at, updated_at)
+  VALUES (NULL, ?, ?, ?, NULL, NULL, ?, ?, ?, ?, ?, ?, ?);`;
 	const [insertRcapsuleRow] = await connection.query(query, [
 		...insertData,
 		"LOCKED", // status
@@ -130,15 +130,13 @@ export const setRcapsuleWriter_n = async (
 	connection,
 	rcapsule_id,
 	from_name,
-	theme,
 	content_type,
 ) => {
-	const query = `INSERT INTO rcapsule_writer (id, rcapsule_id, from_name, theme, content_type, created_at, updated_at) 
-VALUES (null, ?, ?, ?, ?, ?, ?);`;
+	const query = `INSERT INTO rcapsule_writer (id, rcapsule_id, from_name, content_type, created_at, updated_at) 
+VALUES (null, ?, ?, ?, ?, ?);`;
 	const [result] = await connection.query(query, [
 		rcapsule_id,
 		from_name,
-		theme,
 		content_type,
 		new Date(),
 		new Date(),
@@ -149,7 +147,7 @@ VALUES (null, ?, ?, ?, ?, ?, ?);`;
 
 export const addVoiceLetter_d = async (connection, voiceUrl, writer_id) => {
 	const query = `INSERT INTO voice (id, pcapsule_id, rwcapsule_id, voice_url, created_at, updated_at)
-VALUES (null, null, ?, ?, ?, ?);`;
+  VALUES (null, null, ?, ?, ?, ?);`;
 	const [result] = await connection.query(query, [
 		writer_id,
 		voiceUrl,
@@ -192,8 +190,7 @@ WHERE tc.capsule_number = ?;`;
 
 export const checkRcapsule_d = async (connection, capsule_number) => {
 	const query = `SELECT CASE WHEN EXISTS (
-     SELECT capsule_number FROM rcapsule WHERE capsule_number = ?
- ) THEN 1 ELSE 0 END AS RESULT;`;
+  SELECT capsule_number FROM rcapsule WHERE capsule_number = ?) THEN 1 ELSE 0 END AS RESULT;`;
 
 	const [result] = await connection.query(query, [capsule_number]);
 	// console.log(result[0]); //-> [ { RESULT: 0 } ] 형태로 옴
