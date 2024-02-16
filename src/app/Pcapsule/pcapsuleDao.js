@@ -29,11 +29,11 @@ export const savePassword_d = async (
 export const insertCapsuleNum_d = async (
 	connection,
 	capsule_number,
-	user_id,
+	userId,
 ) => {
 	const query = `INSERT INTO time_capsule (member_id, capsule_number, total_cnt) VALUES (?,?,?);`;
 	const [insertTimeCapsuleRow] = await connection.query(query, [
-		user_id,
+		userId,
 		capsule_number,
 		1,
 	]); //total_cnt는 그냥 1넣었는데 나중에 수정해야해요.
@@ -136,7 +136,6 @@ export const saveTextImage = async (
 		new Date(),
 		new Date(),
 	]);
-	console.log("Dao saveTextImage: ", result);
 	return result.insertId;
 };
 
@@ -154,6 +153,5 @@ export const saveVoice = async (connection, pcapsule_id, voice_url) => {
 export const getPcapsuleId = async (connection, capsule_number) => {
 	const query = `SELECT id FROM pcapsule WHERE capsule_number = ?;`;
 	const [result] = await connection.query(query, capsule_number);
-	console.log("getRcapsuleId : ", result[0]);
 	return result[0].id;
 };

@@ -18,17 +18,17 @@ import {
 } from "./pcapsuleDao.js";
 
 // 캡슐 생성
-export const createPcs_s = async (body, nickname, userId) => {
-	const { pcapsule_name, open_date, dear_name, theme, content_type } = body;
+export const createPcs_s = async (body, nickname) => {
+	const { userId, pcapsule_name, open_date, dear_name, theme, content_type } =
+		body;
 	const requiredFields = [
+		"userId",
 		"pcapsule_name",
 		"open_date",
 		"dear_name",
 		"theme",
 		"content_type",
 	];
-
-	console.log("createPcs_s body: ", body);
 
 	requiredFields.forEach((field) => {
 		if (!body.hasOwnProperty(field)) {
@@ -170,7 +170,6 @@ export const readPcs_s = async (capsuleNumber, capsulePassword) => {
 
 		// 캡슐 존재 확인
 		const isExistCapsule = await checkCapsuleNum_d(connection, capsuleNumber);
-		console.log(isExistCapsule);
 
 		if (!isExistCapsule) {
 			throw new BaseError(status.CAPSULE_NOT_FOUND);

@@ -16,16 +16,12 @@ import { savePassword_p } from "./pcapsuleProvider.js";
 // API Name : pcapsule 생성 API
 // [POST] /create
 export const createPcs_c = async (req, res, next) => {
-	// body: pcapsule_name, open_date, dear_name, theme, content_type
+	// body: userId, pcapsule_name, open_date, dear_name, theme, content_type
 	try {
-		const userId = req.query.userId;
-		console.log("createPcs_c userId: ", userId);
-		const userInfos = await getUserInfos(userId);
-		console.log("createPcs_c userInfo: ", userInfos);
+		const userInfos = await getUserInfos(req.body.userId);
 		const nickname = userInfos.nickname;
-		console.log("createPcs_c nickname: ", nickname);
-		const data = await createPcs_s(req.body, nickname, userId);
-		console.log("createPcs_c data: ", data);
+		const data = await createPcs_s(req.body, nickname);
+
 		res.send(
 			response(status.SUCCESS, {
 				...data,
@@ -102,7 +98,6 @@ export const readPcs_c = async (req, res, next) => {
 			}),
 		);
 	} catch (error) {
-		console.log(error);
 		next(error);
 	}
 };
