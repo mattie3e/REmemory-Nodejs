@@ -67,7 +67,8 @@ export const readDear_s = async (capsuleNumber) => {
 	try {
 		connection.beginTransaction();
 
-		//캡슐 존재 확인
+		// 캡슐 존재 확인
+		// 오류때문에 잠깐 지움!************
 		const isExistCapsule = await checkRcapsule_d(connection, capsuleNumber);
 		if (!isExistCapsule) {
 			throw new BaseError(status.CAPSULE_NOT_FOUND);

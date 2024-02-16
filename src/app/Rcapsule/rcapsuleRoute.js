@@ -10,6 +10,7 @@ import {
 	readDear_c,
 	createText_c,
 	readRcs_c,
+	readRcs,
 } from "./rcapsuleController.js";
 
 export const rcapsuleRouter = express.Router();
@@ -31,7 +32,7 @@ rcapsuleRouter.post(
 rcapsuleRouter.get("/rcapsule/info", asyncHandler(readNumNUrl_c));
 
 //url 들어왔을 시
-rcapsuleRouter.get("/:rcapsule_number", asyncHandler(readDear_c));
+rcapsuleRouter.get("url_info/:rcapsule_number", asyncHandler(readDear_c));
 
 //글&사진 쓰기
 rcapsuleRouter.post(

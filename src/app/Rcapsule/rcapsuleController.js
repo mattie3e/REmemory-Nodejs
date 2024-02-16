@@ -54,6 +54,7 @@ export const readDear_c = async (req, res, next) => {
 	try {
 		const capsuleNumber = req.params.rcapsule_number;
 		console.log(capsuleNumber);
+		console.log(req.params);
 
 		const data = await readDear_s(capsuleNumber);
 
@@ -359,6 +360,7 @@ export const readRcs_c = async (req, res, next) => {
 		next(error);
 	}
 };
+
 
 // // API Name : rcapsule 상세조회 API
 // // [GET] /retrieveDetail
