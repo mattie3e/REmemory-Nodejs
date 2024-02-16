@@ -92,14 +92,7 @@ export const addTextImage_s = async (
 		const pcapsuleId = await getPcapsuleId(connection, capsule_number);
 
 		let textImageId = null;
-		// 프론트 예시
-		// contents:
-		//  [
-		//    {type: 'text', content: '안녕'},
-		//    {type: 'image', content: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABMA…kakDsHxpPTEAbA/7800saP21M9FC5t1EGAAAAAElFTkSuQmCC'},
-		//    {type: 'image', content: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABMA…kakDsHxpPTEAbA/7800saP21M9FC5t1EGAAAAAElFTkSuQmCC'},
-		//    {type: 'text', content: '이 사진 기억나?'}
-		//  ]
+
 		for (let i = 0; i < textImageContent.length; i++) {
 			const value = textImageContent[i];
 			if (value.type === "text") {
@@ -135,7 +128,7 @@ export const addTextImage_s = async (
 
 export const addVoice_s = async (voiceFile, capsule_number) => {
 	// 파일 처리 및 pcapsule ID와 연결
-	const voiceUrl = voiceFile.location; // multer-s3를 사용할 경우 파일 UR
+	const voiceUrl = voiceFile.location; // multer-s3를 사용할 경우 파일 URL
 
 	const connection = await pool.getConnection(async (conn) => conn);
 	try {
@@ -148,7 +141,8 @@ export const addVoice_s = async (voiceFile, capsule_number) => {
 			throw new BaseError(status.CAPSULE_NOT_FOUND);
 		}
 
-		const pcapsuleId = await getPcapsuleId(connection, capsule_number); // pcapsuleNumber를 이용해 pcapsuleId를 찾는 함수
+		// pcapsuleNumber를 이용해 pcapsuleId를 찾는 함수
+		const pcapsuleId = await getPcapsuleId(connection, capsule_number);
 
 		const result = await saveVoice(connection, pcapsuleId, voiceUrl);
 
@@ -292,70 +286,6 @@ export const readDetailPcs_s = async (capsuleNumber, capsulePassword) => {
 	} finally {
 		connection.release();
 	}
-
-	// 	if (pcapsuleData.content_type === 1) {
-	// 		const txtData = await retrievetxt_img_idBypcapsule_id(
-	// 			connection,
-	// 			pcapsuleData.id,
-	// 		);
-	// 		txt_img_Id = txtData.id;
-	// 	} else {
-	// 		const voiceData = await retrievevoice_idBypcapsule_id(
-	// 			connection,
-	// 			pcapsuleData.id,
-	// 		);
-	// 		voice_Id = voiceData.id;
-	// 	}
-
-	// 	const retrieveData = {
-	// 		capsule_number: pcapsuleData.capsule_number,
-	// 		pcapsule_name: pcapsuleData.pcapsule_name,
-	// 		open_date: pcapsuleData.open_date,
-	// 		dear_name: pcapsuleData.dear_name,
-	// 		theme: pcapsuleData.theme,
-	// 		content_type: pcapsuleData.content_type,
-	// 		txt_img_Id,
-	// 		voice_Id,
-	// 	};
-
-	// 	// content 가져오기
-	// 	if (pcapsuleData.content_type == 1 && pcapsuleData.text_image_id) {
-	// 		const textImageData = await retrieveText_image(
-	// 			connection,
-	// 			pcapsuleData.text_image_id,
-	// 		);
-
-	// 		if (textImageData.length > 0) {
-	// 			// text_image_id에 해당하는 데이터가 존재하는 경우
-
-	// 			retrieveData.text_image_body = textImageData.body;
-	// 			retrieveData.text_image_url = textImageData.image_url;
-	// 		} else {
-	// 			throw new BaseError(status.TEXT_IMAGE_NOT_FOUND);
-	// 		}
-	// 	}
-
-	// 	if (pcapsuleData.content_type == 2 && pcapsuleData.voice_id) {
-	// 		const voiceData = await retrieveVoice(connection, pcapsuleData.voice_id);
-
-	// 		if (voiceData.length > 0) {
-	// 			// voice_id에 해당하는 데이터가 존재하는 경우
-
-	// 			retrieveData.voice_url = voiceData.voice_url;
-	// 		} else {
-	// 			throw new BaseError(status.VOICE_NOT_FOUND);
-	// 		}
-	// 	}
-
-	// 	await connection.commit();
-
-	// 	return retrieveData;
-	// } catch (error) {
-	// 	await connection.rollback();
-	// 	throw error;
-	// } finally {
-	// 	connection.release();
-	// }
 };
 
 export const updatePcapsuleStatus_s = async (capsuleNumber, newStatus) => {
