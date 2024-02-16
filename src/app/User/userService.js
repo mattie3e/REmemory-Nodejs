@@ -23,59 +23,43 @@ export const userSignAction = async (userCheck, userInfo) => {
 			type: 1,
 			data: {
 				userId: userData.id,
-				email: userData.email,
 				nickname: userData.nickname,
 				...tokenInfo,
 			},
 		};
 	} else {
 		const userId = await insertUser(userInfo);
+		const tokenInfo = setUserJwt(userId);
 		const userData = await getUserInfos(userId);
 		return {
 			type: 0,
 			data: {
 				userId: userData.userId,
-				email: userData.email,
+				nickname: userData.nickname,
+				...tokenInfo,
 			},
 		};
 	}
 };
 
-export const setNickname = async (body, newUser) => {
-	const { userId, nickname, email } = body;
+export const setNickname = async (body) => {
+	const { userId, nickname } = body;
 	const bodyArr = [userId, nickname];
 
 	bodyArr.forEach((value) => {
 		if (!value) throw new BaseError(status.BAD_REQUEST);
 	});
 
-	const userInfoCheck = await getUserInfos(userId);
-	if (newUser) {
-		if (!email) throw new BaseError(status.BAD_REQUEST);
-		if (userInfoCheck.email != email) throw new BaseError(status.FORBIDDEN);
-		console.log(userInfoCheck.nickname);
-		if (userInfoCheck.nickname !== "") throw new BaseError(status.FORBIDDEN); // 이미 닉네임이 설정되어있는 경우
-	}
-
 	const result = await setUserNickname(userId, nickname);
 	if (result == -1) {
 		throw new BaseError(status.BAD_REQUEST);
 	} else {
 		const userInfo = await getUserInfos(userId);
-		const tokenInfo = setUserJwt(userId);
-		if (newUser) {
-			return {
-				userId: userInfo.userId,
-				email: userInfo.email,
-				nickname: userInfo.nickname,
-				...tokenInfo,
-			};
-		} else {
-			return {
-				userId: userInfo.userId,
-				nickname: userInfo.nickname,
-			};
-		}
+
+		return {
+			userId: userInfo.userId,
+			nickname: userInfo.nickname,
+		};
 	}
 };
 
