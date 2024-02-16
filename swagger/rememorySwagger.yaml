@@ -1116,6 +1116,114 @@ paths:
                   message:
                     type: string
                     example: "Internal Server Error. 관리자에게 문의하세요."
+  # 추가 rcapsule 조회, 상세조회
+  /rcapsule/retrieve:
+    get:
+      tags:
+        - Rcapsule
+      summary: rcapsule 조회 API
+      parameters:
+        - in: query
+          name: capsule_number
+          required: true
+          description: Capsule number
+          schema:
+            type: string
+            example: "testMember1_24389"
+        - in: query
+          name: rcapsule_password
+          required: true
+          description: Password for the rcapsule
+          schema:
+            type: integer
+            example: 298394
+      responses:
+        "200":
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    capsule_number:
+                      type: string
+                      example: "testMember1_24389"
+                    password:
+                      type: string
+                      example: "298394"
+        "400":
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: integer
+                    example: 400
+                  isSuccess:
+                    type: boolean
+                    example: false
+                  code:
+                    type: string
+                    example: "COMMON001"
+                  message:
+                    type: string
+                    example: "Bad Request"
+        "404":
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: integer
+                    example: 404
+                  isSuccess:
+                    type: boolean
+                    example: false
+                  code:
+                    type: string
+                    example: "CAPSULE4001"
+                  message:
+                    type: string
+                    example: "Bad Request"
+        "500":
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: integer
+                    example: 500
+                  isSuccess:
+                    type: boolean
+                    example: false
+                  code:
+                    type: string
+                    example: "COMMON000"
+                  message:
+                    type: string
+                    example: "Internal Server Error, please contact the administrator."
+      examples:
+        success:
+          value:
+            - capsule_number: "testMember1_24389"
+              password: "298394"
+            - capsule_number: "testMember1_24389"
+              password: "298394"
+        error:
+          value:
+            status: 400
+            isSuccess: false
+            code: "COMMON001"
+            message: "Bad Request"
+
   # User
   /user/auth:
     get:
