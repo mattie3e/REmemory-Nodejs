@@ -3,20 +3,18 @@ paths:
     post:
       tags:
         - Pcapsule
-      summary: Create a new pcapsule
+      summary: pcapsule 생성 API
       parameters:
-        - in: query
-          name: userId
-          description: 스웨거 테스트용 user ID 입력칸
-          schema:
-            type: int
-            example: 1
         - name: create
           in: body
           required: true
           schema:
             type: object
             properties:
+              userId:
+                type: int
+                description: 유저 아이디
+                example: 1
               pcapsule_name:
                 type: string
                 description: pcapsule 이름
@@ -134,8 +132,8 @@ paths:
                 example:
                   [
                     { type: "text", content: "안녕" },
-                    { type: "image", content: "이미지 URL" },
-                    { type: "image", content: "이미지 URL" },
+                    { type: "image", content: "이미지 URL1" },
+                    { type: "image", content: "이미지 URL2" },
                     { type: "text", content: "이 사진 기억나?" },
                   ]
               align_type:
@@ -222,7 +220,7 @@ paths:
     post:
       tags:
         - Pcapsule
-      summary: 음성메시지 전송 API
+      summary: pcapsule 음성메시지 전송 API
       consumes:
         - multipart/form-data
       parameters:
@@ -301,7 +299,7 @@ paths:
     post:
       tags:
         - Pcapsule
-      summary: Save password for a pcapsule
+      summary: pcapsule 비밀번호 저장 API
       parameters:
         - name: savePassword
           in: body
@@ -386,7 +384,7 @@ paths:
     get:
       tags:
         - Pcapsule
-      summary: Retrieve pcapsule information
+      summary: pcapsule 조회 API
       parameters:
         - in: query
           name: capsule_number
@@ -492,7 +490,7 @@ paths:
     get:
       tags:
         - Pcapsule
-      summary: Retrieve detailed pcapsule information
+      summary: pcapsule 상세조회 API
       parameters:
         - in: query
           name: capsule_number
