@@ -1,5 +1,6 @@
 import express from "express";
 import asyncHandler from "express-async-handler";
+import upload from "../../../config/multer.js";
 
 import {
 	createPcs_c,
@@ -7,11 +8,22 @@ import {
 	readPcs_c,
 	readDetailPcs_c,
 	updatePcs_c,
+	addTextImage_c,
+	addVoice_c,
 } from "./pcapsuleController.js";
 
 export const pcapsuleRouter = express.Router();
 
 pcapsuleRouter.post("/create", asyncHandler(createPcs_c));
+
+pcapsuleRouter.post("/create/text_image", asyncHandler(addTextImage_c));
+
+// 음성 저장 라우트
+pcapsuleRouter.post(
+	"/create/voice",
+	upload.single("voice_pcapsule"),
+	asyncHandler(addVoice_c),
+);
 
 pcapsuleRouter.post("/create/savePassword", asyncHandler(savePassword_c));
 
