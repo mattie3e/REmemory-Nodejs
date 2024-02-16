@@ -23,19 +23,20 @@ export const userSignAction = async (userCheck, userInfo) => {
 			type: 1,
 			data: {
 				userId: userData.id,
-				email: userData.email,
 				nickname: userData.nickname,
 				...tokenInfo,
 			},
 		};
 	} else {
 		const userId = await insertUser(userInfo);
+		const tokenInfo = setUserJwt(userId);
 		const userData = await getUserInfos(userId);
 		return {
 			type: 0,
 			data: {
 				userId: userData.userId,
-				email: userData.email,
+				nickname: userData.nickname,
+				...tokenInfo,
 			},
 		};
 	}
