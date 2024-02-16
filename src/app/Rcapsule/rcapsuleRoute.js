@@ -9,6 +9,7 @@ import {
 	readNumNUrl_c,
 	readDear_c,
 	createText_c,
+	readRcs_c,
 } from "./rcapsuleController.js";
 
 export const rcapsuleRouter = express.Router();
@@ -38,3 +39,5 @@ rcapsuleRouter.post(
 	upload.single("photo_rcapsule"),
 	asyncHandler(createText_c),
 );
+
+rcapsuleRouter.get("/retrieve", asyncHandler(readRcs_c));

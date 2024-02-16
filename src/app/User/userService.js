@@ -1,4 +1,3 @@
-import { response } from "../../../config/response.js";
 import { status } from "../../../config/responseStatus.js";
 import { BaseError } from "../../../config/error.js";
 import {
@@ -25,7 +24,6 @@ export const userSignAction = async (userCheck, userInfo) => {
 			data: {
 				userId: userData.id,
 				email: userData.email,
-				gender: userData.gender,
 				nickname: userData.nickname,
 				...tokenInfo,
 			},
@@ -38,7 +36,6 @@ export const userSignAction = async (userCheck, userInfo) => {
 			data: {
 				userId: userData.userId,
 				email: userData.email,
-				gender: userData.gender,
 			},
 		};
 	}
@@ -70,7 +67,6 @@ export const setNickname = async (body, newUser) => {
 			return {
 				userId: userInfo.userId,
 				email: userInfo.email,
-				gender: userInfo.gender,
 				nickname: userInfo.nickname,
 				...tokenInfo,
 			};

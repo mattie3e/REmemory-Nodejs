@@ -11,6 +11,7 @@ import { userRouter } from "./src/app/User/userRoute.js";
 import { pcapsuleRouter } from "./src/app/Pcapsule/pcapsuleRoute.js";
 import { rcapsuleRouter } from "./src/app/Rcapsule/rcapsuleRoute.js";
 import { healthRoute } from "./src/app/Health/healthRoute.js";
+import { capsuleRouter } from "./src/app/Capsule/capsuleRoute.js";
 
 const app = expressConfig();
 const port = 3000;
@@ -25,6 +26,7 @@ app.get("/", (req, res, next) => {
 });
 
 app.use("/user", userRouter);
+app.use("/capsule", capsuleRouter);
 app.use("/pcapsule", pcapsuleRouter);
 app.use("/rcapsule", rcapsuleRouter);
 

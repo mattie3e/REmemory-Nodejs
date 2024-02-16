@@ -18,6 +18,9 @@ import {
 	getWriterId,
 	addVoiceLetter_d,
 	checkRcapsule_d,
+	checkCapsuleNum_d,
+	checkPasswordValidity,
+	retrieveCapsule_d,
 } from "./rcapsuleDao.js";
 
 import { createCapsuleNum_r } from "./rcapsuleProvider.js";
@@ -97,9 +100,10 @@ export const readDear_s = async (capsuleNumber) => {
 //post textNphotos * photo 파일 변환하기 * error
 export const createText_s = async (imageurl, capsule_number, body) => {
 	const connection = await pool.getConnection(async (conn) => conn);
-	const { from_name, content_type, theme, text } = body;
+	// const { from_name, content_type, theme, text } = body;
+	const { from_name, content_type, text } = body;
 
-	const requiredFields = ["from_name", "content_type", "theme"];
+	const requiredFields = ["from_name", "content_type"];
 
 	requiredFields.forEach((field) => {
 		if (!body.hasOwnProperty(field)) {
@@ -116,22 +120,10 @@ export const createText_s = async (imageurl, capsule_number, body) => {
 	try {
 		connection.beginTransaction();
 
-		//capsule 존재 확인
-		// const isExistCapsule = await checkRcapsule_d(connection, capsule_number);
-		// if (!isExistCapsule) {
-		// 	throw new BaseError(status.CAPSULE_NOT_FOUND);
-		// }
-
 		const rcapsule_id = await getRcapsuleId(connection, capsule_number);
 
 		// await setRcapsuleWriter(connection, rcapsule_id, from_name, content_type);
-		await setRcapsuleWriter_n(
-			connection,
-			rcapsule_id,
-			from_name,
-			theme,
-			content_type,
-		);
+		await setRcapsuleWriter_n(connection, rcapsule_id, from_name, content_type);
 
 		const writer_id = await getWriterId(connection, rcapsule_id);
 		console.log("writer_id : ", writer_id);
@@ -141,9 +133,9 @@ export const createText_s = async (imageurl, capsule_number, body) => {
 		await connection.commit();
 
 		// res.send(
-		// 	response(status.SUCCESS, {
-		// 		data: rCapsuleData,
-		// 	}),
+		//    response(status.SUCCESS, {
+		//       data: rCapsuleData,
+		//    }),
 		// );
 		return response(status.SUCCESS);
 	} catch (error) {
@@ -170,8 +162,7 @@ export const postRcapsule = async (body, nickname, userId) => {
 	console.log("body 추출 : ", rcapsule_name, open_date, dear_name, theme);
 
 	const capsule_number = await createCapsuleNum_r(nickname);
-	const rcapsule_url = `${process.env.FRONT_DOMAIN}/rcapsule_number=${capsule_number}`;
-	//url 생성 (프론트 배포 링크 기준이 되어야 할듯)
+	const rcapsule_url = `${process.env.FRONT_DOMAIN}/capsule/write/rolling/rcapsule_number=${capsule_number}`;
 
 	const connection = await pool.getConnection(async (conn) => conn);
 	try {
@@ -251,17 +242,19 @@ export const setPassword_s = async (body, rcapsule_id) => {
 export const addVoiceLetter_s = async (voiceUrl, capsule_number, body) => {
 	const connection = await pool.getConnection(async (conn) => conn);
 
-	const { from_name, content_type, theme } = body;
+	// const { from_name, content_type, theme } = body;
+	const { from_name, content_type } = body;
 	// console.log(
-	// 	"***rcapsuleService.js***\n\n voiceUrl :",
-	// 	voiceUrl,
-	// 	"capsule_number :",
-	// 	capsule_number,
-	// 	"body: ",
-	// 	body,
+	//    "***rcapsuleService.js***\n\n voiceUrl :",
+	//    voiceUrl,
+	//    "capsule_number :",
+	//    capsule_number,
+	//    "body: ",
+	//    body,
 	// );
 
-	const requiredFields = ["from_name", "theme", "content_type"];
+	// const requiredFields = ["from_name", "theme", "content_type"];
+	const requiredFields = ["from_name", "content_type"];
 
 	requiredFields.forEach((field) => {
 		if (!body.hasOwnProperty(field)) {
@@ -281,13 +274,14 @@ export const addVoiceLetter_s = async (voiceUrl, capsule_number, body) => {
 		const rcapsule_id = await getRcapsuleId(connection, capsule_number);
 		console.log("rcapsule_id", rcapsule_id);
 
-		await setRcapsuleWriter_n(
-			connection,
-			rcapsule_id,
-			from_name,
-			theme,
-			content_type,
-		);
+		// await setRcapsuleWriter_n(
+		// 	connection,
+		// 	rcapsule_id,
+		// 	from_name,
+		// 	theme,
+		// 	content_type,
+		// );
+		await setRcapsuleWriter_n(connection, rcapsule_id, from_name, content_type);
 
 		const writer_id = await getWriterId(connection, rcapsule_id);
 		console.log("writer_id : ", writer_id);
@@ -300,6 +294,138 @@ export const addVoiceLetter_s = async (voiceUrl, capsule_number, body) => {
 	} catch (error) {
 		await connection.rollback();
 		console.log("rcapsuleService.js error : ", error);
+		throw error;
+	} finally {
+		connection.release();
+	}
+};
+
+// rcapsule 조회 코드 추가
+
+//캡슐 조회
+export const readRcs_s = async (capsuleNumber, capsulePassword) => {
+	const connection = await pool.getConnection(async (conn) => conn);
+	try {
+		await connection.beginTransaction();
+
+		// 캡슐 존재 확인
+		const isExistCapsule = await checkCapsuleNum_d(connection, capsuleNumber);
+
+		if (!isExistCapsule) {
+			throw new BaseError(status.CAPSULE_NOT_FOUND);
+		}
+
+		// 패스워드 확인
+		const isPasswordValid = await checkPasswordValidity(
+			connection,
+			capsuleNumber,
+			capsulePassword,
+		);
+
+		if (!isPasswordValid) {
+			throw new BaseError(status.CAPSULE_PASSWORD_WRONG);
+		}
+
+		// 캡슐 정보 조회
+		const rcapsuleData = await retrieveCapsule_d(connection, capsuleNumber);
+
+		// 상세정보를 전부 반환하지 않고 일부만 반환
+		const responseData = {
+			capsule_number: rcapsuleData.capsule_number,
+			rcapsule_name: rcapsuleData.rcapsule_name,
+			rcapsule_cnt: rcapsuleData.rcapsule_cnt,
+			open_date: rcapsuleData.open_date,
+			dear_name: rcapsuleData.dear_name,
+			theme: rcapsuleData.theme,
+			status: rcapsuleData.status,
+		};
+
+		await connection.commit();
+
+		return responseData;
+	} catch (error) {
+		await connection.rollback();
+		throw error;
+	} finally {
+		connection.release();
+	}
+};
+
+//캡슐 상세조회
+export const readDetailRcs_s = async (capsuleNumber, capsulePassword) => {
+	const connection = await pool.getConnection(async (conn) => conn);
+	try {
+		await connection.beginTransaction();
+
+		// 캡슐 존재 확인
+		const isExistCapsule = await checkCapsuleNum_d(connection, capsuleNumber);
+
+		if (!isExistCapsule) {
+			throw new BaseError(status.CAPSULE_NOT_FOUND);
+		}
+
+		// 패스워드 확인
+		const isPasswordValid = await checkPasswordValidity(
+			connection,
+			capsuleNumber,
+			capsulePassword,
+		);
+
+		if (!isPasswordValid) {
+			throw new BaseError(
+				status.CAPSULE_PASSWORD_WRONG,
+				"패스워드가 잘못되었습니다.",
+			);
+		}
+
+		// 캡슐 정보 조회
+		const rcapsuleData = await retrieveCapsule_d(connection, capsuleNumber);
+		// 추가된 로직: opened 상태의 캡슐만 반환
+		if (rcapsuleData.status !== "OPENED") {
+			throw new BaseError(status.CAPSULE_NOT_OPENED);
+		}
+
+		let text_img_data = null;
+		let voice_data = null;
+		let align_type = null;
+
+		// 배열 형식으로 조회 값 저장, 반환하는 로직으로 변경
+		if (pcapsuleData.content_type === 1) {
+			text_img_data = await retrievetxt_img_idBypcapsule_id(
+				connection,
+				pcapsuleData.id,
+			);
+
+			align_type = text_img_data[0].align_type;
+
+			text_img_data = text_img_data.map((row) => ({
+				body: row.body,
+				image_url: row.image_url,
+			}));
+		} else if (pcapsuleData.content_type === 2) {
+			voice_data = await retrievevoice_idBypcapsule_id(
+				connection,
+				pcapsuleData.id,
+			);
+		}
+
+		const retrieveData = {
+			capsule_number: pcapsuleData.capsule_number,
+			pcapsule_name: pcapsuleData.pcapsule_name,
+			open_date: pcapsuleData.open_date,
+			dear_name: pcapsuleData.dear_name,
+			theme: pcapsuleData.theme,
+			content_type: pcapsuleData.content_type,
+			text_img_data,
+			voice_data,
+			align_type,
+		};
+
+		await connection.commit();
+
+		return retrieveData;
+	} catch (error) {
+		await connection.rollback();
 		throw error;
 	} finally {
 		connection.release();
