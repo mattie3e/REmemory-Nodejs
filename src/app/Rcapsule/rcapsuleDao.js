@@ -46,32 +46,32 @@ export const addTextImage_d = async (connection, imageurl, writer_id, text) => {
 VALUES (null, null, ?, ?, ?, ?, ?);`;
 	const [result] = await connection.query(query, [
 		writer_id,
-        text,
-        imageurl,
+		text,
+		imageurl,
 		new Date(),
 		new Date(),
 	]);
-    console.log("addTextImage_d : ", result[0]);
-    return result[0];
+	console.log("addTextImage_d : ", result[0]);
+	return result[0];
 };
 
 //theme이 왜 안 들어가 있는지..? -> 보류
 // export const setRcapsuleWriter = async (
-// 	connection,
-// 	rcapsule_id,
-// 	from_name,
-// 	content_type,
+//    connection,
+//    rcapsule_id,
+//    from_name,
+//    content_type,
 // ) => {
-// 	const query = `INSERT INTO rcapsule_writer (id, rcapsule_id, from_name, content_type, created_at, updated_at) 
+//    const query = `INSERT INTO rcapsule_writer (id, rcapsule_id, from_name, content_type, created_at, updated_at)
 // VALUES (null, ?, ?, ?, ?);`;
-// 	const [result] = await connection.query(query, [
-// 		rcapsule_id,
-// 		from_name,
-// 		content_type,
-// 		new Date(),
-// 		new Date(),
-// 	]);
-// 	return result[0];
+//    const [result] = await connection.query(query, [
+//       rcapsule_id,
+//       from_name,
+//       content_type,
+//       new Date(),
+//       new Date(),
+//    ]);
+//    return result[0];
 // };
 
 export const insertTimeCapsule = async (connection, capsule_number, userId) => {
@@ -93,16 +93,16 @@ export const getTimeCapsuleId = async (connection, capsule_number) => {
 };
 
 export const insertRcapsule = async (connection, insertData) => {
-    const query = `INSERT INTO rcapsule 
-    (id, time_capsule_id, capsule_number, rcapsule_name, rcapsule_password, rcapsule_cnt, url, open_date, dear_name, theme, status, created_at, updated_at)
-    VALUES (NULL, ?, ?, ?, NULL, NULL, ?, ?, ?, ?, ?, ?, ?);`;
-    const [insertRcapsuleRow] = await connection.query(query, [
-        ...insertData,
-        "LOCKED", // status
-        new Date(),
-        new Date(),
-    ]);
-    return insertRcapsuleRow[0];
+	const query = `INSERT INTO rcapsule 
+  (id, time_capsule_id, capsule_number, rcapsule_name, rcapsule_password, rcapsule_cnt, url, open_date, dear_name, theme, status, created_at, updated_at)
+  VALUES (NULL, ?, ?, ?, NULL, NULL, ?, ?, ?, ?, ?, ?, ?);`;
+	const [insertRcapsuleRow] = await connection.query(query, [
+		...insertData,
+		"LOCKED", // status
+		new Date(),
+		new Date(),
+	]);
+	return insertRcapsuleRow[0];
 };
 
 export const updatePassword = async (
@@ -130,15 +130,13 @@ export const setRcapsuleWriter_n = async (
 	connection,
 	rcapsule_id,
 	from_name,
-	theme,
 	content_type,
 ) => {
-	const query = `INSERT INTO rcapsule_writer (id, rcapsule_id, from_name, theme, content_type, created_at, updated_at) 
-  VALUES (null, ?, ?, ?, ?, ?, ?);`;
+	const query = `INSERT INTO rcapsule_writer (id, rcapsule_id, from_name, content_type, created_at, updated_at) 
+VALUES (null, ?, ?, ?, ?, ?);`;
 	const [result] = await connection.query(query, [
 		rcapsule_id,
 		from_name,
-		theme,
 		content_type,
 		new Date(),
 		new Date(),
@@ -181,9 +179,9 @@ export const checkUpdatedRows = async (connection, oneDayAgo) => {
 
 export const getUserEmail = async (connection, capsule_number) => {
 	const query = `SELECT m.email AS userEmail
-  FROM member AS m
-  JOIN time_capsule AS tc ON m.id = tc.member_id
-  WHERE tc.capsule_number = ?;`;
+FROM member AS m
+JOIN time_capsule AS tc ON m.id = tc.member_id
+WHERE tc.capsule_number = ?;`;
 
 	const [result] = await connection.query(query, [capsule_number]);
 
@@ -191,11 +189,31 @@ export const getUserEmail = async (connection, capsule_number) => {
 };
 
 export const checkRcapsule_d = async (connection, capsule_number) => {
-    const query = `SELECT CASE WHEN EXISTS (
-        SELECT capsule_number FROM rcapsule WHERE capsule_number = ?
-    ) THEN 1 ELSE 0 END AS RESULT;`;
+	const query = `SELECT CASE WHEN EXISTS (
+  SELECT capsule_number FROM rcapsule WHERE capsule_number = ?) THEN 1 ELSE 0 END AS RESULT;`;
 
-    const [result] = await connection.query(query, [capsule_number]);
-    // console.log(result[0]); //-> [ { RESULT: 0 } ] 형태로 옴
-    return result[0].RESULT;
-}
+	const [result] = await connection.query(query, [capsule_number]);
+	// console.log(result[0]); //-> [ { RESULT: 0 } ] 형태로 옴
+	return result[0].RESULT;
+};
+
+// 조회 관련 추가 코드들
+
+export const checkPasswordValidity = async (
+	connection,
+	capsuleNumber,
+	capsulePassword,
+) => {
+	const query = `SELECT EXISTS(SELECT 1 FROM rcapsule WHERE capsule_number = ? AND rcapsule_password = ?) as isValidPassword;`;
+	const [passwordResult] = await connection.query(query, [
+		capsuleNumber,
+		capsulePassword,
+	]);
+	return passwordResult[0].isValidPassword;
+};
+
+export const retrieveCapsule_d = async (connection, capsule_number) => {
+	const query = `SELECT * FROM rcapsule WHERE capsule_number = ?`;
+	const [retrieveCapsuleRow] = await connection.query(query, capsule_number);
+	return retrieveCapsuleRow[0];
+};
