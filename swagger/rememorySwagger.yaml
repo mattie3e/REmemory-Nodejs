@@ -150,7 +150,7 @@ paths:
               capsule_number:
                 type: string
                 description: Capsule number
-                example: "WIT_1004"
+                example: "testMember1_74177"
               pcapsule_password:
                 type: integer
                 description: Password for the pcapsule
@@ -179,8 +179,8 @@ paths:
                     type: object
                     example:
                       {
-                        "capsule_number": "WIT_1004",
-                        "pcapsule_password": 012345,
+                        "capsule_number": "testMember1_74177",
+                        "pcapsule_password": 123456,
                       }
         "400":
           description: Bad Request
@@ -427,6 +427,9 @@ paths:
                               voice_url:
                                 type: string
                                 example: null
+                        align_type:
+                          type: string
+                          example: "left"
         "400":
           description: Bad Request
           content:
@@ -567,6 +570,198 @@ paths:
             isSuccess: false
             code: COMMON001
             message: "Bad Request"
+
+  /pcapsule/create/text_image:
+    post:
+      tags:
+        - Pcapsule
+      summary: pcapsule 글사진 전송 API
+      parameters:
+        - name: text_image
+          in: body
+          required: true
+          schema:
+            type: object
+            properties:
+              capsule_number:
+                type: string
+                description: Capsule number
+                example: "testMember1_74177"
+              contents:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    type:
+                      type: string
+                    content:
+                      type: string
+                example:
+                  [
+                    { type: "text", content: "안녕" },
+                    { type: "image", content: "이미지 URL" },
+                    { type: "image", content: "이미지 URL" },
+                    { type: "text", content: "이 사진 기억나?" },
+                  ]
+              align_type:
+                type: string
+                example: "left"
+      responses:
+        "200":
+          description: Password saved successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: integer
+                    example: 200
+                  isSuccess:
+                    type: boolean
+                    example: true
+                  code:
+                    type: integer
+                    example: 2000
+                  message:
+                    type: string
+                    example: "success!"
+                  data:
+                    type: object
+                    example:
+                      {
+                        "contents":
+                          [
+                            { type: "text", content: "안녕" },
+                            {
+                              type: "image",
+                              content: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABMA…kakDsHxpPTEAbA/7800saP21M9FC5t1EGAAAAAElFTkSuQmCC",
+                            },
+                            {
+                              type: "image",
+                              content: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABMA…kakDsHxpPTEAbA/7800saP21M9FC5t1EGAAAAAElFTkSuQmCC",
+                            },
+                            { type: "text", content: "이 사진 기억나?" },
+                          ],
+                        "align_type": "left",
+                      }
+        "400":
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: integer
+                    example: 400
+                  isSuccess:
+                    type: boolean
+                    example: false
+                  code:
+                    type: integer
+                    example: COMMON001
+                  message:
+                    type: string
+                    example: "Bad Request"
+        "500":
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: integer
+                    example: 500
+                  isSuccess:
+                    type: boolean
+                    example: false
+                  code:
+                    type: integer
+                    example: COMMON000
+                  message:
+                    type: string
+                    example: "Internal Server Error, please contact the administrator."
+
+  /pcapsule/create/voice:
+    post:
+      tags:
+        - Pcapsule
+      summary: Add voice message to a pcapsule
+      consumes:
+        - multipart/form-data
+      parameters:
+        - name: pcapsule_number
+          in: path
+          required: true
+          description: The number of the pcapsule
+          schema:
+            type: string
+            example: "testMember1_74177"
+        - name: voice_pcapsule
+          in: formData
+          required: true
+          type: file
+          description: The voice file to upload
+      responses:
+        "200":
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: integer
+                    example: 200
+                  isSuccess:
+                    type: boolean
+                    example: true
+                  code:
+                    type: integer
+                    example: 2000
+                  message:
+                    type: string
+                    example: "success!"
+        "400":
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: integer
+                    example: 400
+                  isSuccess:
+                    type: boolean
+                    example: false
+                  code:
+                    type: integer
+                    example: COMMON001
+                  message:
+                    type: string
+                    example: "Bad Request"
+        "500":
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: integer
+                    example: 500
+                  isSuccess:
+                    type: boolean
+                    example: false
+                  code:
+                    type: integer
+                    example: COMMON000
+                  message:
+                    type: string
+                    example: "Internal Server Error. Contact the administrator."
 
   # Rcapsule Part
 
