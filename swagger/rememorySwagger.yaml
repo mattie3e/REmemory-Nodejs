@@ -908,50 +908,53 @@ paths:
                   message:
                     type: string
                     example: "Internal Server Error. 관리자에게 문의하세요."
-
-  # [POST] 롤링페이퍼 음성 메세지 추가
-  /rcapsule/voice/{rcapsule_number}:
+  # [POST] 롤링페이퍼 글/사진 메세지 추가
+  /rcapsule/text_photo/{rcapsule_number}:
     post:
       tags:
         - Rcapsule
-      summary: "롤링페이퍼에 음성 메세지 쓰기"
+      summary: "롤링페이퍼에 글/사진 메세지 쓰기"
       consumes:
         - multipart/form-data
+        - application/json
+        - x-www-form-urlencoded
       parameters:
-        - in: formData
-          name: voice_rcapsule
-          # required: true
-          type: file
-          description: file to upload
+        # - in: formData
+        #   name: voice_rcapsule
+        #   type: file
+        #   description: file to upload
         - in: path
           name: rcapsule_number
           # required: true
-          description: 음성 메세지를 쓰고 싶은 롤링페이퍼 고유번호
+          description: 글/사진 메세지를 쓰고 싶은 롤링페이퍼 고유번호
           schema:
             type: string
-            example: "TEST_111111"
+            example: "testMember1_41305"
         - in: query
           name: from_name
           # required: true
           description: 작성한 사람
           schema:
             type: string
-            example: "nahy"
+            example: "test"
         - in: query
           name: content_type
           # required: true
           schema:
-            type: string
-            example: "2"
-        - in: query
-          name: theme
-          # required: true
+            type: integer
+            example: 1
+        - in: formData
+          name: text
           schema:
             type: string
-            example: "1"
+            example: "생일 축하해 ~~ ~~~~~~~~~~~"
+        - in: formData
+          name: photo_rcapsule
+          type: file
+          description: file to upload
       responses:
         "200":
-          description: 성공
+          description: success
           content:
             application/json:
               schema:
@@ -1007,60 +1010,43 @@ paths:
                   message:
                     type: string
                     example: "Internal Server Error. 관리자에게 문의하세요."
-
-  # [POST] 롤링페이퍼 글/사진 메세지 추가
-  /rcapsule/text_photo/{rcapsule_number}:
+  # [POST] 롤링페이퍼 음성 메세지 추가
+  /rcapsule/voice/{rcapsule_number}:
     post:
       tags:
         - Rcapsule
-      summary: "롤링페이퍼에 글/사진 메세지 쓰기"
+      summary: "롤링페이퍼에 음성 메세지 쓰기"
       consumes:
         - multipart/form-data
-        - application/json
-        - x-www-form-urlencoded
       parameters:
-        # - in: formData
-        #   name: voice_rcapsule
-        #   type: file
-        #   description: file to upload
+        - in: formData
+          name: voice_rcapsule
+          # required: true
+          type: file
+          description: file to upload
         - in: path
           name: rcapsule_number
           # required: true
-          description: 글/사진 메세지를 쓰고 싶은 롤링페이퍼 고유번호
+          description: 음성 메세지를 쓰고 싶은 롤링페이퍼 고유번호
           schema:
             type: string
-            example: "TEST_111111"
+            example: "testMember1_41305"
         - in: query
           name: from_name
           # required: true
           description: 작성한 사람
           schema:
             type: string
-            example: "nahy"
+            example: "test"
         - in: query
           name: content_type
           # required: true
           schema:
-            type: string
-            example: "2"
-        - in: query
-          name: theme
-          # required: true
-          schema:
-            type: string
-            example: "1"
-        - in: formData
-          name: text
-          schema:
-            type: string
-            example: "생일 축하해 ~~ ~~~~~~~~~~~"
-        - in: formData
-          name: photo_rcapsule
-          type: file
-          description: file to upload
+            type: integer
+            example: 2
       responses:
         "200":
-          description: success
+          description: 성공
           content:
             application/json:
               schema:
@@ -1129,14 +1115,14 @@ paths:
           description: Capsule number
           schema:
             type: string
-            example: "testMember1_24389"
+            example: "testMember1_41305"
         - in: query
           name: rcapsule_password
           required: true
           description: Password for the rcapsule
           schema:
             type: integer
-            example: 298394
+            example: 123456
       responses:
         "200":
           description: Success
@@ -1149,10 +1135,10 @@ paths:
                   properties:
                     capsule_number:
                       type: string
-                      example: "testMember1_24389"
+                      example: "testMember1_41305"
                     password:
                       type: string
-                      example: "298394"
+                      example: "123456"
         "400":
           description: Bad Request
           content:
