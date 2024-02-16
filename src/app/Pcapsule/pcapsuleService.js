@@ -16,29 +16,18 @@ import {
 	saveVoice,
 	updateCapsuleStatus,
 } from "./pcapsuleDao.js";
-import { BADFAMILY } from "dns";
-import { text } from "express";
 
 // 캡슐 생성
-export const createPcs_s = async (body, nickname, userId) => {
-	// align_type 추가
-	const {
-		pcapsule_name,
-		open_date,
-		dear_name,
-		theme,
-		content_type,
-		// contents,
-		// align_type,
-	} = body;
+export const createPcs_s = async (body, nickname) => {
+	const { userId, pcapsule_name, open_date, dear_name, theme, content_type } =
+		body;
 	const requiredFields = [
+		"userId",
 		"pcapsule_name",
 		"open_date",
 		"dear_name",
 		"theme",
 		"content_type",
-		// "contents", // 글사진 or 음성 데이터
-		// "align_type",
 	];
 
 	requiredFields.forEach((field) => {
@@ -54,7 +43,7 @@ export const createPcs_s = async (body, nickname, userId) => {
 	try {
 		connection.beginTransaction();
 
-		const capsule_Id = await insertCapsuleNum_d(
+		const capsule_id = await insertCapsuleNum_d(
 			connection,
 			capsule_number,
 			userId,
@@ -62,7 +51,7 @@ export const createPcs_s = async (body, nickname, userId) => {
 
 		const pcapsule_password = null;
 		const insertData = [
-			capsule_Id,
+			capsule_id,
 			capsule_number,
 			pcapsule_password,
 			pcapsule_name,
@@ -181,7 +170,6 @@ export const readPcs_s = async (capsuleNumber, capsulePassword) => {
 
 		// 캡슐 존재 확인
 		const isExistCapsule = await checkCapsuleNum_d(connection, capsuleNumber);
-		console.log(isExistCapsule);
 
 		if (!isExistCapsule) {
 			throw new BaseError(status.CAPSULE_NOT_FOUND);
