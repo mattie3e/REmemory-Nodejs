@@ -8,6 +8,8 @@ import {
 	postRcapsule,
 	setPassword_s,
 	addVoiceLetter_s,
+	readRcs_s,
+	readDetailRcs_s,
 } from "./rcapsuleService.js";
 
 import { getUserInfos } from "../User/userProvider.js";
@@ -86,39 +88,43 @@ export const createText_c = async (req, res, next) => {
 		const body = {
 			from_name: from_name,
 			content_type: content_type,
-			theme : theme,
-			text : req.body.text,
+			theme: theme,
+			text: req.body.text,
 		};
 
 		// if (!req.file.location) {
-		// 	return res.status(500).send(
-		// 		response(status.INTERNAL_SERVER_ERROR, { err: "파일 업로드 실패." }),
-		// 	);
+		//    return res.status(500).send(
+		//       response(status.INTERNAL_SERVER_ERROR, { err: "파일 업로드 실패." }),
+		//    );
 		// }
 
 		if (!req.params.rcapsule_number) {
-			return res.status(400).send(
-				response(status.BAD_REQUEST, { err: "rcapsule_number가 없습니다." }),
-			);
+			return res
+				.status(400)
+				.send(
+					response(status.BAD_REQUEST, { err: "rcapsule_number가 없습니다." }),
+				);
 		}
 
 		// 글 , 사진 둘 다 없을 경우만
 		if (!req.body.text && !req.fil.location) {
-			return res.status(400).send(
-				response(status.BAD_REQUEST, { err: "capsule의 내용이 없습니다." }),
-			);
+			return res
+				.status(400)
+				.send(
+					response(status.BAD_REQUEST, { err: "capsule의 내용이 없습니다." }),
+				);
 		}
 
 		//형식적 validation 처리 *이 부분 추가 수정하기
 		// if (!req.params.rcapsule_number) {
-		// 	return res.send(response(status.BAD_REQUEST));
+		//    return res.send(response(status.BAD_REQUEST));
 		// }
 		// if (!from_name) {
-		// 	return res.send(response(status.NOT_FOUND));
+		//    return res.send(response(status.NOT_FOUND));
 		// } else if (!content_type) {
-		// 	return res.send(response(status.NOT_FOUND));
+		//    return res.send(response(status.NOT_FOUND));
 		// } else if (!image_url && !body) {
-		// 	return res.send(response(status.NOT_FOUND));
+		//    return res.send(response(status.NOT_FOUND));
 		// }
 		//처리 결과를 클라이언트에게 응답
 		const result = await createText_s(
@@ -130,34 +136,35 @@ export const createText_c = async (req, res, next) => {
 		res.send(result);
 
 		// res.status(200).send(
-		// 	response(status.SUCCESS, {
-		// 		// ...req.body, // 원래의 데이터 복사
-		// 		capsule_number: result.capsuleNumber,
-		// 	}),
+		//    response(status.SUCCESS, {
+		//       // ...req.body, // 원래의 데이터 복사
+		//       capsule_number: result.capsuleNumber,
+		//    }),
 		// );
 	} catch (error) {
 		// * 추가
 		// res.send(status.INTERNAL_SERVER_ERROR, {
-		// 	error: "텍스트 및 사진 파일 업로드 실패.",
-		// 	detail: error,
+		//    error: "텍스트 및 사진 파일 업로드 실패.",
+		//    detail: error,
 		// });
 		// next(error);
 		console.log(error.data);
 		// if (error.data.code == 'CAPSULE4001') {
-		// 	res.status(400).send(response(status.CAPSULE_NOT_FOUND, {error: "존재하지 않는 롤링페이퍼 캡슐입니다."}))
+		//    res.status(400).send(response(status.CAPSULE_NOT_FOUND, {error: "존재하지 않는 롤링페이퍼 캡슐입니다."}))
 		// } else {
-		// 	res.status(500).send(
-		// 	response(status.INTERNAL_SERVER_ERROR, {
-		// 		err: "글/사진 메세지 쓰기 실패",
-		// 		detail: error,
-		// 	}),
+		//    res.status(500).send(
+		//    response(status.INTERNAL_SERVER_ERROR, {
+		//       err: "글/사진 메세지 쓰기 실패",
+		//       detail: error,
+		//    }),
 		// );
 		// }
 		res.status(500).send(
 			response(status.INTERNAL_SERVER_ERROR, {
 				err: "글/사진 메세지 쓰기 실패",
 				detail: error,
-			}));
+			}),
+		);
 	}
 };
 
@@ -201,15 +208,15 @@ export const createRcapsule = async (req, res, next) => {
 	} catch (error) {
 		// next(e);//보류
 		// if (error instanceof BaseError) {
-		// 	// BaseError를 캐치한 경우
-		// 	next(error);
+		//    // BaseError를 캐치한 경우
+		//    next(error);
 		// } else if (error.message.includes("Missing required field")) {
-		// 	// 필수 필드가 누락된 경우의 오류 처리
-		// 	res.send(response(status.BAD_REQUEST));
+		//    // 필수 필드가 누락된 경우의 오류 처리
+		//    res.send(response(status.BAD_REQUEST));
 		// } else {
-		// 	// 그 외의 오류 처리
-		// 	// console.error("Error creating rcapsule:", error);
-		// 	res.status(StatusCodes.INTERNAL_SERVER_ERROR).send(response(status.INTERNAL_SERVER_ERROR));
+		//    // 그 외의 오류 처리
+		//    // console.error("Error creating rcapsule:", error);
+		//    res.status(StatusCodes.INTERNAL_SERVER_ERROR).send(response(status.INTERNAL_SERVER_ERROR));
 		// }
 		console.log(error);
 		next(error);
@@ -231,20 +238,29 @@ export const setRcapsulePw = async (req, res, next) => {
 			});
 		}
 
-        const result = await setPassword_s(req.body, rcapsule_id);
+		const result = await setPassword_s(req.body, rcapsule_id);
 		// console.log('rcapsuleController.js, result: ', result);
-        res.send(result);
-    } catch (error) {
+		res.send(result);
+	} catch (error) {
 		console.log(error.data);
 		if (error.data.status == 400) {
-			res.status(400).send(response(status.BAD_REQUEST, {error: "입력된 password가 없습니다."}));
-		} else if (error.data.code == 'CAPSULE4001') {
-			res.status(400).send(response(status.CAPSULE_NOT_FOUND, {error: "존재하지 않는 롤링페이퍼 캡슐입니다."}))
+			res.status(400).send(
+				response(status.BAD_REQUEST, {
+					error: "입력된 password가 없습니다.",
+				}),
+			);
+		} else if (error.data.code == "CAPSULE4001") {
+			res.status(400).send(
+				response(status.CAPSULE_NOT_FOUND, {
+					error: "존재하지 않는 롤링페이퍼 캡슐입니다.",
+				}),
+			);
+		} else {
+			res
+				.status(500)
+				.send(response(status.INTERNAL_SERVER_ERROR, { error: error.message }));
 		}
-        else {
-			res.status(500).send(response(status.INTERNAL_SERVER_ERROR, { error: error.message }));
-		}
-    }
+	}
 };
 
 // API Name : 롤링페이퍼 음성 편지 쓰기
@@ -269,15 +285,19 @@ export const addVoiceLetter_c = async (req, res, next) => {
 		if (!req.file.location) {
 			console.log("file x");
 			// throw error;
-			return res.status(500).send(
-				response(status.INTERNAL_SERVER_ERROR, { err: "파일 업로드 실패." }),
-			);
+			return res
+				.status(500)
+				.send(
+					response(status.INTERNAL_SERVER_ERROR, { err: "파일 업로드 실패." }),
+				);
 		}
 
 		if (!req.params.rcapsule_number) {
-			return res.status(400).send(
-				response(status.BAD_REQUEST, { err: "rcapsule_number가 없습니다." }),
-			);
+			return res
+				.status(400)
+				.send(
+					response(status.BAD_REQUEST, { err: "rcapsule_number가 없습니다." }),
+				);
 		}
 
 		const result = await addVoiceLetter_s(
@@ -289,15 +309,59 @@ export const addVoiceLetter_c = async (req, res, next) => {
 	} catch (error) {
 		// res.send(status.INTERNAL_SERVER_ERROR, { error: "음성 파일 업로드 실패.", detail: error });
 		console.log(error);
-		if (error.data.code == 'CAPSULE4001') {
-			res.status(400).send(response(status.CAPSULE_NOT_FOUND, {error: "존재하지 않는 롤링페이퍼 캡슐입니다."}))
+		if (error.data.code == "CAPSULE4001") {
+			res.status(400).send(
+				response(status.CAPSULE_NOT_FOUND, {
+					error: "존재하지 않는 롤링페이퍼 캡슐입니다.",
+				}),
+			);
 		} else {
 			res.status(500).send(
-			response(status.INTERNAL_SERVER_ERROR, {
-				err: "음성 메세지 쓰기 실패",
-				detail: error,
-			}),
-		);
+				response(status.INTERNAL_SERVER_ERROR, {
+					err: "음성 메세지 쓰기 실패",
+					detail: error,
+				}),
+			);
 		}
 	}
 };
+
+// rcapsule 조회 코드 추가
+
+// API Name : rcapsule 조회 API
+// [GET] /retrieve
+export const readRcs_c = async (req, res, next) => {
+	try {
+		const capsuleNumber = req.query.capsule_number;
+		const capsulePassword = req.query.rcapsule_password;
+
+		const data = await readRcs_s(capsuleNumber, capsulePassword);
+
+		res.send(
+			response(status.SUCCESS, {
+				rcapsules: data,
+			}),
+		);
+	} catch (error) {
+		next(error);
+	}
+};
+
+// // API Name : rcapsule 상세조회 API
+// // [GET] /retrieveDetail
+// export const readDetailRcs_c = async (req, res, next) => {
+//    try {
+//       const capsuleNumber = req.query.capsule_number;
+//       const capsulePassword = req.query.rcapsule_password;
+
+//       const data = await readDetailRcs_s(capsuleNumber, capsulePassword);
+
+//       res.send(
+//          response(status.SUCCESS, {
+//             pcapsules: data,
+//          }),
+//       );
+//    } catch (error) {
+//       next(error);
+//    }
+// };
