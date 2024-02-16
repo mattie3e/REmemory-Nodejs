@@ -44,8 +44,8 @@ paths:
                 example:
                   [
                     { type: "text", content: "안녕" },
-                    { type: "image", content: "이미지 URL" },
-                    { type: "image", content: "이미지 URL" },
+                    { type: "image", content: "이미지 URL1" },
+                    { type: "image", content: "이미지 URL2" },
                     { type: "text", content: "이 사진 기억나?" },
                   ]
               align_type:
@@ -263,7 +263,6 @@ paths:
           schema:
             type: string
             example: "testMember1_74177"
-
         - name: voice_pcapsule
           in: formData
           required: true
@@ -346,7 +345,7 @@ paths:
               pcapsule_password:
                 type: integer
                 description: Password for the pcapsule
-                example: 012345
+                example: 123456
       responses:
         "200":
           description: Password saved successfully
@@ -619,12 +618,9 @@ paths:
                               voice_url:
                                 type: string
                                 example: null
-<<<<<<< HEAD
                         align_type:
                           type: string
                           example: "left"
-=======
->>>>>>> 61482cf3895010810f302fd2d6d7ec1f3a1736bd
         "400":
           description: Bad Request
           content:
