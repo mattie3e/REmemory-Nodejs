@@ -22,13 +22,11 @@ export const insertUser = async (data) => {
 	try {
 		const conn = await pool.getConnection();
 		const insertUserSql =
-			"INSERT INTO member (email, gender, status, created_at) VALUES (?, ?, ?, ?)";
+			"INSERT INTO member (email, status, created_at) VALUES (?, ?, ?)";
 		const created_at = new Date();
 
 		const result = await pool.query(insertUserSql, [
 			data.email,
-			// data.gender,
-			"F",
 			1, // status
 			created_at, // created_at
 		]);
