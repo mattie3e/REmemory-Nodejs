@@ -8,22 +8,62 @@ import {
 	readPcs_s,
 	readDetailPcs_s,
 	updatePcapsuleStatus_s,
+	addTextImage_s,
+	addVoice_s,
 } from "./pcapsuleService.js";
 import { savePassword_p } from "./pcapsuleProvider.js";
 
 // API Name : pcapsule 생성 API
 // [POST] /create
 export const createPcs_c = async (req, res, next) => {
-	// body: pcapsule_name, open_date, dear_name, theme, content_type, content
+	// body: userId, pcapsule_name, open_date, dear_name, theme, content_type
 	try {
-		const userId = req.query.userId;
-		const userInfos = await getUserInfos(userId);
+		const userInfos = await getUserInfos(req.body.userId);
 		const nickname = userInfos.nickname;
-		const data = await createPcs_s(req.body, nickname, userId);
+		const data = await createPcs_s(req.body, nickname);
+
 		res.send(
 			response(status.SUCCESS, {
 				...data,
 				capsule_number: data.capsule_number,
+			}),
+		);
+	} catch (error) {
+		next(error);
+	}
+};
+
+// [POST] create/text_image
+export const addTextImage_c = async (req, res, next) => {
+	try {
+		const capsule_number = req.body.capsule_number;
+		const textImageContent = req.body.contents; // 클라이언트가 보낸 글사진 데이터
+		const align_type = req.body.align_type;
+
+		const result = await addTextImage_s(
+			textImageContent,
+			capsule_number,
+			align_type,
+		);
+		res.send(
+			response(status.SUCCESS, {
+				result,
+			}),
+		);
+	} catch (error) {
+		next(error);
+	}
+};
+
+// [POST] create/voice
+export const addVoice_c = async (req, res, next) => {
+	try {
+		const voiceFile = req.file;
+		const capsule_number = req.body.capsule_number;
+		const result = await addVoice_s(voiceFile, capsule_number);
+		res.send(
+			response(status.SUCCESS, {
+				result,
 			}),
 		);
 	} catch (error) {
@@ -49,8 +89,6 @@ export const readPcs_c = async (req, res, next) => {
 	try {
 		const capsuleNumber = req.query.capsule_number;
 		const capsulePassword = req.query.pcapsule_password;
-		console.log(capsuleNumber);
-		console.log(capsulePassword);
 
 		const data = await readPcs_s(capsuleNumber, capsulePassword);
 
@@ -60,7 +98,6 @@ export const readPcs_c = async (req, res, next) => {
 			}),
 		);
 	} catch (error) {
-		console.log(error);
 		next(error);
 	}
 };

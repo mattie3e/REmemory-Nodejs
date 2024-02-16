@@ -7,7 +7,7 @@ import {
 	saveTextImage,
 	saveVoice,
 	updateOpenedStatus_d,
-	checkCapsuleNum_d
+	checkCapsuleNum_d,
 } from "./pcapsuleDao.js";
 
 // 캡슐넘버 생성
@@ -22,7 +22,6 @@ export const createCapsuleNum_p = async (nickname) => {
 		if (!isExistCapsule) {
 			break;
 		}
-
 	}
 	connection.release();
 	return capsule_number;
@@ -46,49 +45,28 @@ export const savePassword_p = async (capsule_number, pcapsule_password) => {
 	}
 };
 
-// text_image or voice data 생성
-export const createContent_p = async (content_type, content, pcapsule_id) => {
-	const connection = await pool.getConnection(async (conn) => conn);
-
-	let text_image_id = null;
-	let voice_id = null;
-
-	if (content_type === 1) {
-		const { body, image_url, sort } = content[0];
-		text_image_id = await saveTextImage(connection, pcapsule_id, body, image_url, sort);
-	} else if (content_type === 2) {
-		const { voice_url } = content;
-		voice_id = await saveVoice(connection, pcapsule_id, voice_url);
-	}
-	await connection.commit();
-	connection.release();
-	return { text_image_id, voice_id };
-};
-
 // 캡슐 상태변경
 export const updateOpenedStatus_p = async () => {
 	await updateOpenedStatus_d();
 };
 
-
 //유저의 capsule list 가져오기
 export const getUserCapsules_p = async (user_id) => {
-    const connection = await pool.getConnection(async (conn) => conn);
+	const connection = await pool.getConnection(async (conn) => conn);
 
-    try {
-        const userId = user_id;
-        const data = await getPcapsulesByUserId(connection, userId);
+	try {
+		const userId = user_id;
+		const data = await getPcapsulesByUserId(connection, userId);
 
-        console.log(data);
+		console.log(data);
 
-        return data;
-    } catch (error) {
-        console.error('Error in getUserCapsules_p:', error);
-        throw error; 
-    } finally {
-
-        if (connection) {
-            connection.release();
-        }
-    }
+		return data;
+	} catch (error) {
+		console.error("Error in getUserCapsules_p:", error);
+		throw error;
+	} finally {
+		if (connection) {
+			connection.release();
+		}
+	}
 };
