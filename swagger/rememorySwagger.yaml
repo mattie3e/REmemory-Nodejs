@@ -619,9 +619,12 @@ paths:
                               voice_url:
                                 type: string
                                 example: null
+<<<<<<< HEAD
                         align_type:
                           type: string
                           example: "left"
+=======
+>>>>>>> 61482cf3895010810f302fd2d6d7ec1f3a1736bd
         "400":
           description: Bad Request
           content:

@@ -304,6 +304,70 @@ export const readDetailPcs_s = async (capsuleNumber, capsulePassword) => {
 	} finally {
 		connection.release();
 	}
+
+	// 	if (pcapsuleData.content_type === 1) {
+	// 		const txtData = await retrievetxt_img_idBypcapsule_id(
+	// 			connection,
+	// 			pcapsuleData.id,
+	// 		);
+	// 		txt_img_Id = txtData.id;
+	// 	} else {
+	// 		const voiceData = await retrievevoice_idBypcapsule_id(
+	// 			connection,
+	// 			pcapsuleData.id,
+	// 		);
+	// 		voice_Id = voiceData.id;
+	// 	}
+
+	// 	const retrieveData = {
+	// 		capsule_number: pcapsuleData.capsule_number,
+	// 		pcapsule_name: pcapsuleData.pcapsule_name,
+	// 		open_date: pcapsuleData.open_date,
+	// 		dear_name: pcapsuleData.dear_name,
+	// 		theme: pcapsuleData.theme,
+	// 		content_type: pcapsuleData.content_type,
+	// 		txt_img_Id,
+	// 		voice_Id,
+	// 	};
+
+	// 	// content 가져오기
+	// 	if (pcapsuleData.content_type == 1 && pcapsuleData.text_image_id) {
+	// 		const textImageData = await retrieveText_image(
+	// 			connection,
+	// 			pcapsuleData.text_image_id,
+	// 		);
+
+	// 		if (textImageData.length > 0) {
+	// 			// text_image_id에 해당하는 데이터가 존재하는 경우
+
+	// 			retrieveData.text_image_body = textImageData.body;
+	// 			retrieveData.text_image_url = textImageData.image_url;
+	// 		} else {
+	// 			throw new BaseError(status.TEXT_IMAGE_NOT_FOUND);
+	// 		}
+	// 	}
+
+	// 	if (pcapsuleData.content_type == 2 && pcapsuleData.voice_id) {
+	// 		const voiceData = await retrieveVoice(connection, pcapsuleData.voice_id);
+
+	// 		if (voiceData.length > 0) {
+	// 			// voice_id에 해당하는 데이터가 존재하는 경우
+
+	// 			retrieveData.voice_url = voiceData.voice_url;
+	// 		} else {
+	// 			throw new BaseError(status.VOICE_NOT_FOUND);
+	// 		}
+	// 	}
+
+	// 	await connection.commit();
+
+	// 	return retrieveData;
+	// } catch (error) {
+	// 	await connection.rollback();
+	// 	throw error;
+	// } finally {
+	// 	connection.release();
+	// }
 };
 
 export const updatePcapsuleStatus_s = async (capsuleNumber, newStatus) => {

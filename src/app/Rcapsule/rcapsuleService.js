@@ -107,7 +107,7 @@ export const createText_s = async (imageurl, capsule_number, body) => {
 
 	const check_rcapsule = await checkRcapsule_d(connection, capsule_number);
 
-	if(!check_rcapsule) {
+	if (!check_rcapsule) {
 		throw new BaseError(status.CAPSULE_NOT_FOUND);
 	}
 
@@ -123,7 +123,13 @@ export const createText_s = async (imageurl, capsule_number, body) => {
 		const rcapsule_id = await getRcapsuleId(connection, capsule_number);
 
 		// await setRcapsuleWriter(connection, rcapsule_id, from_name, content_type);
-		await setRcapsuleWriter_n(connection, rcapsule_id, from_name, theme, content_type);
+		await setRcapsuleWriter_n(
+			connection,
+			rcapsule_id,
+			from_name,
+			theme,
+			content_type,
+		);
 
 		const writer_id = await getWriterId(connection, rcapsule_id);
 		console.log("writer_id : ", writer_id);
@@ -151,12 +157,7 @@ export const createText_s = async (imageurl, capsule_number, body) => {
 export const postRcapsule = async (body, nickname, userId) => {
 	// 값이 제대로 전송 안된 경우
 	const { rcapsule_name, open_date, dear_name, theme } = body;
-	const requiredFields = [
-		"rcapsule_name",
-		"open_date",
-		"dear_name",
-		"theme",
-	];
+	const requiredFields = ["rcapsule_name", "open_date", "dear_name", "theme"];
 
 	requiredFields.forEach((field) => {
 		if (!body.hasOwnProperty(field)) {
@@ -182,21 +183,21 @@ export const postRcapsule = async (body, nickname, userId) => {
 		const time_capsule_id = await getTimeCapsuleId(connection, capsule_number);
 		console.log("time_capsule_id : ", time_capsule_id);
 
-	   if (!time_capsule_id) {
-		   throw new BaseError(status.CAPSULE_NOT_FOUND);
-	   }
-	   const insertData = [
-		   time_capsule_id,
-		   capsule_number,
-		   rcapsule_name,
-		   rcapsule_url,
-		   open_date,
-		   dear_name,
-		   theme,
-	   ];
+		if (!time_capsule_id) {
+			throw new BaseError(status.CAPSULE_NOT_FOUND);
+		}
+		const insertData = [
+			time_capsule_id,
+			capsule_number,
+			rcapsule_name,
+			rcapsule_url,
+			open_date,
+			dear_name,
+			theme,
+		];
 
-	   const createRcsData = await insertRcapsule(connection, insertData);
-	   console.log('insertRcapsule성공', createRcsData);
+		const createRcsData = await insertRcapsule(connection, insertData);
+		console.log("insertRcapsule성공", createRcsData);
 
 		const newRcapsuleId = await getRcapsuleId(connection, capsule_number);
 		console.log("getRcapsuleId 성공");
@@ -224,7 +225,7 @@ export const setPassword_s = async (body, rcapsule_id) => {
 
 	const check_rcapsule = await checkRcapsule_d(connection, rcapsule_id);
 	// console.log(check_rcapsule);
-	if(!check_rcapsule) {
+	if (!check_rcapsule) {
 		throw new BaseError(status.CAPSULE_NOT_FOUND);
 	}
 
@@ -268,7 +269,7 @@ export const addVoiceLetter_s = async (voiceUrl, capsule_number, body) => {
 
 	const check_rcapsule = await checkRcapsule_d(connection, capsule_number);
 
-	if(!check_rcapsule) {
+	if (!check_rcapsule) {
 		throw new BaseError(status.CAPSULE_NOT_FOUND);
 	}
 
