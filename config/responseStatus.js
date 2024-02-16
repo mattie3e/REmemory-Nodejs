@@ -13,11 +13,11 @@ export const status = {
 		code: "USER001",
 		message: "로그인에 성공했습니다.",
 	},
-	NICKNAME_REQUIRED: {
+	SIGNUP_SUCCESS: {
 		status: StatusCodes.OK,
 		isSuccess: true,
 		code: "USER002",
-		message: "회원가입에 성공했습니다. 닉네임을 설정해주세요.",
+		message: "회원가입에 성공했습니다.",
 	},
 
 	// error

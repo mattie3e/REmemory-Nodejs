@@ -1358,47 +1358,7 @@ paths:
                   message:
                     type: string
                     example: "회원가입에 성공했습니다. 닉네임을 설정해주세요."
-  /user:
-    patch:
-      tags:
-        - User
-      summary: "회원가입 후 닉네임 설정"
-      parameters:
-        - in: body
-          name: 닉네임 설정
-          required: true
-          schema:
-            type: object
-            properties:
-              userId:
-                type: int
-                example: 2
-              email:
-                type: string
-                example: ateahyun@naver.com
-              nickname:
-                type: string
-                example: "티티"
-      responses:
-        "200":
-          description: 성공
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  status:
-                    type: integer
-                    example: 200
-                  isSuccess:
-                    type: boolean
-                    example: true
-                  code:
-                    type: integer
-                    example: 2000
-                  message:
-                    type: string
-                    example: "success!"
+
   /user/nickname:
     patch:
       tags:

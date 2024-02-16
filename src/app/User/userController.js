@@ -23,7 +23,7 @@ export const userSign = async (req, res) => {
 	if (type == 1) {
 		res.send(response(status.LOGIN_SUCCESS, userData.data));
 	} else if (type == 0) {
-		res.send(response(status.NICKNAME_REQUIRED, userData.data));
+		res.send(response(status.SIGNUP_SUCCESS, userData.data));
 	}
 };
 
