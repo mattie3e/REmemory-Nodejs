@@ -70,7 +70,6 @@ export const readDear_s = async (capsuleNumber) => {
 		connection.beginTransaction();
 
 		// 캡슐 존재 확인
-		// 오류때문에 잠깐 지움!************
 		const isExistCapsule = await checkRcapsule_d(connection, capsuleNumber);
 		if (!isExistCapsule) {
 			throw new BaseError(status.CAPSULE_NOT_FOUND);
@@ -84,11 +83,6 @@ export const readDear_s = async (capsuleNumber) => {
 			dear_name: rCapsuleData.dear_name,
 			capsule_id: rCapsuleData.id,
 		};
-		// res.send(
-		// 	response(status.SUCCESS, {
-		// 		dearNid: resdata,
-		// 	}),
-		// );
 		return resdata;
 	} catch (error) {
 		//에러 발생 시 롤백
@@ -303,16 +297,7 @@ export const addVoiceLetter_s = async (voiceUrl, capsule_number, body) => {
 
 	// const { from_name, content_type, theme } = body;
 	const { from_name, content_type } = body;
-	// console.log(
-	//    "***rcapsuleService.js***\n\n voiceUrl :",
-	//    voiceUrl,
-	//    "capsule_number :",
-	//    capsule_number,
-	//    "body: ",
-	//    body,
-	// );
 
-	// const requiredFields = ["from_name", "theme", "content_type"];
 	const requiredFields = ["from_name", "content_type"];
 
 	requiredFields.forEach((field) => {
@@ -333,13 +318,6 @@ export const addVoiceLetter_s = async (voiceUrl, capsule_number, body) => {
 		const rcapsule_id = await getRcapsuleId(connection, capsule_number);
 		console.log("rcapsule_id", rcapsule_id);
 
-		// await setRcapsuleWriter_n(
-		// 	connection,
-		// 	rcapsule_id,
-		// 	from_name,
-		// 	theme,
-		// 	content_type,
-		// );
 		await setRcapsuleWriter_n(connection, rcapsule_id, from_name, content_type);
 
 		const writer_id = await getWriterId(connection, rcapsule_id);
@@ -410,7 +388,7 @@ export const readRcs_s = async (capsuleNumber, capsulePassword) => {
 	}
 };
 
-//캡슐 상세조회
+//캡슐 상상세조회
 export const readDetailRcs_s = async (capsuleNumber, capsulePassword) => {
 	const connection = await pool.getConnection(async (conn) => conn);
 	try {
