@@ -1235,7 +1235,6 @@ paths:
                     type: string
                     example: "Internal Server Error. 관리자에게 문의하세요."
 
-
   # [POST] 롤링페이퍼 음성 메세지 추가
   /rcapsule/voice/{rcapsule_number}:
     post:
