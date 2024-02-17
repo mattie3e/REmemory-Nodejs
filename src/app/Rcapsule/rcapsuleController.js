@@ -10,6 +10,7 @@ import {
 	addVoiceLetter_s,
 	readRcs_s,
 	readDetailRcs_s,
+	addTextImage_rcs,
 } from "./rcapsuleService.js";
 
 import { getUserInfos } from "../User/userProvider.js";
@@ -84,9 +85,6 @@ export const createRcapsule = async (req, res, next) => {
 		// const userId = req.user ? req.user.userId : null; //userId를 어떻게 가져올 수 있을까..?
 
 		console.log(req.url);
-		// const paramsRegex = /userId=(.*?)/; //swagger 테스트용 임시
-		// const [, userId] = paramsRegex.exec(req.url);
-		// console.log('userID : ', userId);
 		const paramsRegex = /[?&]userId=([^&]+)/;
 		const match = paramsRegex.exec(req.url);
 		const userId = match && decodeURIComponent(match[1]);
@@ -178,79 +176,34 @@ export const createText_c = async (req, res, next) => {
 	try {
 		//aws s3에 업로드 된 파일 url 접근 및 db 저장
 		//console.log(req.file.locatiron); // aws s3에 올려진 파일 url
-		console.log("글/사진 params", req.params); // -> { rcapsule_number: 'TEST_111111' }
-		console.log("글/사진 쿼리스트링", req.url); //-> 파싱 필요 /text_photo/TEST_111111?from_name=nahy&content_type=2&theme=1
-		console.log("글/사진 req.file", req.file); //req.file.location
-		console.log("req.body.text : ", req.body.text); // -> text 그대로 잘 담김
 
-		const paramsRegex = /from_name=(.*?)&content_type=(.*)/;
-		const [, from_name, content_type] = paramsRegex.exec(req.url);
-		// const image_url = req.file.location;
-		console.log("from_name 확인:", from_name);
-		console.log("content_type 확인:", content_type);
+		// const paramsRegex = /from_name=(.*?)&content_type=(.*)/;
+		// const [, from_name, content_type] = paramsRegex.exec(req.url);
 
-		const body = {
-			from_name: from_name,
-			content_type: content_type,
-			text: req.body.text,
-		};
-
-		// if (!req.file.location) {
-		//    return res.status(500).send(
-		//       response(status.INTERNAL_SERVER_ERROR, { err: "파일 업로드 실패." }),
-		//    );
-		// }
-
-		if (!req.params.rcapsule_number) {
-			return res
-				.status(400)
-				.send(
-					response(status.BAD_REQUEST, { err: "rcapsule_number가 없습니다." }),
-				);
-		}
+		const capsule_number = req.body.capsule_number;
+		const textImageContent = req.body.contents;
+		const align_type = req.body.align_type;
+		const from_name = req.body.from_name; // rcapsule 글/사진 쓰기의 경우 이게 필요
 
 		// 글 , 사진 둘 다 없을 경우만
-		if (!req.body.text && !req.fil.location) {
-			return res
-				.status(400)
-				.send(
-					response(status.BAD_REQUEST, { err: "capsule의 내용이 없습니다." }),
-				);
-		}
-
-		//형식적 validation 처리 *이 부분 추가 수정하기
-		// if (!req.params.rcapsule_number) {
-		//    return res.send(response(status.BAD_REQUEST));
+		// if (!req.body.text && !req.fil.location) {
+		// 	return res
+		// 		.status(400)
+		// 		.send(
+		// 			response(status.BAD_REQUEST, { err: "capsule의 내용이 없습니다." }),
+		// 		);
 		// }
-		// if (!from_name) {
-		//    return res.send(response(status.NOT_FOUND));
-		// } else if (!content_type) {
-		//    return res.send(response(status.NOT_FOUND));
-		// } else if (!image_url && !body) {
-		//    return res.send(response(status.NOT_FOUND));
-		// }
-		//처리 결과를 클라이언트에게 응답
-		const result = await createText_s(
-			req.file.location,
-			req.params.rcapsule_number,
-			body,
+		
+		const result = await addTextImage_rcs(
+			capsule_number,
+			textImageContent,
+			align_type,
+			from_name,
 		);
-
-		res.send(result);
-
-		// res.status(200).send(
-		//    response(status.SUCCESS, {
-		//       // ...req.body, // 원래의 데이터 복사
-		//       capsule_number: result.capsuleNumber,
-		//    }),
-		// );
+		res.status(200).send(response(status.SUCCESS, {
+			result,
+		}));
 	} catch (error) {
-		// * 추가
-		// res.send(status.INTERNAL_SERVER_ERROR, {
-		//    error: "텍스트 및 사진 파일 업로드 실패.",
-		//    detail: error,
-		// });
-		// next(error);
 		console.log(error.data);
 		// if (error.data.code == 'CAPSULE4001') {
 		//    res.status(400).send(response(status.CAPSULE_NOT_FOUND, {error: "존재하지 않는 롤링페이퍼 캡슐입니다."}))
@@ -362,21 +315,21 @@ export const readRcs_c = async (req, res, next) => {
 };
 
 
-// // API Name : rcapsule 상세조회 API
-// // [GET] /retrieveDetail
-// export const readDetailRcs_c = async (req, res, next) => {
-//    try {
-//       const capsuleNumber = req.query.capsule_number;
-//       const capsulePassword = req.query.rcapsule_password;
+// API Name : rcapsule 상세조회 API
+// [GET] /retrieveDetail
+export const readDetailRcs_c = async (req, res, next) => {
+   try {
+      const capsuleNumber = req.query.capsule_number;
+      const capsulePassword = req.query.rcapsule_password;
 
-//       const data = await readDetailRcs_s(capsuleNumber, capsulePassword);
+      const data = await readDetailRcs_s(capsuleNumber, capsulePassword);
 
-//       res.send(
-//          response(status.SUCCESS, {
-//             pcapsules: data,
-//          }),
-//       );
-//    } catch (error) {
-//       next(error);
-//    }
-// };
+      res.send(
+         response(status.SUCCESS, {
+            pcapsules: data,
+         }),
+      );
+   } catch (error) {
+      next(error);
+   }
+};

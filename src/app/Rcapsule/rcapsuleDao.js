@@ -55,25 +55,6 @@ VALUES (null, null, ?, ?, ?, ?, ?);`;
 	return result[0];
 };
 
-//theme이 왜 안 들어가 있는지..? -> 보류
-// export const setRcapsuleWriter = async (
-//    connection,
-//    rcapsule_id,
-//    from_name,
-//    content_type,
-// ) => {
-//    const query = `INSERT INTO rcapsule_writer (id, rcapsule_id, from_name, content_type, created_at, updated_at)
-// VALUES (null, ?, ?, ?, ?);`;
-//    const [result] = await connection.query(query, [
-//       rcapsule_id,
-//       from_name,
-//       content_type,
-//       new Date(),
-//       new Date(),
-//    ]);
-//    return result[0];
-// };
-
 export const insertTimeCapsule = async (connection, capsule_number, userId) => {
 	const query = `INSERT INTO time_capsule (id, member_id, total_cnt, capsule_number) VALUES (NULL, ?, 0, ?);`;
 	const [insertTimeCapsuleRow] = await connection.query(query, [
@@ -141,8 +122,7 @@ VALUES (null, ?, ?, ?, ?, ?);`;
 		new Date(),
 		new Date(),
 	]);
-	console.log("setRcapsuleWriter_n : ", result[0]);
-	return result[0];
+	return result.insertId;
 };
 
 export const addVoiceLetter_d = async (connection, voiceUrl, writer_id) => {
@@ -217,3 +197,22 @@ export const retrieveCapsule_d = async (connection, capsule_number) => {
 	const [retrieveCapsuleRow] = await connection.query(query, capsule_number);
 	return retrieveCapsuleRow[0];
 };
+
+export const saveTextImage_rcs = async (
+	connection,
+	rwcapsule_id,
+	body,
+	image_url,
+	align_type,
+) => {
+	const query = `INSERT INTO text_image (rwcapsule_id, body, image_url, align_type, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?);`;
+	const [result] = await connection.query(query, [
+		rwcapsule_id,
+		body,
+		image_url,
+		align_type,
+		new Date(),
+		new Date(),
+	]);
+	return result.insertId;
+}

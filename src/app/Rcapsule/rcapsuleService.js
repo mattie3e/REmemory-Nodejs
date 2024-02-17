@@ -21,9 +21,11 @@ import {
 	checkCapsuleNum_d,
 	checkPasswordValidity,
 	retrieveCapsule_d,
+	saveTextImage_rcs,
 } from "./rcapsuleDao.js";
 
 import { createCapsuleNum_r } from "./rcapsuleProvider.js";
+import { uploadImageToS3 } from "../../../config/multer.js";
 
 //캡슐 번호 및 url 가져오기
 export const readNumnUrl_s = async (capsuleNumber) => {
@@ -99,55 +101,111 @@ export const readDear_s = async (capsuleNumber) => {
 };
 
 //post textNphotos * photo 파일 변환하기 * error
-export const createText_s = async (imageurl, capsule_number, body) => {
+// export const createText_s = async (imageurl, capsule_number, body) => {
+// 	const connection = await pool.getConnection(async (conn) => conn);
+// 	// const { from_name, content_type, theme, text } = body;
+// 	const { from_name, content_type, text } = body;
+
+// 	const requiredFields = ["from_name", "content_type"];
+
+// 	requiredFields.forEach((field) => {
+// 		if (!body.hasOwnProperty(field)) {
+// 			throw new Error(`Missing required filed: ${field}`);
+// 		}
+// 	});
+
+// 	const check_rcapsule = await checkRcapsule_d(connection, capsule_number);
+
+// 	if (!check_rcapsule) {
+// 		throw new BaseError(status.CAPSULE_NOT_FOUND);
+// 	}
+
+// 	try {
+// 		connection.beginTransaction();
+
+// 		const rcapsule_id = await getRcapsuleId(connection, capsule_number);
+
+// 		// await setRcapsuleWriter(connection, rcapsule_id, from_name, content_type);
+// 		await setRcapsuleWriter_n(connection, rcapsule_id, from_name, content_type);
+
+// 		const writer_id = await getWriterId(connection, rcapsule_id);
+// 		console.log("writer_id : ", writer_id);
+
+// 		await addTextImage_d(connection, imageurl, writer_id, text);
+
+// 		await connection.commit();
+
+// 		// res.send(
+// 		//    response(status.SUCCESS, {
+// 		//       data: rCapsuleData,
+// 		//    }),
+// 		// );
+// 		return response(status.SUCCESS);
+// 	} catch (error) {
+// 		//에러 발생 시 롤백
+// 		await connection.rollback();
+// 		throw error;
+// 	} finally {
+// 		//모든 경우에 연결 반환
+// 		connection.release();
+// 	}
+// };
+
+// **수정된 글/사진 쓰기 로직**
+export const addTextImage_rcs = async (capsule_number, textImageContent, align_type, from_name) => {
 	const connection = await pool.getConnection(async (conn) => conn);
-	// const { from_name, content_type, theme, text } = body;
-	const { from_name, content_type, text } = body;
-
-	const requiredFields = ["from_name", "content_type"];
-
-	requiredFields.forEach((field) => {
-		if (!body.hasOwnProperty(field)) {
-			throw new Error(`Missing required filed: ${field}`);
-		}
-	});
-
-	const check_rcapsule = await checkRcapsule_d(connection, capsule_number);
-
-	if (!check_rcapsule) {
-		throw new BaseError(status.CAPSULE_NOT_FOUND);
-	}
 
 	try {
 		connection.beginTransaction();
 
-		const rcapsule_id = await getRcapsuleId(connection, capsule_number);
+		const isExistCapsule = await checkCapsuleNum_d(connection, capsule_number);
 
-		// await setRcapsuleWriter(connection, rcapsule_id, from_name, content_type);
-		await setRcapsuleWriter_n(connection, rcapsule_id, from_name, content_type);
+		if(!isExistCapsule) {
+			throw new BaseError(status.CAPSULE_NOT_FOUND);
+		}
 
-		const writer_id = await getWriterId(connection, rcapsule_id);
+		const rcapsuleId = await getRcapsuleId(connection, capsule_number);
+
+		const writer_id = await setRcapsuleWriter_n(connection, rcapsuleId, from_name, 1); //글/사진의 경우 1
+
 		console.log("writer_id : ", writer_id);
 
-		await addTextImage_d(connection, imageurl, writer_id, text);
+		let textImageId = null;
+
+		for (let i = 0; i < textImageContent.length; i++) {
+			const value = textImageContent[i];
+			if (value.type === "text") {
+				textImageId = await saveTextImage_rcs(
+					connection,
+					writer_id,
+					value.content,
+					null,
+					align_type,
+				);
+			} else if (value.type === "image") {
+				const imageUrl = await uploadImageToS3(value.content);
+
+				textImageId = await saveTextImage_rcs(
+					connection,
+					writer_id,
+					null,
+					imageUrl,
+					align_type,
+				);
+			}
+			if (!textImageId) throw new BaseError(status.INTERNAL_SERVER_ERROR);
+		}
 
 		await connection.commit();
 
-		// res.send(
-		//    response(status.SUCCESS, {
-		//       data: rCapsuleData,
-		//    }),
-		// );
-		return response(status.SUCCESS);
+		return { textImageId };
 	} catch (error) {
-		//에러 발생 시 롤백
 		await connection.rollback();
 		throw error;
 	} finally {
-		//모든 경우에 연결 반환
 		connection.release();
 	}
-};
+}
 
 export const postRcapsule = async (body, nickname, userId) => {
 	// 값이 제대로 전송 안된 경우
