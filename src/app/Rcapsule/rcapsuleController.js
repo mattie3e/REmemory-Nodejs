@@ -128,7 +128,7 @@ export const createRcapsule = async (req, res, next) => {
 		//    res.status(StatusCodes.INTERNAL_SERVER_ERROR).send(response(status.INTERNAL_SERVER_ERROR));
 		// }
 		console.log(error);
-		next(error);
+		res.status(500).send(response(status.INTERNAL_SERVER_ERROR, { detail : error }));
 	}
 };
 
