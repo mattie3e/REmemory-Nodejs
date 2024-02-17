@@ -85,16 +85,19 @@ export const createRcapsule = async (req, res, next) => {
 		// const userId = req.user ? req.user.userId : null; //userId를 어떻게 가져올 수 있을까..?
 
 		console.log(req.url);
-		const paramsRegex = /[?&]userId=([^&]+)/;
-		const match = paramsRegex.exec(req.url);
-		const userId = match && decodeURIComponent(match[1]);
+		// const paramsRegex = /[?&]userId=([^&]+)/;
+		// const match = paramsRegex.exec(req.url);
+		// const userId = match && decodeURIComponent(match[1]);
+
+		const userId = req.query.userId || req.user.userId;
+		console.log(userId);
 
 		console.log("userID : ", userId);
 
 		if (!userId) {
-			return res.send(
+			return res.status(401).send(
 				response(status.EMPTY_TOKEN, { err: "유저 정보가 없습니다." }),
-			); // 또는 로그인 페이지로 리다이렉트 등의 처리
+			); 
 		}
 
 		const userInfos = await getUserInfos(userId);
