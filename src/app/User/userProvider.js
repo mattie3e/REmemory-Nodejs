@@ -32,6 +32,7 @@ export const kakaoGetUserInfo = async (code) => {
 
 		return userInfo;
 	} catch (err) {
+		console.log(err);
 		throw new BaseError(status.KAKAO_REJECTION);
 	}
 };
@@ -47,6 +48,7 @@ export const emailCheck = async (userInfo) => {
 };
 
 export const getUserInfos = async (userId) => {
+	console.log(userId);
 	const userInfo = await getUserInfo(userId);
 	if (userInfo == -1) throw new BaseError(status.BAD_REQUEST);
 	else {
@@ -59,6 +61,7 @@ export const getUserInfos = async (userId) => {
 };
 
 export const getuserStatus = async (userId) => {
+	console.log(userId);
 	const userInfo = await getUserInfo(userId);
 	if (userInfo == -1) throw new BaseError(status.BAD_REQUEST);
 	else {

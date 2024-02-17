@@ -44,6 +44,7 @@ export const userSignAction = async (userCheck, userInfo) => {
 
 export const setNickname = async (body) => {
 	const { userId, nickname } = body;
+	console.log("userId:", userId, "nickname:", nickname);
 	const bodyArr = [userId, nickname];
 
 	bodyArr.forEach((value) => {
@@ -64,6 +65,7 @@ export const setNickname = async (body) => {
 };
 
 export const changeUserStatus = async (userId, userStatus) => {
+	console.log(userId);
 	if (!userId) throw new BaseError(status.BAD_REQUEST);
 
 	const userData = await getuserStatus(userId);
