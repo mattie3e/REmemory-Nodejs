@@ -46,11 +46,6 @@ export const checkCapsuleNum_d = async (connection, capsule_number) => {
 	return checkCapsuleNumRow[0].isExistCapsule;
 };
 
-export const updateOpenedStatus_d = async () => {
-	const query = `UPDATE pcapsule SET status = 'OPENED' WHERE open_date <= CURDATE() AND status = 'LOCKED';`;
-	await connection.query(query);
-};
-
 //유저id로 pcapsule 가져오기
 export const getPcapsulesByUserId = async (connection, userId) => {
 	const query = `SELECT capsule_number FROM pcapsule WHERE capsule_number LIKE ?`;

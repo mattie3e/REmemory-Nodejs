@@ -59,20 +59,6 @@ app.use((err, req, res, next) => {
 		// 에러 데이터가 없는 경우에는 기본적으로 500 상태 코드를 반환
 		res.status(500).send(response(status.INTERNAL_SERVER_ERROR));
 	}
-
-	// // // res.send(response(status(err.data.status)));
-	// // // res.send(response(status(err.data.status || status.INTERNAL_SERVER_ERROR)));
-	// res
-	// 	// .status(status.INTERNAL_SERVER_ERROR)
-	// 	// .send(response(err.data));
-	// 	.send(response(err.data));
-	// // 에러 데이터가 있는 경우에만 해당 데이터를 사용하여 응답을 보냄
-	// // if (err.data) {
-	// // 	res.send(response(err.data));
-	// // } else {
-	// // 	// 에러 데이터가 없는 경우에는 기본적으로 INTERNAL_SERVER_ERROR를 응답으로 설정
-	// // 	res.send(response(status.INTERNAL_SERVER_ERROR));
-	// // }
 });
 
 app.listen(port, () => {

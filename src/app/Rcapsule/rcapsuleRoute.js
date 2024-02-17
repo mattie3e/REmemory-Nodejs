@@ -12,6 +12,7 @@ import {
 	readRcs_c,
 	readRcs,
 } from "./rcapsuleController.js";
+import { readDetailRcs_s } from "./rcapsuleService.js";
 
 export const rcapsuleRouter = express.Router();
 
@@ -36,9 +37,11 @@ rcapsuleRouter.get("/url_info/:rcapsule_number", asyncHandler(readDear_c));
 
 //글&사진 쓰기
 rcapsuleRouter.post(
-	"/text_photo/:rcapsule_number",
-	upload.single("photo_rcapsule"),
+	"/create/text_image",
+	// upload.single("photo_rcapsule"),
 	asyncHandler(createText_c),
 );
 
 rcapsuleRouter.get("/retrieve", asyncHandler(readRcs_c));
+
+// rcapsuleRouter.get("/retrieveDetail", asyncHandler(readDetailRcs_s));
