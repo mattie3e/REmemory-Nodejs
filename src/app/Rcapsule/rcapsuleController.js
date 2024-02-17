@@ -102,11 +102,13 @@ export const createRcapsule = async (req, res, next) => {
 		const nickname = userInfos.nickname; // userInfos -> 이거 userInfo 함수 없어져서 수정 필요 *****
 
 		const data = await postRcapsule(req.body, nickname, userId);
+		console.log(data);
 		res.send(
 			response(status.SUCCESS, {
 				// ...data,
 				capsule_number: data.capsule_number,
 				rcapsule_id: data.newRcapsuleId,
+				url: data.rcapsule_url,
 			}),
 		);
 	} catch (error) {
