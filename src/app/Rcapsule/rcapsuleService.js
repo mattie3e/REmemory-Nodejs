@@ -97,57 +97,6 @@ export const readDear_s = async (capsuleNumber) => {
 	}
 };
 
-//post textNphotos * photo 파일 변환하기 * error
-// export const createText_s = async (imageurl, capsule_number, body) => {
-// 	const connection = await pool.getConnection(async (conn) => conn);
-// 	// const { from_name, content_type, theme, text } = body;
-// 	const { from_name, content_type, text } = body;
-
-// 	const requiredFields = ["from_name", "content_type"];
-
-// 	requiredFields.forEach((field) => {
-// 		if (!body.hasOwnProperty(field)) {
-// 			throw new Error(`Missing required filed: ${field}`);
-// 		}
-// 	});
-
-// 	const check_rcapsule = await checkRcapsule_d(connection, capsule_number);
-
-// 	if (!check_rcapsule) {
-// 		throw new BaseError(status.CAPSULE_NOT_FOUND);
-// 	}
-
-// 	try {
-// 		connection.beginTransaction();
-
-// 		const rcapsule_id = await getRcapsuleId(connection, capsule_number);
-
-// 		// await setRcapsuleWriter(connection, rcapsule_id, from_name, content_type);
-// 		await setRcapsuleWriter_n(connection, rcapsule_id, from_name, content_type);
-
-// 		const writer_id = await getWriterId(connection, rcapsule_id);
-// 		console.log("writer_id : ", writer_id);
-
-// 		await addTextImage_d(connection, imageurl, writer_id, text);
-
-// 		await connection.commit();
-
-// 		// res.send(
-// 		//    response(status.SUCCESS, {
-// 		//       data: rCapsuleData,
-// 		//    }),
-// 		// );
-// 		return response(status.SUCCESS);
-// 	} catch (error) {
-// 		//에러 발생 시 롤백
-// 		await connection.rollback();
-// 		throw error;
-// 	} finally {
-// 		//모든 경우에 연결 반환
-// 		connection.release();
-// 	}
-// };
-
 // **수정된 글/사진 쓰기 로직**
 export const addTextImage_rcs = async (capsule_number, textImageContent, align_type, from_name) => {
 	const connection = await pool.getConnection(async (conn) => conn);
