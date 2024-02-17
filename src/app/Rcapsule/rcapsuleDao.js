@@ -189,6 +189,7 @@ export const checkPasswordValidity = async (
 		capsuleNumber,
 		capsulePassword,
 	]);
+	console.log(passwordResult);
 	return passwordResult[0].isValidPassword;
 };
 
@@ -215,4 +216,12 @@ export const saveTextImage_rcs = async (
 		new Date(),
 	]);
 	return result.insertId;
+}
+
+//상세조회를 위한 롤링페이퍼 목록을 조회
+export const getRollingPaperList = async(connection, rcapsule_id) => {
+	const query = `SELECT id AS writer_id, from_name, content_type FROM rcapsule_writer WHERE rcapsule_id = ?;`;
+	const [result] = await connection.query(query, [rcapsule_id]);
+	// console.log('writer list : ', result);
+	return result;
 }
