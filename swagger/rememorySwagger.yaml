@@ -438,7 +438,7 @@ paths:
                 description: Capsule number
                 example: "testMember1_74177"
               pcapsule_password:
-                type: integer
+                type: string
                 description: Password for the pcapsule
                 example: 123456
       responses:
