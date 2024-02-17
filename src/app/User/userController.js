@@ -28,14 +28,10 @@ export const userSign = async (req, res) => {
 };
 
 export const userSetNickname = async (req, res) => {
-	if (!req.user) {
-		res.send(response(status.SUCCESS, await setNickname(req.body, 1)));
+	if (req.user.userId == req.body.userId) {
+		res.send(response(status.SUCCESS, await setNickname(req.body)));
 	} else {
-		if (req.user.userId == req.body.userId) {
-			res.send(response(status.SUCCESS, await setNickname(req.body, 0)));
-		} else {
-			throw new BaseError(status.FORBIDDEN);
-		}
+		throw new BaseError(status.FORBIDDEN);
 	}
 };
 
