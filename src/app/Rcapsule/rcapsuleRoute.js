@@ -16,6 +16,8 @@ import {
 } from "./rcapsuleController.js";
 import { readDetailRcs_s } from "./rcapsuleService.js";
 
+import { tokenAuthMiddleware } from "../../../config/tokenAuthMiddleware.js";
+
 export const rcapsuleRouter = express.Router();
 
 //캡슐 생성
