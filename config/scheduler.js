@@ -9,8 +9,8 @@ export const startSchedulers = () => {
 };
 
 // Test code
-async function test() {
-	await updateOpenDate_p();
-}
+// async function test() {
+// 	await updateOpenDate_p();
+// }
 
-test();
+// test();
