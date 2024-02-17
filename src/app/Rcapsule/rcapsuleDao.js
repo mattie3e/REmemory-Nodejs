@@ -74,7 +74,7 @@ export const getTimeCapsuleId = async (connection, capsule_number) => {
 };
 
 export const insertRcapsule = async (connection, insertData) => {
-	console.log('insertData', insertData);
+	console.log("insertData", insertData);
 	const query = `INSERT INTO rcapsule 
   (time_capsule_id, capsule_number, rcapsule_name, rcapsule_password, rcapsule_cnt, url, open_date, dear_name, theme, status, created_at, updated_at)
   VALUES (?, ?, ?, NULL, NULL, ?, ?, ?, ?, ?, ?, ?);`;
@@ -220,16 +220,41 @@ export const saveTextImage_rcs = async (
 };
 
 //상세조회를 위한 롤링페이퍼 목록을 조회
-export const getRollingPaperList = async(connection, rcapsule_id) => {
+export const getRollingPaperList = async (connection, rcapsule_id) => {
 	const query = `SELECT id AS writer_id, from_name, content_type FROM rcapsule_writer WHERE rcapsule_id = ?;`;
 	const [result] = await connection.query(query, [rcapsule_id]);
 	// console.log('writer list : ', result);
 	return result;
 };
 
-export const getRcapsuleUrl = async(connection, capsule_number) => {
+export const getRcapsuleUrl = async (connection, capsule_number) => {
 	const query = `SELECT url FROM rcapsule WHERE capsule_number = ?;`;
 	const [result] = await connection.query(query, [capsule_number]);
 
 	return result[0].url;
-}
+};
+
+export const checkWid_d = async (connection, wId) => {
+	const query = `SELECT EXISTS(SELECT 1 FROM rcapsule_writer WHERE id = ?) as isExistW;`;
+	const [checkW] = await connection.query(query, wId);
+	return checkW[0].isExistW;
+};
+
+export const getRcsWContentType = async (connection, wId) => {
+	const query = `SELECT id, content_type, from_name FROM rcapsule_writer WHERE id =?`;
+	const [Winfo] = await connection.query(query, wId);
+	return Winfo[0];
+};
+
+export const retrievetxt_img_idBypcapsule_id = async (connection, wId) => {
+	const query = `SELECT * FROM text_image WHERE rwcapsule_id = ?`;
+	const [retrieveCapsuleRow] = await connection.query(query, wId);
+	// 모든 행 가져오도록 변경
+	return retrieveCapsuleRow;
+};
+
+export const retrievevoice_idBypcapsule_id = async (connection, wId) => {
+	const query = `SELECT * FROM voice WHERE rwcapsule_id = ?`;
+	const [retrieveCapsuleRow] = await connection.query(query, wId);
+	return retrieveCapsuleRow[0];
+};

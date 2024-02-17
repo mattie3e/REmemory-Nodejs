@@ -12,6 +12,7 @@ import {
 	readRcs_c,
 	readRcs,
 	readRcsList_c,
+	readInnerDetailRcs_c,
 } from "./rcapsuleController.js";
 import { readDetailRcs_s } from "./rcapsuleService.js";
 
@@ -45,4 +46,5 @@ rcapsuleRouter.post(
 
 rcapsuleRouter.get("/retrieve", asyncHandler(readRcs_c));
 
-// rcapsuleRouter.get("/retrieveDetail", asyncHandler(readDetailRcs_s));
+// 롤링페이퍼 상상세 조회
+rcapsuleRouter.get("/retrieveDetail", asyncHandler(readInnerDetailRcs_c));
