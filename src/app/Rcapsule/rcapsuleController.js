@@ -85,9 +85,6 @@ export const createRcapsule = async (req, res, next) => {
 		// const userId = req.user ? req.user.userId : null; //userId를 어떻게 가져올 수 있을까..?
 
 		console.log(req.url);
-		// const paramsRegex = /userId=(.*?)/; //swagger 테스트용 임시
-		// const [, userId] = paramsRegex.exec(req.url);
-		// console.log('userID : ', userId);
 		const paramsRegex = /[?&]userId=([^&]+)/;
 		const match = paramsRegex.exec(req.url);
 		const userId = match && decodeURIComponent(match[1]);
@@ -179,10 +176,6 @@ export const createText_c = async (req, res, next) => {
 	try {
 		//aws s3에 업로드 된 파일 url 접근 및 db 저장
 		//console.log(req.file.locatiron); // aws s3에 올려진 파일 url
-		// console.log("글/사진 params", req.params); // -> { rcapsule_number: 'TEST_111111' }
-		// console.log("글/사진 쿼리스트링", req.url); //-> 파싱 필요 /text_photo/TEST_111111?from_name=nahy&content_type=2&theme=1
-		// console.log("글/사진 req.file", req.file); //req.file.location
-		// console.log("req.body.text : ", req.body.text); // -> text 그대로 잘 담김
 
 		// const paramsRegex = /from_name=(.*?)&content_type=(.*)/;
 		// const [, from_name, content_type] = paramsRegex.exec(req.url);
@@ -192,20 +185,6 @@ export const createText_c = async (req, res, next) => {
 		const align_type = req.body.align_type;
 		const from_name = req.body.from_name; // rcapsule 글/사진 쓰기의 경우 이게 필요
 
-		// if (!req.file.location) {
-		//    return res.status(500).send(
-		//       response(status.INTERNAL_SERVER_ERROR, { err: "파일 업로드 실패." }),
-		//    );
-		// }
-
-		// if (!req.params.rcapsule_number) {
-		// 	return res
-		// 		.status(400)
-		// 		.send(
-		// 			response(status.BAD_REQUEST, { err: "rcapsule_number가 없습니다." }),
-		// 		);
-		// }
-
 		// 글 , 사진 둘 다 없을 경우만
 		// if (!req.body.text && !req.fil.location) {
 		// 	return res
@@ -214,16 +193,7 @@ export const createText_c = async (req, res, next) => {
 		// 			response(status.BAD_REQUEST, { err: "capsule의 내용이 없습니다." }),
 		// 		);
 		// }
-
-		//처리 결과를 클라이언트에게 응답
-		// const result = await createText_s(
-		// 	req.file.location,
-		// 	req.params.rcapsule_number,
-		// 	body,
-		// );
-
-		// res.send(result);
-
+		
 		const result = await addTextImage_rcs(
 			capsule_number,
 			textImageContent,
