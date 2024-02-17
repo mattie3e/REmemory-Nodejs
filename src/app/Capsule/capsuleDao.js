@@ -8,10 +8,11 @@ export const getCapsule = async (userId) => {
 		const conn = await pool.getConnection();
 
 		const getCapsules =
-			"SELECT time_capsule.capsule_number, rcapsule.rcapsule_name, pcapsule.pcapsule_name FROM time_capsule LEFT JOIN rcapsule ON time_capsule.capsule_number = rcapsule.capsule_number LEFT JOIN pcapsule ON time_capsule.capsule_number = pcapsule.capsule_number WHERE time_capsule.member_id = ?;";
+			"SELECT time_capsule.capsule_number, rcapsule.rcapsule_name, pcapsule.pcapsule_name, rcapsule.theme as RT, pcapsule.theme as PT FROM time_capsule LEFT JOIN rcapsule ON time_capsule.capsule_number = rcapsule.capsule_number LEFT JOIN pcapsule ON time_capsule.capsule_number = pcapsule.capsule_number WHERE time_capsule.member_id = ?;";
 		const [capsules] = await pool.query(getCapsules, [userId]);
 
 		conn.release();
+		console.log(capsules);
 		return capsules;
 	} catch (err) {
 		console.log(err);
@@ -51,8 +52,8 @@ export const updateOpenDate_d = async (connection) => {
 	const [p_result] = await connection.query(queryPcs);
 	const [r_result] = await connection.query(queryRcs);
 
-	if(p_result.changedRows > 0 || r_result.changedRows > 0) {
-		console.log('메일 보내기 테스트')
+	if (p_result.changedRows > 0 || r_result.changedRows > 0) {
+		console.log("메일 보내기 테스트");
 		sendNotificationEmail();
 	}
 };
@@ -63,14 +64,14 @@ export const checkUpdatedRows = async (connection, oneDayAgo) => {
 
 	const [r_rows] = await connection.query(r_query, [oneDayAgo]);
 	const [p_rows] = await connection.query(p_query, [oneDayAgo]);
-	console.log('r_rows', r_rows);
-	console.log('p_rows', p_rows);
+	console.log("r_rows", r_rows);
+	console.log("p_rows", p_rows);
 
 	const mergedRows = r_rows.concat(p_rows);
 
-    console.log('updatedRows: ', mergedRows);
+	console.log("updatedRows: ", mergedRows);
 
-    return mergedRows;
+	return mergedRows;
 };
 
 export const getUserEmail = async (connection, capsule_number) => {

@@ -1,6 +1,12 @@
 import { BaseError } from "../../../config/error.js";
 import { status } from "../../../config/responseStatus.js";
-import { getCapsule, getCapsuleType, updateOpenDate_d, checkUpdatedRows, getUserEmail } from "./capsuleDao.js";
+import {
+	getCapsule,
+	getCapsuleType,
+	updateOpenDate_d,
+	checkUpdatedRows,
+	getUserEmail,
+} from "./capsuleDao.js";
 import { pool } from "../../../config/dbConfig.js";
 import transporter from "../../../config/nodemailer.js";
 
@@ -13,15 +19,17 @@ export const getUserCapsules = async (userId) => {
 			userCapsules.push({
 				capsule_number: item.capsule_number,
 				capsule_name: item.rcapsule_name,
+				theme: item.RT,
 			});
 		} else {
 			userCapsules.push({
 				capsule_number: item.capsule_number,
 				capsule_name: item.pcapsule_name,
+				theme: item.PT,
 			});
 		}
 	});
-	console.log(capsules);
+
 	return { capsules: userCapsules, capsule_cnt: userCapsules.length };
 };
 
@@ -70,8 +78,8 @@ export const sendNotificationEmail = async () => {
 			const userEmail = await getUserEmail(connection, row.capsule_number);
 
 			// 메일 보내기
-			await transporter.sendMail(
-				{
+			await transporter
+				.sendMail({
 					from: `"Re-Memory" <${process.env.NODEMAILER_USER}>`,
 					to: `${userEmail}`,
 					subject: "작성하신 타임캡슐이 열렸어요! 💌",
@@ -88,8 +96,8 @@ export const sendNotificationEmail = async () => {
 				  저희 서비스를 이용해 주셔서 감사합니다.
 				  `,
 				})
-				.then((r) => console.log('저장 및 발송 성공', r))
-           		.catch((e) => console.log('에러', e));
+				.then((r) => console.log("저장 및 발송 성공", r))
+				.catch((e) => console.log("에러", e));
 
 			console.log("이메일 전송 성공 : ", userEmail);
 		}
