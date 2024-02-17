@@ -67,24 +67,27 @@ export const readDear_s = async (capsuleNumber) => {
 	try {
 		connection.beginTransaction();
 
-		//캡슐 존재 확인
-		const isExistCapsule = await checkCapsuleNum_d(connection, capsuleNumber);
-		if (isExistCapsule) {
+		// 캡슐 존재 확인
+		// 오류때문에 잠깐 지움!************
+		const isExistCapsule = await checkRcapsule_d(connection, capsuleNumber);
+		if (!isExistCapsule) {
 			throw new BaseError(status.CAPSULE_NOT_FOUND);
 		}
 
 		//DAO를 총해 캡슐 정보 조회
 		const rCapsuleData = await readDear_d(connection, capsuleNumber);
+		console.log('DAO를 총해 캡슐 정보 조회', rCapsuleData);
 
 		const resdata = {
 			dear_name: rCapsuleData.dear_name,
-			capsule_id: rCapsuleData.capsule_id,
+			capsule_id: rCapsuleData.id,
 		};
-		res.send(
-			response(status.SUCCESS, {
-				dearNid: resdata,
-			}),
-		);
+		// res.send(
+		// 	response(status.SUCCESS, {
+		// 		dearNid: resdata,
+		// 	}),
+		// );
+		return resdata;
 	} catch (error) {
 		//에러 발생 시 롤백
 		await connection.rollback();

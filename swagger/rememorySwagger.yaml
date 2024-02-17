@@ -1221,6 +1221,79 @@ paths:
                   message:
                     type: string
                     example: "Internal Server Error. 관리자에게 문의하세요."
+
+  /rcapsule/url_info/{rcapsule_number}:
+    get:
+      tags:
+        - Rcapsule
+      summary: "url 들어왔을 시 화면"
+      parameters:
+        - in: path
+          name: rcapsule_number
+          description: 정보를 얻고 싶은 롤링페이퍼 캡슐 고유번호
+          schema:
+            type: string
+            example: "TEST_111111"
+      responses:
+        "200":
+          description: success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: integer
+                    example: 200
+                  isSuccess:
+                    type: boolean
+                    example: true
+                  code:
+                    type: string
+                    example: 2000
+                  message:
+                    type: string
+                    example: "success!"
+        "400":
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: integer
+                    example: 400
+                  isSuccess:
+                    type: boolean
+                    example: false
+                  code:
+                    type: string
+                    example: COMMON001
+                  message:
+                    type: string
+                    example: "Bad Request"
+        "500":
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: integer
+                    example: 500
+                  isSuccess:
+                    type: boolean
+                    example: false
+                  code:
+                    type: string
+                    example: COMMON000
+                  message:
+                    type: string
+                    example: "Internal Server Error. 관리자에게 문의하세요."
+
+
   # 추가 rcapsule 조회, 상세조회
   /rcapsule/retrieve:
     get:

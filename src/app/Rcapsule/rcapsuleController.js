@@ -49,19 +49,27 @@ export const readNumNUrl_c = async (req, res, next) => {
  * dearName 과 rcapsule_id 반환
  * [GET] : /:rcapsule_number/:rCapsuleCnt
  */
+//path : rcapsule_number
 export const readDear_c = async (req, res, next) => {
 	try {
-		const capsuleNumber = req.body.capsule_number;
+		const capsuleNumber = req.params.rcapsule_number;
+		console.log(capsuleNumber);
+		console.log(req.params);
 
 		const data = await readDear_s(capsuleNumber);
 
 		res.send(
 			response(status.SUCCESS, {
-				dearNid: data,
+				data,
 			}),
 		);
 	} catch (error) {
-		next(error);
+		// next(error);
+		if(error.data.status == 404) {
+			res.status(404).send(response(status.CAPSULE_NOT_FOUND, {err : "캡슐을 찾을 수 없습니다. 다시 시도해 주세요."}));
+		} else {
+			res.status(500).send(response(status.INTERNAL_SERVER_ERROR), {detail : error});
+		}
 		console.log(error);
 	}
 };
@@ -352,6 +360,7 @@ export const readRcs_c = async (req, res, next) => {
 		next(error);
 	}
 };
+
 
 // // API Name : rcapsule 상세조회 API
 // // [GET] /retrieveDetail
