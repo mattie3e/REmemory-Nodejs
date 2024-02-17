@@ -42,11 +42,13 @@ export const userSetNickname = async (req, res) => {
 };
 
 export const userGetInfo = async (req, res) => {
+	console.log("userGetInfo 함수 시작");
 	if (req.user.userId != req.params.userId) {
 		throw new BaseError(status.FORBIDDEN);
 	} else if (!req.user) {
 		throw new BaseError(status.BAD_REQUEST);
 	} else {
+		console.log("userGetInfo 함수 userId: ", req.params.userId);
 		res.send(response(status.SUCCESS, await getUserInfos(req.params.userId)));
 	}
 };

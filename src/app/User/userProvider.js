@@ -51,8 +51,9 @@ export const emailCheck = async (userInfo) => {
 };
 
 export const getUserInfos = async (userId) => {
-	console.log(userId);
+	console.log("getUserInfos 함수, userId: ", userId);
 	const userInfo = await getUserInfo(userId);
+	console.log("getUserInfos 함수, userInfo: ", userInfo);
 	if (userInfo == -1) throw new BaseError(status.BAD_REQUEST);
 	else {
 		return {
