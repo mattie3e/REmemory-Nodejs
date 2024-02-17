@@ -74,9 +74,10 @@ export const getTimeCapsuleId = async (connection, capsule_number) => {
 };
 
 export const insertRcapsule = async (connection, insertData) => {
+	console.log('insertData', insertData);
 	const query = `INSERT INTO rcapsule 
-  (id, time_capsule_id, capsule_number, rcapsule_name, rcapsule_password, rcapsule_cnt, url, open_date, dear_name, theme, status, created_at, updated_at)
-  VALUES (NULL, ?, ?, ?, NULL, NULL, ?, ?, ?, ?, ?, ?, ?);`;
+  (time_capsule_id, capsule_number, rcapsule_name, rcapsule_password, rcapsule_cnt, url, open_date, dear_name, theme, status, created_at, updated_at)
+  VALUES (?, ?, ?, NULL, NULL, ?, ?, ?, ?, ?, ?, ?);`;
 	const [insertRcapsuleRow] = await connection.query(query, [
 		...insertData,
 		"LOCKED", // status
@@ -216,7 +217,7 @@ export const saveTextImage_rcs = async (
 		new Date(),
 	]);
 	return result.insertId;
-}
+};
 
 //상세조회를 위한 롤링페이퍼 목록을 조회
 export const getRollingPaperList = async(connection, rcapsule_id) => {
@@ -224,4 +225,11 @@ export const getRollingPaperList = async(connection, rcapsule_id) => {
 	const [result] = await connection.query(query, [rcapsule_id]);
 	// console.log('writer list : ', result);
 	return result;
+};
+
+export const getRcapsuleUrl = async(connection, capsule_number) => {
+	const query = `SELECT url FROM rcapsule WHERE capsule_number = ?;`;
+	const [result] = await connection.query(query, [capsule_number]);
+
+	return result[0].url;
 }

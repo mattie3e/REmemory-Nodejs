@@ -23,6 +23,7 @@ import {
 	retrieveCapsule_d,
 	saveTextImage_rcs,
 	getRollingPaperList,
+	getRcapsuleUrl,
 } from "./rcapsuleDao.js";
 
 import { createCapsuleNum_r } from "./rcapsuleProvider.js";
@@ -216,7 +217,8 @@ export const postRcapsule = async (body, nickname, userId) => {
 	console.log("body 추출 : ", rcapsule_name, open_date, dear_name, theme);
 
 	const capsule_number = await createCapsuleNum_r(nickname);
-	const rcapsule_url = `${process.env.FRONT_DOMAIN}/capsule/write/rolling/rcapsule_number=${capsule_number}`;
+	const rcapsuleUrl = `${process.env.FRONT_DOMAIN}/capsule/write/rolling/rcapsule_number=${capsule_number}`;
+	console.log(rcapsuleUrl);
 
 	const connection = await pool.getConnection(async (conn) => conn);
 	try {
@@ -237,7 +239,7 @@ export const postRcapsule = async (body, nickname, userId) => {
 			time_capsule_id,
 			capsule_number,
 			rcapsule_name,
-			rcapsule_url,
+			rcapsuleUrl,
 			open_date,
 			dear_name,
 			theme,
@@ -247,11 +249,13 @@ export const postRcapsule = async (body, nickname, userId) => {
 		console.log("insertRcapsule성공", createRcsData);
 
 		const newRcapsuleId = await getRcapsuleId(connection, capsule_number);
-		console.log("getRcapsuleId 성공");
+		const rcapsule_url = await getRcapsuleUrl(connection, capsule_number);
+
+		console.log("url : ", rcapsule_url);
 
 		await connection.commit();
 
-		return { ...createRcsData, capsule_number, newRcapsuleId };
+		return { ...createRcsData, capsule_number, newRcapsuleId, rcapsule_url };
 	} catch (error) {
 		await connection.rollback(); // 실패 시 롤백
 		throw new BaseError(status.INTERNAL_SERVER_ERROR);
