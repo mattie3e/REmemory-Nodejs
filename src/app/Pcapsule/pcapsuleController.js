@@ -88,7 +88,7 @@ export const savePassword_c = async (req, res, next) => {
 export const readPcs_c = async (req, res, next) => {
 	try {
 		const capsuleNumber = req.query.capsule_number;
-		const capsulePassword = req.query.pcapsule_password;
+		const capsulePassword = req.query.capsule_password;
 
 		const data = await readPcs_s(capsuleNumber, capsulePassword);
 
@@ -107,7 +107,7 @@ export const readPcs_c = async (req, res, next) => {
 export const readDetailPcs_c = async (req, res, next) => {
 	try {
 		const capsuleNumber = req.query.capsule_number;
-		const capsulePassword = req.query.pcapsule_password;
+		const capsulePassword = req.query.capsule_password;
 
 		const data = await readDetailPcs_s(capsuleNumber, capsulePassword);
 
