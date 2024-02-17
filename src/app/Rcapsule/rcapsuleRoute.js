@@ -11,6 +11,7 @@ import {
 	createText_c,
 	readRcs_c,
 	readRcs,
+	readRcsList_c,
 } from "./rcapsuleController.js";
 import { readDetailRcs_s } from "./rcapsuleService.js";
 

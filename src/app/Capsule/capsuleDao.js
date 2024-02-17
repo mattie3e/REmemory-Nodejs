@@ -1,6 +1,7 @@
 import { pool } from "../../../config/dbConfig.js";
 import { BaseError } from "../../../config/error.js";
 import { status } from "../../../config/responseStatus.js";
+import { sendNotificationEmail } from "./capsuleProvider.js";
 
 export const getCapsule = async (userId) => {
 	try {
@@ -47,6 +48,35 @@ export const getCapsuleType = async (c_num) => {
 export const updateOpenDate_d = async (connection) => {
 	const queryPcs = `UPDATE pcapsule SET status = 'OPENED' WHERE open_date <= CURDATE() AND status = 'LOCKED';`;
 	const queryRcs = `UPDATE rcapsule SET status = 'OPENED' WHERE open_date <= CURDATE() AND status = 'LOCKED';`;
-	await connection.query(queryPcs);
-	await connection.query(queryRcs);
+	const [p_result] = await connection.query(queryPcs);
+	const [r_result] = await connection.query(queryRcs);
+
+	if(p_result.changedRows > 0 || r_result.changedRows > 0) {
+		console.log('메일 보내기 테스트')
+		sendNotificationEmail();
+	}
+};
+
+export const checkUpdatedRows = async (connection, oneDayAgo) => {
+	const r_query = `SELECT capsule_number, rcapsule_name AS capsule_name, rcapsule_password AS capsule_password FROM rcapsule WHERE status = 'OPENED' AND updated_at >= ?;`;
+	const p_query = `SELECT capsule_number, pcapsule_name AS capsule_name, pcapsule_password AS capsule_password FROM pcapsule WHERE status = 'OPENED' AND updated_at >= ?;`;
+
+	const [r_rows] = await connection.query(r_query, [oneDayAgo]);
+	const [p_rows] = await connection.query(p_query, [oneDayAgo]);
+	console.log('r_rows', r_rows);
+	console.log('p_rows', p_rows);
+
+	const mergedRows = r_rows.concat(p_rows);
+
+    console.log('updatedRows: ', mergedRows);
+
+    return mergedRows;
+};
+
+export const getUserEmail = async (connection, capsule_number) => {
+	const query = `SELECT m.email AS userEmail FROM member AS m JOIN time_capsule AS tc ON m.id = tc.member_id WHERE tc.capsule_number = ?;`;
+
+	const [result] = await connection.query(query, [capsule_number]);
+
+	return result[0].userEmail;
 };

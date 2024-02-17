@@ -8,7 +8,7 @@ export const startSchedulers = () => {
 	});
 };
 
-// // Test code
+// Test code
 // async function test() {
 // 	await updateOpenDate_p();
 // }
