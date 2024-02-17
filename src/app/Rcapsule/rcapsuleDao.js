@@ -33,7 +33,7 @@ export const checkCapsuleNum_d = async (connection, capsuleNumber) => {
 
 // 보내는 사람 조회하기 *query문 확인 ..
 export const readDear_d = async (connection, capsuleNumber) => {
-	const query = "SELECT dear_name, id FROM rcapsule WHERE capsule_number = ?";
+	const query = "SELECT dear_name, id, theme FROM rcapsule WHERE capsule_number = ?";
 	const [resdata] = await connection.query(query, [capsuleNumber]);
 	//결과 반환
 	return resdata[0];

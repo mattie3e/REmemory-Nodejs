@@ -48,7 +48,7 @@ export const readNumNUrl_c = async (req, res, next) => {
 /**
  * API NAME : url 들어왔을 시 화면
  * dearName 과 rcapsule_id 반환
- * [GET] : /:rcapsule_number/:rCapsuleCnt
+ * [GET] : /url_info/{rcapsule_id}
  */
 //path : rcapsule_number
 export const readDear_c = async (req, res, next) => {

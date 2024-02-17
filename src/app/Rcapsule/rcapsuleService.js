@@ -84,6 +84,7 @@ export const readDear_s = async (capsuleNumber) => {
 		const resdata = {
 			dear_name: rCapsuleData.dear_name,
 			capsule_id: rCapsuleData.id,
+			theme: rCapsuleData.theme
 		};
 		return resdata;
 	} catch (error) {
