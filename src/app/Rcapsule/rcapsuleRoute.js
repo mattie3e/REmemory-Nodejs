@@ -2,6 +2,8 @@ import express from "express";
 import asyncHandler from "express-async-handler";
 import upload from "../../../config/multer.js";
 
+import { tokenAuthMiddleware } from "../../../config/tokenAuthMiddleware.js";
+
 import {
 	createRcapsule,
 	setRcapsulePw,
@@ -19,7 +21,11 @@ import { readDetailRcs_s } from "./rcapsuleService.js";
 export const rcapsuleRouter = express.Router();
 
 //캡슐 생성
-rcapsuleRouter.post("/create", tokenAuthMiddleware, asyncHandler(createRcapsule));
+rcapsuleRouter.post(
+	"/create",
+	tokenAuthMiddleware,
+	asyncHandler(createRcapsule),
+);
 
 //비밀번호 설정
 rcapsuleRouter.patch("/:rcapsule_id", asyncHandler(setRcapsulePw));

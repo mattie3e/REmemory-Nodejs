@@ -29,6 +29,7 @@ export const kakaoGetUserInfo = async (code) => {
 			},
 		});
 		const userInfo = userInfoResponse.data.kakao_account;
+		console.log("kakaoGetUserInfo 함수, userInfo: ", userInfo);
 
 		return userInfo;
 	} catch (err) {
@@ -39,10 +40,12 @@ export const kakaoGetUserInfo = async (code) => {
 
 export const emailCheck = async (userInfo) => {
 	const email = userInfo.email;
+	console.log("emailCheck 함수, email: ", email);
 
 	const checkUserData = await checkUserEmail({
 		email: email,
 	});
+	console.log("emailCheck 함수, checkUserData: ", checkUserData);
 
 	return checkUserData;
 };
@@ -74,6 +77,7 @@ export const getuserStatus = async (userId) => {
 
 export const setUserJwt = (userId) => {
 	const provider = "kakao";
+	console.log("setUserJwt 시작 시 userId: ", userId);
 	let token = jwt.sign(
 		{
 			userId: userId,
@@ -84,6 +88,7 @@ export const setUserJwt = (userId) => {
 			expiresIn: "2h",
 		},
 	);
+	console.log("setUserJwt 함수, token: ", token);
 	return {
 		token: token,
 		expires: "2h",
