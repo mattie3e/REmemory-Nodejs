@@ -4,8 +4,6 @@ import { status } from "../../../config/responseStatus.js";
 
 import {
 	savePassword_d,
-	saveTextImage,
-	saveVoice,
 	updateOpenedStatus_d,
 	checkCapsuleNum_d,
 } from "./pcapsuleDao.js";

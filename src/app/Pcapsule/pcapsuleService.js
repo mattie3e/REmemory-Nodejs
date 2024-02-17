@@ -2,7 +2,7 @@
 import { pool } from "../../../config/dbConfig.js";
 import { BaseError } from "../../../config/error.js";
 import { status } from "../../../config/responseStatus.js";
-import { createCapsuleNum_p, createContent_p } from "./pcapsuleProvider.js";
+import { createCapsuleNum_p } from "./pcapsuleProvider.js";
 import {
 	checkCapsuleNum_d,
 	insertPcapsule_d,
@@ -16,6 +16,8 @@ import {
 	saveVoice,
 	updateCapsuleStatus,
 } from "./pcapsuleDao.js";
+
+import { uploadImageToS3 } from "../../../config/multer.js";
 
 // 캡슐 생성
 export const createPcs_s = async (body, nickname) => {
@@ -104,11 +106,13 @@ export const addTextImage_s = async (
 					align_type,
 				);
 			} else if (value.type === "image") {
+				const imageUrl = await uploadImageToS3(value.content);
+
 				textImageId = await saveTextImage(
 					connection,
 					pcapsuleId,
 					null,
-					value.content, // 이미지인 경우 값 저장
+					imageUrl,
 					align_type,
 				);
 			}
