@@ -7,7 +7,7 @@ const options = {
 			version: "1.0.0",
 			description: "Rememory API 설명",
 		},
-		host: "localhost:3000",
+		host: "dev.mattie3e.store",
 		basepath: "../",
 	},
 	apis: [
