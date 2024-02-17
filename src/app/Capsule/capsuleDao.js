@@ -43,3 +43,10 @@ export const getCapsuleType = async (c_num) => {
 		throw new BaseError(status.BAD_REQUEST);
 	}
 };
+
+export const updateOpenDate_d = async (connection) => {
+	const queryPcs = `UPDATE pcapsule SET status = 'OPENED' WHERE open_date <= CURDATE() AND status = 'LOCKED';`;
+	const queryRcs = `UPDATE rcapsule SET status = 'OPENED' WHERE open_date <= CURDATE() AND status = 'LOCKED';`;
+	await connection.query(queryPcs);
+	await connection.query(queryRcs);
+};
