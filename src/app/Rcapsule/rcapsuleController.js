@@ -11,6 +11,7 @@ import {
 	readRcs_s,
 	readDetailRcs_s,
 	addTextImage_rcs,
+	readInnerDetailRcs_s,
 } from "./rcapsuleService.js";
 
 import { getUserInfos } from "../User/userProvider.js";
@@ -66,10 +67,16 @@ export const readDear_c = async (req, res, next) => {
 		);
 	} catch (error) {
 		// next(error);
-		if(error.data.status == 404) {
-			res.status(404).send(response(status.CAPSULE_NOT_FOUND, {err : "캡슐을 찾을 수 없습니다. 다시 시도해 주세요."}));
+		if (error.data.status == 404) {
+			res.status(404).send(
+				response(status.CAPSULE_NOT_FOUND, {
+					err: "캡슐을 찾을 수 없습니다. 다시 시도해 주세요.",
+				}),
+			);
 		} else {
-			res.status(500).send(response(status.INTERNAL_SERVER_ERROR), {detail : error});
+			res
+				.status(500)
+				.send(response(status.INTERNAL_SERVER_ERROR), { detail: error });
 		}
 		console.log(error);
 	}
@@ -195,16 +202,18 @@ export const createText_c = async (req, res, next) => {
 		// 			response(status.BAD_REQUEST, { err: "capsule의 내용이 없습니다." }),
 		// 		);
 		// }
-		
+
 		const result = await addTextImage_rcs(
 			capsule_number,
 			textImageContent,
 			align_type,
 			from_name,
 		);
-		res.status(200).send(response(status.SUCCESS, {
-			result,
-		}));
+		res.status(200).send(
+			response(status.SUCCESS, {
+				result,
+			}),
+		);
 	} catch (error) {
 		console.log(error.data);
 		// if (error.data.code == 'CAPSULE4001') {
@@ -302,7 +311,8 @@ export const addVoiceLetter_c = async (req, res, next) => {
 export const readRcs_c = async (req, res, next) => {
 	try {
 		const capsuleNumber = req.query.capsule_number;
-		const capsulePassword = req.query.rcapsule_password || req.query.capsule_password;
+		const capsulePassword =
+			req.query.rcapsule_password || req.query.capsule_password;
 		console.log(capsuleNumber, capsulePassword);
 
 		const data = await readRcs_s(capsuleNumber, capsulePassword);
@@ -317,23 +327,42 @@ export const readRcs_c = async (req, res, next) => {
 	}
 };
 
-
 // API Name : rcapsule 상세조회 API
 // [GET] /retrieveDetail
 export const readDetailRcs_c = async (req, res, next) => {
-   try {
-      const capsuleNumber = req.query.capsule_number;
-      const capsulePassword = req.query.rcapsule_password || req.query.capsule_password;
-	//   console.log(capsuleNumber, capsulePassword);
+	try {
+		const capsuleNumber = req.query.capsule_number;
+		const capsulePassword =
+			req.query.rcapsule_password || req.query.capsule_password;
+		//   console.log(capsuleNumber, capsulePassword);
 
-      const data = await readDetailRcs_s(capsuleNumber, capsulePassword);
+		const data = await readDetailRcs_s(capsuleNumber, capsulePassword);
 
-      res.send(
-         response(status.SUCCESS, {
-            rcapsules: data,
-         }),
-      );
-   } catch (error) {
-      next(error);
-   }
+		res.send(
+			response(status.SUCCESS, {
+				rcapsules: data,
+			}),
+		);
+	} catch (error) {
+		next(error);
+	}
+};
+
+// API Name : rcapsule 상상세조회 API
+// [GET] /retrieveDetail
+export const readInnerDetailRcs_c = async (req, res, next) => {
+	try {
+		const wId = req.query.writer_id;
+		console.log(wId);
+
+		const data = await readInnerDetailRcs_s(wId);
+
+		res.send(
+			response(status.SUCCESS, {
+				capsuledata: data,
+			}),
+		);
+	} catch (error) {
+		next(error);
+	}
 };

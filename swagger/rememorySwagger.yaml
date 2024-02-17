@@ -1507,6 +1507,37 @@ paths:
             code: "COMMON001"
             message: "Bad Request"
 
+  /rcapsule/retrieveDetail:
+    get:
+      tags:
+        - Rcapsule
+      summary: rcapsule 편지 내용 조회 API
+      parameters:
+        - in: query
+          name: writer_id
+          required: true
+          description: 작성자 id
+          schema:
+            type: int
+            example: 30
+      responses:
+        "200":
+          description: 롤링페이퍼 편지 상세보기
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  isSuccess:
+                    type: boolean
+                    example: true
+                  code:
+                    type: string
+                    example: "USER002"
+                  message:
+                    type: string
+                    example: "성공!"
+
   # User
   /user/auth:
     get:

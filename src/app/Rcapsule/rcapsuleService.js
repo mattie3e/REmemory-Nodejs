@@ -24,6 +24,10 @@ import {
 	saveTextImage_rcs,
 	getRollingPaperList,
 	getRcapsuleUrl,
+	retrievevoice_idBypcapsule_id,
+	retrievetxt_img_idBypcapsule_id,
+	getRcsWContentType,
+	checkWid_d,
 } from "./rcapsuleDao.js";
 
 import { createCapsuleNum_r } from "./rcapsuleProvider.js";
@@ -79,7 +83,7 @@ export const readDear_s = async (capsuleNumber) => {
 
 		//DAO를 총해 캡슐 정보 조회
 		const rCapsuleData = await readDear_d(connection, capsuleNumber);
-		console.log('DAO를 총해 캡슐 정보 조회', rCapsuleData);
+		console.log("DAO를 총해 캡슐 정보 조회", rCapsuleData);
 
 		const resdata = {
 			dear_name: rCapsuleData.dear_name,
@@ -148,7 +152,12 @@ export const readDear_s = async (capsuleNumber) => {
 // };
 
 // **수정된 글/사진 쓰기 로직**
-export const addTextImage_rcs = async (capsule_number, textImageContent, align_type, from_name) => {
+export const addTextImage_rcs = async (
+	capsule_number,
+	textImageContent,
+	align_type,
+	from_name,
+) => {
 	const connection = await pool.getConnection(async (conn) => conn);
 
 	try {
@@ -156,13 +165,18 @@ export const addTextImage_rcs = async (capsule_number, textImageContent, align_t
 
 		const isExistCapsule = await checkCapsuleNum_d(connection, capsule_number);
 
-		if(!isExistCapsule) {
+		if (!isExistCapsule) {
 			throw new BaseError(status.CAPSULE_NOT_FOUND);
 		}
 
 		const rcapsuleId = await getRcapsuleId(connection, capsule_number);
 
-		const writer_id = await setRcapsuleWriter_n(connection, rcapsuleId, from_name, 1); //글/사진의 경우 1
+		const writer_id = await setRcapsuleWriter_n(
+			connection,
+			rcapsuleId,
+			from_name,
+			1,
+		); //글/사진의 경우 1
 
 		console.log("writer_id : ", writer_id);
 
@@ -201,7 +215,7 @@ export const addTextImage_rcs = async (capsule_number, textImageContent, align_t
 	} finally {
 		connection.release();
 	}
-}
+};
 
 export const postRcapsule = async (body, nickname, userId) => {
 	// 값이 제대로 전송 안된 경우
@@ -356,7 +370,7 @@ export const readRcs_s = async (capsuleNumber, capsulePassword) => {
 		if (!isExistCapsule) {
 			throw new BaseError(status.CAPSULE_NOT_FOUND);
 		}
-		console.log('n', capsuleNumber, 'p', capsulePassword);
+		console.log("n", capsuleNumber, "p", capsulePassword);
 
 		// 패스워드 확인
 		const isPasswordValid = await checkPasswordValidity(
@@ -472,6 +486,64 @@ export const readDetailRcs_s = async (capsuleNumber, capsulePassword) => {
 		// 	voice_data,
 		// 	align_type,
 		// };
+	} catch (error) {
+		await connection.rollback();
+		throw error;
+	} finally {
+		connection.release();
+	}
+};
+
+//캡슐 상상세조회!
+export const readInnerDetailRcs_s = async (wId) => {
+	const connection = await pool.getConnection(async (conn) => conn);
+	try {
+		await connection.beginTransaction();
+
+		// writer 존재 확인
+		const isExistW = await checkWid_d(connection, wId);
+		console.log("isExistW:", isExistW);
+		if (!isExistW) {
+			throw new BaseError(status.WRONG_WRITER);
+		}
+
+		// writer content type, from_name 가져오기
+		const wData = await getRcsWContentType(connection, wId);
+		console.log("wdata:", wData);
+
+		let text_img_data = null;
+		let voice_data = null;
+		let align_type = null;
+
+		// 배열 형식으로 조회 값 저장, 반환하는 로직으로 변경
+		if (wData.content_type === 1) {
+			text_img_data = await retrievetxt_img_idBypcapsule_id(
+				connection,
+				wData.id,
+			);
+
+			align_type = text_img_data[0].align_type;
+
+			text_img_data = text_img_data.map((row) => ({
+				body: row.body,
+				image_url: row.image_url,
+			}));
+		} else if (wData.content_type === 2) {
+			console.log("?");
+			voice_data = await retrievevoice_idBypcapsule_id(connection, wData.id);
+		}
+
+		const retrieveData = {
+			from_name: wData.from_name,
+			content_type: wData.content_type,
+			text_img_data,
+			voice_data,
+			align_type,
+		};
+
+		await connection.commit();
+
+		return retrieveData;
 	} catch (error) {
 		await connection.rollback();
 		throw error;
