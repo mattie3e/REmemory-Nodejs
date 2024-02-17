@@ -253,11 +253,11 @@ paths:
                     { type: "text", content: "안녕" },
                     {
                       type: "image",
-                      content: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABMA…kakDsHxpPTEAbA/7800saP21M9FC5t1EGAAAAAElFTkSuQmCC",
+                      content: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABgAAAAUCAYAAACXtf2DAAAACXBIWXMAAAsTAAALEwEAmpwYAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAABQSURBVHgB7dMhDsAgEETR2brWYnvJXqInxWLBMgSQBMMGwb7kb/BkBNXDXqwVSsLj2A8d38WToOeW9nCtlTyLMNv1T7YdjNgOTmA7mNHfQQagVxIutoabqQAAAABJRU5ErkJggg==",
                     },
                     {
                       type: "image",
-                      content: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABMA…kakDsHxpPTEAbA/7800saP21M9FC5t1EGAAAAAElFTkSuQmCC",
+                      content: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAB0AAAAiCAYAAACjv9J3AAAACXBIWXMAAAsTAAALEwEAmpwYAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAG2SURBVHgB7VfRccIwDFWYwBvgbpAN8AYdATZJN4AN0m7ABsAEYYNkg3QDVW7kQ80FR04IHz3enS4QS+9ZtpEFwAgQscY01GOcK3jhvyHTONHhMPTYkjmynMyK4StZQ3Yku2RZ1sAckJgjO2EaSjILqfCZkR0EUctkW7I1Zx58c7Idj0vspd+YoMXbb9OLFdpgji2EcD2adU/wbgCP1XN5wpIGxyqWXUgD4gkY5gnCZsjpEHVIFB1IZN8ftGIfrIJMJSq4Ww5xcqDkl4WSSC3K/gWHnORM1FlOFDUiW+NvGcdjn7OryR0Q7zd0Fctj60Xf+csZlsWFnw7Esc610anLyzFhG+upBFNiTIjLQjCtu+rGCaKgR0PUbzJuJWcCz4KoGGtYENjdRh6Vz/TK7x0si3BQGy96fpLohp9HearapfZ1sOrhrSVR1d4Joh/MX8qXTmRr4YHAWG3Hrqf5rRiPWmaM3acDDtVcYdR0Duyo623GBdN4egHIh8AqxQz7t8kT5+A9/kWJXd+b9/z8JHc83gp/fd87kHWJaTiRbWK82v8yFrqK5S98/1nevQ10pfRM9sVdQhQ/FfeD9SGIq1gAAAAASUVORK5CYII=",
                     },
 
                     { type: "text", content: "이 사진 기억나?" },
@@ -1234,7 +1234,6 @@ paths:
                   message:
                     type: string
                     example: "Internal Server Error. 관리자에게 문의하세요."
-
 
   # [POST] 롤링페이퍼 음성 메세지 추가
   /rcapsule/voice/{rcapsule_number}:
