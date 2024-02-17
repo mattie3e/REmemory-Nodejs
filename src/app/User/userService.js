@@ -11,14 +11,19 @@ import { getUserInfos, getuserStatus, setUserJwt } from "./userProvider.js";
 
 export const userSignAction = async (userCheck, userInfo) => {
 	if (userCheck) {
+		console.log("userSignAction 함수, userCheck 일 때 시작");
 		const userId = await getUserIdByEmail(userInfo.email);
+		console.log("userSignAction 함수, userId: ", userId);
 		if (userId == -1) throw new BaseError(status.BAD_REQUEST);
 		const tokenInfo = setUserJwt(userId);
+		console.log("userSignAction 함수, tokenInfo: ", tokenInfo);
 		const userData = await getUserInfo(userId);
-
+		console.log("userSignAction 함수, userData: ", userData);
 		if (!userData.status) {
+			console.log("userData.status != 1일 때");
 			await changeUserStatus(userId, 1);
 		}
+
 		return {
 			type: 1,
 			data: {
@@ -28,9 +33,13 @@ export const userSignAction = async (userCheck, userInfo) => {
 			},
 		};
 	} else {
+		console.log("userSignAction 함수, userCheck != 때 시작");
 		const userId = await insertUser(userInfo);
+		console.log("userSignAction 함수, userId: ", userId);
 		const tokenInfo = setUserJwt(userId);
+		console.log("userSignAction 함수, tokenInfo: ", tokenInfo);
 		const userData = await getUserInfos(userId);
+		console.log("userSignAction 함수, userData: ", userData);
 		return {
 			type: 0,
 			data: {
