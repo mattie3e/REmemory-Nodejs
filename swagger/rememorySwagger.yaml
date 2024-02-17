@@ -251,8 +251,15 @@ paths:
                 example:
                   [
                     { type: "text", content: "안녕" },
-                    { type: "image", content: "이미지 URL1" },
-                    { type: "image", content: "이미지 URL2" },
+                    {
+                      type: "image",
+                      content: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABMA…kakDsHxpPTEAbA/7800saP21M9FC5t1EGAAAAAElFTkSuQmCC",
+                    },
+                    {
+                      type: "image",
+                      content: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABMA…kakDsHxpPTEAbA/7800saP21M9FC5t1EGAAAAAElFTkSuQmCC",
+                    },
+
                     { type: "text", content: "이 사진 기억나?" },
                   ]
               align_type:
@@ -287,11 +294,11 @@ paths:
                             { type: "text", content: "안녕" },
                             {
                               type: "image",
-                              content: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABMA…kakDsHxpPTEAbA/7800saP21M9FC5t1EGAAAAAElFTkSuQmCC",
+                              content: "https://re-memory-bucket.s3.ap-northeast-2.amazonaws.com/images/example.jpg",
                             },
                             {
                               type: "image",
-                              content: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABMA…kakDsHxpPTEAbA/7800saP21M9FC5t1EGAAAAAElFTkSuQmCC",
+                              content: "https://re-memory-bucket.s3.ap-northeast-2.amazonaws.com/images/example2.png",
                             },
                             { type: "text", content: "이 사진 기억나?" },
                           ],
@@ -431,7 +438,7 @@ paths:
                 description: Capsule number
                 example: "testMember1_74177"
               pcapsule_password:
-                type: integer
+                type: string
                 description: Password for the pcapsule
                 example: 123456
       responses:
@@ -1292,7 +1299,6 @@ paths:
                   message:
                     type: string
                     example: "Internal Server Error. 관리자에게 문의하세요."
-
 
   # 추가 rcapsule 조회, 상세조회
   /rcapsule/retrieve:
