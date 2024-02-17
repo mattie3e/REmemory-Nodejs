@@ -22,6 +22,7 @@ import {
 	checkPasswordValidity,
 	retrieveCapsule_d,
 	saveTextImage_rcs,
+	getRollingPaperList,
 } from "./rcapsuleDao.js";
 
 import { createCapsuleNum_r } from "./rcapsuleProvider.js";
@@ -351,6 +352,7 @@ export const readRcs_s = async (capsuleNumber, capsulePassword) => {
 		if (!isExistCapsule) {
 			throw new BaseError(status.CAPSULE_NOT_FOUND);
 		}
+		console.log('n', capsuleNumber, 'p', capsulePassword);
 
 		// 패스워드 확인
 		const isPasswordValid = await checkPasswordValidity(
@@ -358,6 +360,7 @@ export const readRcs_s = async (capsuleNumber, capsulePassword) => {
 			capsuleNumber,
 			capsulePassword,
 		);
+		console.log(isPasswordValid);
 
 		if (!isPasswordValid) {
 			throw new BaseError(status.CAPSULE_PASSWORD_WRONG);
@@ -422,45 +425,49 @@ export const readDetailRcs_s = async (capsuleNumber, capsulePassword) => {
 			throw new BaseError(status.CAPSULE_NOT_OPENED);
 		}
 
-		let text_img_data = null;
-		let voice_data = null;
-		let align_type = null;
+		const rcapsule_id = await getRcapsuleId(connection, capsuleNumber);
 
-		// 배열 형식으로 조회 값 저장, 반환하는 로직으로 변경
-		if (pcapsuleData.content_type === 1) {
-			text_img_data = await retrievetxt_img_idBypcapsule_id(
-				connection,
-				pcapsuleData.id,
-			);
-
-			align_type = text_img_data[0].align_type;
-
-			text_img_data = text_img_data.map((row) => ({
-				body: row.body,
-				image_url: row.image_url,
-			}));
-		} else if (pcapsuleData.content_type === 2) {
-			voice_data = await retrievevoice_idBypcapsule_id(
-				connection,
-				pcapsuleData.id,
-			);
-		}
-
-		const retrieveData = {
-			capsule_number: pcapsuleData.capsule_number,
-			pcapsule_name: pcapsuleData.pcapsule_name,
-			open_date: pcapsuleData.open_date,
-			dear_name: pcapsuleData.dear_name,
-			theme: pcapsuleData.theme,
-			content_type: pcapsuleData.content_type,
-			text_img_data,
-			voice_data,
-			align_type,
-		};
+		const rollingPaperList = await getRollingPaperList(connection, rcapsule_id);
 
 		await connection.commit();
 
-		return retrieveData;
+		return rollingPaperList;
+
+		// let text_img_data = null;
+		// let voice_data = null;
+		// let align_type = null;
+
+		// // 배열 형식으로 조회 값 저장, 반환하는 로직으로 변경
+		// if (pcapsuleData.content_type === 1) {
+		// 	text_img_data = await retrievetxt_img_idBypcapsule_id(
+		// 		connection,
+		// 		pcapsuleData.id,
+		// 	);
+
+		// 	align_type = text_img_data[0].align_type;
+
+		// 	text_img_data = text_img_data.map((row) => ({
+		// 		body: row.body,
+		// 		image_url: row.image_url,
+		// 	}));
+		// } else if (pcapsuleData.content_type === 2) {
+		// 	voice_data = await retrievevoice_idBypcapsule_id(
+		// 		connection,
+		// 		pcapsuleData.id,
+		// 	);
+		// }
+
+		// const retrieveData = {
+		// 	capsule_number: pcapsuleData.capsule_number,
+		// 	pcapsule_name: pcapsuleData.pcapsule_name,
+		// 	open_date: pcapsuleData.open_date,
+		// 	dear_name: pcapsuleData.dear_name,
+		// 	theme: pcapsuleData.theme,
+		// 	content_type: pcapsuleData.content_type,
+		// 	text_img_data,
+		// 	voice_data,
+		// 	align_type,
+		// };
 	} catch (error) {
 		await connection.rollback();
 		throw error;

@@ -321,13 +321,14 @@ export const readRcs_c = async (req, res, next) => {
 export const readDetailRcs_c = async (req, res, next) => {
    try {
       const capsuleNumber = req.query.capsule_number;
-      const capsulePassword = req.query.rcapsule_password;
+      const capsulePassword = req.query.rcapsule_password || req.query.capsule_password;
+	//   console.log(capsuleNumber, capsulePassword);
 
       const data = await readDetailRcs_s(capsuleNumber, capsulePassword);
 
       res.send(
          response(status.SUCCESS, {
-            pcapsules: data,
+            rcapsules: data,
          }),
       );
    } catch (error) {

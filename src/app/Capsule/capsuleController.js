@@ -18,6 +18,7 @@ export const readCapsuleByType = async (req, res, next) => {
 			readPcs_c(req, res, next);
 		} else {
 			//rcapsule 조회 controller 코드
+			readRcs_c(req, res, next);
 		}
 	}
 };
@@ -34,7 +35,8 @@ export const readCapsuleDetail = async (req, res, next) => {
 		if (await getCapsuleByType(c_num, pw)) {
 			readDetailPcs_c(req, res, next);
 		} else {
-			//rcapsule 조회 controller 코드
+			//rcapsule 조회 controller 코드 (상세조회 not상상세)
+			readDetailRcs_c(req, res, next);
 		}
 	}
 };
