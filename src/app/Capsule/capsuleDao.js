@@ -1,6 +1,6 @@
-import { pool } from "../../../config/dbConfig";
-import { BaseError } from "../../../config/error";
-import { status } from "../../../config/responseStatus";
+import { pool } from "../../../config/dbConfig.js";
+import { BaseError } from "../../../config/error.js";
+import { status } from "../../../config/responseStatus.js";
 
 export const getCapsule = async (userId) => {
 	try {

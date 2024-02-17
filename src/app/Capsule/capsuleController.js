@@ -1,8 +1,9 @@
 import { BaseError } from "../../../config/error";
 import { response } from "../../../config/response";
 import { status } from "../../../config/responseStatus";
-import { readDetailPcs_c, readPcs_c } from "../Pcapsule/pcapsuleController";
-import { getCapsuleByType, getUserCapsules } from "./capsuleProvider";
+import { readDetailPcs_c, readPcs_c } from "../Pcapsule/pcapsuleController.js";
+import { readDetailRcs_c, readRcs_c } from "../Rcapsule/rcapsuleController.js";
+import { getCapsuleByType, getUserCapsules } from "./capsuleProvider.js";
 
 export const readCapsuleByType = async (req, res, next) => {
 	// capsule_number, capsule_password

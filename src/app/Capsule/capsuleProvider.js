@@ -1,6 +1,6 @@
-import { BaseError } from "../../../config/error";
-import { status } from "../../../config/responseStatus";
-import { getCapsule, getCapsuleType } from "./capsuleDao";
+import { BaseError } from "../../../config/error.js";
+import { status } from "../../../config/responseStatus.js";
+import { getCapsule, getCapsuleType } from "./capsuleDao.js";
 
 export const getUserCapsules = async (userId) => {
 	const capsules = await getCapsule(userId);

@@ -1,11 +1,11 @@
 import express from "express";
 import asyncHandler from "express-async-handler";
-import { tokenAuthMiddleware } from "../../../config/tokenAuthMiddleware";
+import { tokenAuthMiddleware } from "../../../config/tokenAuthMiddleware.js";
 import {
 	getOwnCapsules,
 	readCapsuleByType,
 	readCapsuleDetail,
-} from "./capsuleController";
+} from "./capsuleController.js";
 
 export const capsuleRouter = express.Router();
 
