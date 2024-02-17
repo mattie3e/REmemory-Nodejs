@@ -17,8 +17,8 @@ paths:
           required: true
           description: Password for the pcapsule
           schema:
-            type: integer
-            example: 123456
+            type: string
+            example: "123456"
       responses:
         "200":
           description: 성공
@@ -58,8 +58,8 @@ paths:
           required: true
           description: Password for the pcapsule
           schema:
-            type: integer
-            example: 123456
+            type: string
+            example: "123456"
       responses:
         "200":
           description: 성공
@@ -440,7 +440,7 @@ paths:
               pcapsule_password:
                 type: string
                 description: Password for the pcapsule
-                example: 123456
+                example: "123456"
       responses:
         "200":
           description: Password saved successfully
@@ -466,7 +466,7 @@ paths:
                     example:
                       {
                         "capsule_number": "testMember1_74177",
-                        "pcapsule_password": 123456,
+                        "pcapsule_password": "123456",
                       }
         "400":
           description: Bad Request
@@ -524,8 +524,8 @@ paths:
           required: true
           description: Password for the pcapsule
           schema:
-            type: integer
-            example: 123456
+            type: string
+            example: "123456"
       responses:
         "200":
           description: Success
@@ -630,8 +630,8 @@ paths:
           required: true
           description: Password for the pcapsule
           schema:
-            type: integer
-            example: 123456
+            type: string
+            example: "123456"
       responses:
         "200":
           description: Success
@@ -1319,8 +1319,8 @@ paths:
           required: true
           description: Password for the rcapsule
           schema:
-            type: integer
-            example: 123456
+            type: string
+            example: "123456"
       responses:
         "200":
           description: Success
