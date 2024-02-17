@@ -21,9 +21,11 @@ import {
 	checkCapsuleNum_d,
 	checkPasswordValidity,
 	retrieveCapsule_d,
+	saveTextImage_rcs,
 } from "./rcapsuleDao.js";
 
 import { createCapsuleNum_r } from "./rcapsuleProvider.js";
+import { uploadImageToS3 } from "../../../config/multer.js";
 
 //캡슐 번호 및 url 가져오기
 export const readNumnUrl_s = async (capsuleNumber) => {
@@ -148,6 +150,61 @@ export const createText_s = async (imageurl, capsule_number, body) => {
 		connection.release();
 	}
 };
+
+export const addTextImage_rcs = async (capsule_number, textImageContent, align_type, from_name) => {
+	const connection = await pool.getConnection(async (conn) => conn);
+
+	try {
+		connection.beginTransaction();
+
+		const isExistCapsule = await checkCapsuleNum_d(connection, capsule_number);
+
+		if(!isExistCapsule) {
+			throw new BaseError(status.CAPSULE_NOT_FOUND);
+		}
+
+		const rcapsuleId = await getRcapsuleId(connection, capsule_number);
+
+		const writer_id = await setRcapsuleWriter_n(connection, rcapsuleId, from_name, 1); //글/사진의 경우 1
+
+		console.log("writer_id : ", writer_id);
+
+		let textImageId = null;
+
+		for (let i = 0; i < textImageContent.length; i++) {
+			const value = textImageContent[i];
+			if (value.type === "text") {
+				textImageId = await saveTextImage_rcs(
+					connection,
+					writer_id,
+					value.content,
+					null,
+					align_type,
+				);
+			} else if (value.type === "image") {
+				const imageUrl = await uploadImageToS3(value.content);
+
+				textImageId = await saveTextImage_rcs(
+					connection,
+					writer_id,
+					null,
+					imageUrl,
+					align_type,
+				);
+			}
+			if (!textImageId) throw new BaseError(status.INTERNAL_SERVER_ERROR);
+		}
+
+		await connection.commit();
+
+		return { textImageId };
+	} catch (error) {
+		await connection.rollback();
+		throw error;
+	} finally {
+		connection.release();
+	}
+}
 
 export const postRcapsule = async (body, nickname, userId) => {
 	// 값이 제대로 전송 안된 경우
