@@ -311,12 +311,13 @@ export const addVoiceLetter_c = async (req, res, next) => {
 
 // API Name : rcapsule 조회 API
 // [GET] /retrieve
+// [Get] /capsule/retrieve/detail -> rcapsule part와 연결된 로직임
 export const readRcs_c = async (req, res, next) => {
 	try {
 		const capsuleNumber = req.query.capsule_number;
 		const capsulePassword =
 			req.query.rcapsule_password || req.query.capsule_password;
-		console.log(capsuleNumber, capsulePassword);
+		console.log("readRcs_c : ", capsuleNumber, capsulePassword);
 
 		const data = await readRcs_s(capsuleNumber, capsulePassword);
 
@@ -343,7 +344,8 @@ export const readDetailRcs_c = async (req, res, next) => {
 
 		res.send(
 			response(status.SUCCESS, {
-				rcapsules: data,
+				rcapsules: data.rollingPaperList,
+				theme: data.theme,
 			}),
 		);
 	} catch (error) {
