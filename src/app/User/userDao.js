@@ -45,14 +45,13 @@ export const getUserIdByEmail = async (email) => {
 
 		const getUserId = "SELECT id FROM member WHERE email = ?";
 		const [user] = await pool.query(getUserId, [email]);
-		console.log("getUserIdByEmail 함수 user: ", user);
 
 		if (user.length == 0) {
 			return -1;
 		}
 
 		conn.release();
-		console.log("getUserIdByEmail 함수, user[0].id: ", user[0].id);
+
 		return user[0].id;
 	} catch (err) {
 		console.log(err);
@@ -67,14 +66,13 @@ export const getUserInfo = async (userId) => {
 		const getUser =
 			"SELECT id, email, nickname, status FROM member WHERE id = ?";
 		const [user] = await pool.query(getUser, [userId]);
-		console.log("getUser 함수, user: ", user);
 
 		if (user.length == 0) {
 			return -1;
 		}
 
 		conn.release();
-		console.log("getUser 함수, user[0]: ", user[0]);
+
 		return user[0];
 	} catch (err) {
 		console.log(err);
