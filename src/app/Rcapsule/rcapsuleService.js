@@ -336,6 +336,7 @@ export const readRcs_s = async (capsuleNumber, capsulePassword) => {
 
 		// 캡슐 정보 조회
 		const rcapsuleData = await retrieveCapsule_d(connection, capsuleNumber);
+		console.log("readRcs_s : ", rcapsuleData);
 
 		// 상세정보를 전부 반환하지 않고 일부만 반환
 		const responseData = {

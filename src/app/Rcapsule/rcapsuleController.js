@@ -316,7 +316,7 @@ export const readRcs_c = async (req, res, next) => {
 		const capsuleNumber = req.query.capsule_number;
 		const capsulePassword =
 			req.query.rcapsule_password || req.query.capsule_password;
-		console.log(capsuleNumber, capsulePassword);
+		console.log("readRcs_c : ", capsuleNumber, capsulePassword);
 
 		const data = await readRcs_s(capsuleNumber, capsulePassword);
 
