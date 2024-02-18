@@ -100,4 +100,11 @@ export const status = {
 		code: "CAPSULE4005",
 		message: "음성이 없습니다.",
 	},
+
+	CAPSULE_NOT_VALID: {
+		status: StatusCodes.FORBIDDEN,
+		isSuccess: false,
+		code: "CAPSULE4006",
+		message: "유효하지 않은 캡슐입니다.",
+	},
 };
