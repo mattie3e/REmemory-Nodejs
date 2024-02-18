@@ -368,6 +368,13 @@ export const readInnerDetailRcs_c = async (req, res, next) => {
 	try {
 		const wId = req.query.writer_id;
 		console.log(wId);
+		if(!wId) {
+			res.status(400).send(
+				response(status.BAD_REQUEST, {
+					err: "writer id undefined",
+				})
+			)
+		}
 
 		const data = await readInnerDetailRcs_s(wId);
 
