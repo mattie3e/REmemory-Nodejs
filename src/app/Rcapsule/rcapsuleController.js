@@ -311,6 +311,7 @@ export const addVoiceLetter_c = async (req, res, next) => {
 
 // API Name : rcapsule 조회 API
 // [GET] /retrieve
+// [Get] /capsule/retrieve/detail -> rcapsule part와 연결된 로직임
 export const readRcs_c = async (req, res, next) => {
 	try {
 		const capsuleNumber = req.query.capsule_number;

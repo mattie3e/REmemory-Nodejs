@@ -360,7 +360,7 @@ export const readRcs_s = async (capsuleNumber, capsulePassword) => {
 	}
 };
 
-//캡슐 상상세조회
+//캡슐 상세조회
 export const readDetailRcs_s = async (capsuleNumber, capsulePassword) => {
 	const connection = await pool.getConnection(async (conn) => conn);
 	try {
@@ -402,41 +402,6 @@ export const readDetailRcs_s = async (capsuleNumber, capsulePassword) => {
 
 		return rollingPaperList;
 
-		// let text_img_data = null;
-		// let voice_data = null;
-		// let align_type = null;
-
-		// // 배열 형식으로 조회 값 저장, 반환하는 로직으로 변경
-		// if (pcapsuleData.content_type === 1) {
-		// 	text_img_data = await retrievetxt_img_idBypcapsule_id(
-		// 		connection,
-		// 		pcapsuleData.id,
-		// 	);
-
-		// 	align_type = text_img_data[0].align_type;
-
-		// 	text_img_data = text_img_data.map((row) => ({
-		// 		body: row.body,
-		// 		image_url: row.image_url,
-		// 	}));
-		// } else if (pcapsuleData.content_type === 2) {
-		// 	voice_data = await retrievevoice_idBypcapsule_id(
-		// 		connection,
-		// 		pcapsuleData.id,
-		// 	);
-		// }
-
-		// const retrieveData = {
-		// 	capsule_number: pcapsuleData.capsule_number,
-		// 	pcapsule_name: pcapsuleData.pcapsule_name,
-		// 	open_date: pcapsuleData.open_date,
-		// 	dear_name: pcapsuleData.dear_name,
-		// 	theme: pcapsuleData.theme,
-		// 	content_type: pcapsuleData.content_type,
-		// 	text_img_data,
-		// 	voice_data,
-		// 	align_type,
-		// };
 	} catch (error) {
 		await connection.rollback();
 		throw error;
