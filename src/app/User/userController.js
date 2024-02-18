@@ -16,19 +16,17 @@ export const userSign = async (req, res) => {
 	const code = req.query.code;
 	if (!code) throw new BaseError(status.BAD_REQUEST);
 	const userInfo = await kakaoGetUserInfo(code);
-	console.log("userSign 함수, userInfo: ", userInfo);
+
 	const userCheck = await emailCheck(userInfo);
-	console.log("userSign 함수, userCheck: ", userCheck);
 
 	const userData = await userSignAction(userCheck, userInfo);
-	console.log("userSign 함수, userData: ", userData);
+
 	const type = userData.type;
-	console.log("userSign 함수, type: ", type);
+
 	if (type == 1) {
-		console.log("userSign 함수 type 1일 때 userData.data: ", userData.data);
 		res.send(response(status.LOGIN_SUCCESS, userData.data));
 	} else if (type == 0) {
-		console.log("userSign 함수 type 0일 때 userData.data: ", userData.data);
+		d;
 		res.send(response(status.SIGNUP_SUCCESS, userData.data));
 	}
 };

@@ -2,6 +2,8 @@ import express from "express";
 import asyncHandler from "express-async-handler";
 import upload from "../../../config/multer.js";
 
+import { tokenAuthMiddleware } from "../../../config/tokenAuthMiddleware.js";
+
 import {
 	createPcs_c,
 	savePassword_c,
