@@ -264,4 +264,11 @@ export const getRcapsuleTheme = async (connection, rcapsule_id) => {
 	const [result] = await connection.query(query, [rcapsule_id]);
 
 	return result[0].theme;
+};
+
+export const checkRcapsulePw = async (connection, capsule_number) => {
+	const query = `SELECT IFNULL((SELECT 1 FROM rcapsule WHERE capsule_number = ? AND rcapsule_password IS NOT NULL), 0) AS password_existence;`;
+	const [result] = await connection.query(query, [capsule_number]);
+
+	return result[0].password_existence;
 }

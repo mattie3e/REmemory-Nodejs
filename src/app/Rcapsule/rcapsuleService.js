@@ -29,6 +29,7 @@ import {
 	getRcsWContentType,
 	checkWid_d,
 	getRcapsuleTheme,
+	checkRcapsulePw,
 } from "./rcapsuleDao.js";
 
 import { createCapsuleNum_r } from "./rcapsuleProvider.js";
@@ -80,6 +81,12 @@ export const readDear_s = async (capsuleNumber) => {
 		const isExistCapsule = await checkRcapsule_d(connection, capsuleNumber);
 		if (!isExistCapsule) {
 			throw new BaseError(status.CAPSULE_NOT_FOUND);
+		}
+
+		// 캡슐 비밀번호 설정 확인
+		const isExistPassword = await checkRcapsulePw(connection, capsuleNumber);
+		if(!isExistPassword) {
+			throw new BaseError(status.CAPSULE_NOT_VALID);
 		}
 
 		//DAO를 총해 캡슐 정보 조회

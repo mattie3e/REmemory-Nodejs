@@ -73,6 +73,12 @@ export const readDear_c = async (req, res, next) => {
 					err: "캡슐을 찾을 수 없습니다. 다시 시도해 주세요.",
 				}),
 			);
+		} else if (error.data.status == 403) {
+			res.status(403).send(
+				response(status.CAPSULE_NOT_VALID, {
+					err: "비밀번호가 없는 캡슐입니다. 비밀번호를 먼저 설정해 주세요.",
+				})
+			)
 		} else {
 			res
 				.status(500)
