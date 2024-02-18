@@ -197,22 +197,10 @@ export const createText_c = async (req, res, next) => {
 		//aws s3에 업로드 된 파일 url 접근 및 db 저장
 		//console.log(req.file.locatiron); // aws s3에 올려진 파일 url
 
-		// const paramsRegex = /from_name=(.*?)&content_type=(.*)/;
-		// const [, from_name, content_type] = paramsRegex.exec(req.url);
-
 		const capsule_number = req.body.capsule_number;
 		const textImageContent = req.body.contents;
 		const align_type = req.body.align_type;
 		const from_name = req.body.from_name; // rcapsule 글/사진 쓰기의 경우 이게 필요
-
-		// 글 , 사진 둘 다 없을 경우만
-		// if (!req.body.text && !req.fil.location) {
-		// 	return res
-		// 		.status(400)
-		// 		.send(
-		// 			response(status.BAD_REQUEST, { err: "capsule의 내용이 없습니다." }),
-		// 		);
-		// }
 
 		const result = await addTextImage_rcs(
 			capsule_number,
@@ -253,22 +241,15 @@ export const addVoiceLetter_c = async (req, res, next) => {
 		// aws s3에 업로드 된 파일 url 접근 및 db 저장
 		console.log(req.file.location); // aws s3에 올려진 파일 url
 		console.log("req.params.rcapsule_number : ", req.params.rcapsule_number);
-		// console.log('req', req.url);
 
-		// const paramsRegex = /from_name=(.*?)&content_type=(.*?)&theme=(.*)/;
-		const paramsRegex = /from_name=(.*?)&content_type=(.*)/;
-		console.log("addVoiceLetter_c paramRegex: ", paramsRegex);
-		// const [, fromName, contentType, theme] = paramsRegex.exec(req.url);
-		const [, fromName, contentType] = paramsRegex.exec(req.url);
+		const fromName = req.query.from_name;
+		const contentType = req.query.content_type;
 
 		const body = {
 			from_name: fromName,
 			content_type: contentType,
 		};
-		// const body = {
-		// 	from_name: req.body.from_name,
-		// 	content_type: req.body.content_type,
-		// };
+		
 		console.log("body : ", body);
 
 		if (!req.file.location) {

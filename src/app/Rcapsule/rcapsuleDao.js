@@ -7,9 +7,9 @@ export const getRcapsuleId = async (connection, capsule_number) => {
 	return result[0].id;
 };
 
-export const getWriterId = async (connection, rcapsule_id) => {
-	const query = `SELECT id FROM rcapsule_writer WHERE rcapsule_id = ?;`;
-	const [result] = await connection.query(query, rcapsule_id);
+export const getWriterId = async (connection, rcapsule_id, from_name, content_type) => {
+	const query = `SELECT id FROM rcapsule_writer WHERE rcapsule_id = ? AND from_name = ? AND content_type = ?;`;
+	const [result] = await connection.query(query, [rcapsule_id, from_name, content_type]);
 	console.log("getWriterId", result[0]);
 	return result[0].id;
 };
@@ -128,8 +128,8 @@ VALUES (null, ?, ?, ?, ?, ?);`;
 };
 
 export const addVoiceLetter_d = async (connection, voiceUrl, writer_id) => {
-	const query = `INSERT INTO voice (id, pcapsule_id, rwcapsule_id, voice_url, created_at, updated_at)
-VALUES (null, null, ?, ?, ?, ?);`;
+	const query = `INSERT INTO voice (rwcapsule_id, voice_url, created_at, updated_at)
+VALUES (?, ?, ?, ?);`;
 	const [result] = await connection.query(query, [
 		writer_id,
 		voiceUrl,
