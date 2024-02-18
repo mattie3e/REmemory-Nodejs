@@ -258,3 +258,10 @@ export const retrievevoice_idBypcapsule_id = async (connection, wId) => {
 	const [retrieveCapsuleRow] = await connection.query(query, wId);
 	return retrieveCapsuleRow[0];
 };
+
+export const getRcapsuleTheme = async (connection, rcapsule_id) => {
+	const query = `SELECT theme FROM rcapsule WHERE id = ?;`;
+	const [result] = await connection.query(query, [rcapsule_id]);
+
+	return result[0].theme;
+}

@@ -28,6 +28,7 @@ import {
 	retrievetxt_img_idBypcapsule_id,
 	getRcsWContentType,
 	checkWid_d,
+	getRcapsuleTheme,
 } from "./rcapsuleDao.js";
 
 import { createCapsuleNum_r } from "./rcapsuleProvider.js";
@@ -379,6 +380,8 @@ export const readDetailRcs_s = async (capsuleNumber, capsulePassword) => {
 			capsuleNumber,
 			capsulePassword,
 		);
+		console.log('readDetailRcs_s : ', capsuleNumber, capsulePassword);
+		console.log('isPasswordValid : ', isPasswordValid);
 
 		if (!isPasswordValid) {
 			throw new BaseError(
@@ -398,9 +401,11 @@ export const readDetailRcs_s = async (capsuleNumber, capsulePassword) => {
 
 		const rollingPaperList = await getRollingPaperList(connection, rcapsule_id);
 
+		const theme = await getRcapsuleTheme(connection, rcapsule_id);
+
 		await connection.commit();
 
-		return rollingPaperList;
+		return { rollingPaperList, theme };
 
 	} catch (error) {
 		await connection.rollback();
