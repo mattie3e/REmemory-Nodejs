@@ -181,7 +181,7 @@ export const postRcapsule = async (body, nickname, userId) => {
 	console.log("body 추출 : ", rcapsule_name, open_date, dear_name, theme);
 
 	const capsule_number = await createCapsuleNum_r(nickname);
-	const rcapsuleUrl = `${process.env.FRONT_DOMAIN}/rolling/rcapsule_number=${capsule_number}`;
+	const rcapsuleUrl = `${process.env.FRONT_DOMAIN}/rolling/${capsule_number}`;
 	console.log(rcapsuleUrl);
 
 	const connection = await pool.getConnection(async (conn) => conn);
