@@ -2,6 +2,8 @@ import express from "express";
 import asyncHandler from "express-async-handler";
 import upload from "../../../config/multer.js";
 
+import { tokenAuthMiddleware } from "../../../config/tokenAuthMiddleware.js";
+
 import {
 	createPcs_c,
 	savePassword_c,
@@ -14,7 +16,8 @@ import {
 
 export const pcapsuleRouter = express.Router();
 
-pcapsuleRouter.post("/create", asyncHandler(createPcs_c));
+pcapsuleRouter.post("/create", tokenAuthMiddleware, asyncHandler(createPcs_c));
+// pcapsuleRouter.post("/create", asyncHandler(createPcs_c));
 
 pcapsuleRouter.post("/create/text_image", asyncHandler(addTextImage_c));
 

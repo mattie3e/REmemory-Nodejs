@@ -89,7 +89,7 @@ export const readDear_s = async (capsuleNumber) => {
 		const resdata = {
 			dear_name: rCapsuleData.dear_name,
 			capsule_id: rCapsuleData.id,
-			theme: rCapsuleData.theme
+			theme: rCapsuleData.theme,
 		};
 		return resdata;
 	} catch (error) {
@@ -182,7 +182,7 @@ export const postRcapsule = async (body, nickname, userId) => {
 	console.log("body 추출 : ", rcapsule_name, open_date, dear_name, theme);
 
 	const capsule_number = await createCapsuleNum_r(nickname);
-	const rcapsuleUrl = `${process.env.FRONT_DOMAIN}/capsule/write/rolling/rcapsule_number=${capsule_number}`;
+	const rcapsuleUrl = `${process.env.FRONT_DOMAIN}/rolling/${capsule_number}`;
 	console.log(rcapsuleUrl);
 
 	const connection = await pool.getConnection(async (conn) => conn);
