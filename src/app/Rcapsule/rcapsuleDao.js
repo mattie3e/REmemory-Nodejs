@@ -260,10 +260,11 @@ export const retrievevoice_idBypcapsule_id = async (connection, wId) => {
 	return retrieveCapsuleRow[0];
 };
 
-export const getRcapsuleThemeNDear = async (connection, rcapsule_id) => {
-	const query = `SELECT theme, dear_name FROM rcapsule WHERE id = ?;`;
+export const getRcapsuleInfo = async (connection, rcapsule_id) => {
+	const query = `SELECT theme, dear_name, rcapsule_name FROM rcapsule WHERE id = ?;`;
 	const [result] = await connection.query(query, [rcapsule_id]);
 
+	console.log(result);
 	return result[0];
 };
 

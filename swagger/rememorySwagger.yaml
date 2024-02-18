@@ -1514,7 +1514,7 @@ paths:
       parameters:
         - in: query
           name: writer_id
-          required: true
+          # required: true
           description: 작성자 id
           schema:
             type: int
