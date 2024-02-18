@@ -130,10 +130,6 @@ paths:
           schema:
             type: object
             properties:
-              userId:
-                type: int
-                description: 유저 아이디
-                example: 1
               pcapsule_name:
                 type: string
                 description: pcapsule 이름
@@ -154,6 +150,9 @@ paths:
               content_type:
                 type: integer
                 description: (1 글사진, 2 음성)
+                example: 1
+              userId:
+                type: integer
                 example: 1
       responses:
         "200":
