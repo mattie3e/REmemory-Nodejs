@@ -17,7 +17,6 @@ import {
 export const pcapsuleRouter = express.Router();
 
 pcapsuleRouter.post("/create", tokenAuthMiddleware, asyncHandler(createPcs_c));
-// pcapsuleRouter.post("/create", asyncHandler(createPcs_c));
 
 pcapsuleRouter.post("/create/text_image", asyncHandler(addTextImage_c));
 

@@ -48,10 +48,8 @@ export const updateOpenDate_p = async () => {
 	try {
 		connection.beginTransaction();
 
-		console.log("updateOpenDate_p 시작");
-		console.log("updateOpenDate_d 시작");
 		await updateOpenDate_d(connection);
-		console.log("updateOpenDate_d 종료");
+
 		await connection.commit();
 
 		return { message: "updateCapsule saved successfully." };
