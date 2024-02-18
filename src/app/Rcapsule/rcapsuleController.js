@@ -84,7 +84,7 @@ export const readDear_c = async (req, res, next) => {
 				.status(500)
 				.send(response(status.INTERNAL_SERVER_ERROR), { detail: error });
 		}
-		console.log(error);
+		console.log("url_info error : ", error);
 	}
 };
 
