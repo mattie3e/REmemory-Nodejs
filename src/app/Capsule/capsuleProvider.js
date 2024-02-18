@@ -84,7 +84,7 @@ export const sendNotificationEmail = async () => {
 					to: `${userEmail}`,
 					subject: "작성하신 타임캡슐이 열렸어요! 💌",
 					text: `
-					타임캡슐 ${row.capsule_name}이 열렸습니다.
+          타임캡슐 ${row.capsule_name}이 열렸습니다.
                   지금 리메모리 페이지에 방문하여 캡슐을 확인해 보세요 ✨
                   저희 'Re-Memory'의 서비스를 이용해주셔서 감사합니다.
 
@@ -92,9 +92,9 @@ export const sendNotificationEmail = async () => {
                   
                   ✔ 캡슐 번호: ${row.capsule_number},
                   ✔ 캡슐 비밀번호: ${row.capsule_password}
-				  
-				  저희 서비스를 이용해 주셔서 감사합니다.
-				  `,
+          
+          저희 서비스를 이용해 주셔서 감사합니다.
+          `,
 				})
 				.then((r) => console.log("저장 및 발송 성공", r))
 				.catch((e) => console.log("에러", e));

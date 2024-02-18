@@ -108,9 +108,9 @@ export const createRcapsule = async (req, res, next) => {
 		console.log("userID : ", userId);
 
 		if (!userId) {
-			return res.status(401).send(
-				response(status.EMPTY_TOKEN, { err: "유저 정보가 없습니다." }),
-			); 
+			return res
+				.status(401)
+				.send(response(status.EMPTY_TOKEN, { err: "유저 정보가 없습니다." }));
 		}
 
 		const userInfos = await getUserInfos(userId);
@@ -141,7 +141,9 @@ export const createRcapsule = async (req, res, next) => {
 		//    res.status(StatusCodes.INTERNAL_SERVER_ERROR).send(response(status.INTERNAL_SERVER_ERROR));
 		// }
 		console.log(error);
-		res.status(500).send(response(status.INTERNAL_SERVER_ERROR, { detail : error }));
+		res
+			.status(500)
+			.send(response(status.INTERNAL_SERVER_ERROR, { detail: error }));
 	}
 };
 
