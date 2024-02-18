@@ -7,7 +7,7 @@ import cors from "cors";
 export default function () {
 	const app = express();
 
-	app.use(express.json()); // JSON 파싱 미들웨어를 사용하도록 설정
+	app.use(express.json({ limit: "1mb" })); // JSON 파싱 미들웨어에서 본문 크기 제한 설정
 	// 클라이언트로부터 받은 JSON 데이터를 파싱하여 req.body 객체를 생성
 	app.use(express.urlencoded({ extended: true })); // URL-encoded 파싱 미들웨어를 사용하도록 설정
 	// 클라이언트로부터 받은 URL-encoded 데이터를 파싱하여 req.body 객체를 생성
