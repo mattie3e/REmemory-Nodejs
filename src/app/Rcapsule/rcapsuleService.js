@@ -429,6 +429,7 @@ export const readInnerDetailRcs_s = async (wId) => {
 		await connection.beginTransaction();
 
 		// writer 존재 확인
+		console.log('readInnerDetailRcs_s', wId);
 		const isExistW = await checkWid_d(connection, wId);
 		console.log("isExistW:", isExistW);
 		if (!isExistW) {
