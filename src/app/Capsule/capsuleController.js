@@ -52,7 +52,7 @@ export const getOwnCapsules = async (req, res, next) => {
 		throw new BaseError(status.BAD_REQUEST);
 	} else {
 		res.send(
-			response(status.SUCCESS, await getUserCapsules(req.params.userId)),
+			response(status.SUCCESS, await getUserCapsules(req.query.userId)),
 		);
 	}
 };
