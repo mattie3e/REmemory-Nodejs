@@ -28,7 +28,7 @@ import {
 	retrievetxt_img_idBypcapsule_id,
 	getRcsWContentType,
 	checkWid_d,
-	getRcapsuleTheme,
+	getRcapsuleThemeNDear,
 	checkRcapsulePw,
 } from "./rcapsuleDao.js";
 
@@ -408,11 +408,11 @@ export const readDetailRcs_s = async (capsuleNumber, capsulePassword) => {
 
 		const rollingPaperList = await getRollingPaperList(connection, rcapsule_id);
 
-		const theme = await getRcapsuleTheme(connection, rcapsule_id);
+		const { theme, dear_name } = await getRcapsuleThemeNDear(connection, rcapsule_id);
 
 		await connection.commit();
 
-		return { rollingPaperList, theme };
+		return { rollingPaperList, theme, dear_name };
 
 	} catch (error) {
 		await connection.rollback();
