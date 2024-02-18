@@ -296,10 +296,11 @@ export const addVoiceLetter_s = async (voiceUrl, capsule_number, body) => {
 		const rcapsule_id = await getRcapsuleId(connection, capsule_number);
 		console.log("rcapsule_id", rcapsule_id);
 
-		await setRcapsuleWriter_n(connection, rcapsule_id, from_name, content_type);
+		const writer_id = await setRcapsuleWriter_n(connection, rcapsule_id, from_name, content_type);
+		console.log('찐 writer : ', writer_id);
 
-		const writer_id = await getWriterId(connection, rcapsule_id);
-		console.log("writer_id : ", writer_id);
+		// const writer_id = await getWriterId(connection, rcapsule_id, from_name, content_type);
+		// console.log("writer_id : ", writer_id);
 
 		await addVoiceLetter_d(connection, voiceUrl, writer_id);
 
