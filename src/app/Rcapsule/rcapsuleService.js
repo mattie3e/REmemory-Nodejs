@@ -28,12 +28,13 @@ import {
 	retrievetxt_img_idBypcapsule_id,
 	getRcsWContentType,
 	checkWid_d,
-	getRcapsuleThemeNDear,
+	getRcapsuleInfo,
 	checkRcapsulePw,
 } from "./rcapsuleDao.js";
 
 import { createCapsuleNum_r } from "./rcapsuleProvider.js";
 import { uploadImageToS3 } from "../../../config/multer.js";
+import { text } from "express";
 
 //캡슐 번호 및 url 가져오기
 export const readNumnUrl_s = async (capsuleNumber) => {
@@ -408,11 +409,11 @@ export const readDetailRcs_s = async (capsuleNumber, capsulePassword) => {
 
 		const rollingPaperList = await getRollingPaperList(connection, rcapsule_id);
 
-		const { theme, dear_name } = await getRcapsuleThemeNDear(connection, rcapsule_id);
+		const { theme, dear_name, rcapsule_name } = await getRcapsuleInfo(connection, rcapsule_id);
 
 		await connection.commit();
 
-		return { rollingPaperList, theme, dear_name };
+		return { rollingPaperList, theme, dear_name, rcapsule_name };
 
 	} catch (error) {
 		await connection.rollback();
@@ -450,6 +451,7 @@ export const readInnerDetailRcs_s = async (wId) => {
 				connection,
 				wData.id,
 			);
+			console.log('text_img_data', text_img_data);
 
 			align_type = text_img_data[0].align_type;
 

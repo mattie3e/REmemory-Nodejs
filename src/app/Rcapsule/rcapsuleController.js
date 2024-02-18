@@ -355,6 +355,7 @@ export const readDetailRcs_c = async (req, res, next) => {
 				rcapsules: data.rollingPaperList,
 				theme: data.theme,
 				dear_name: data.dear_name,
+				rcapsule_name: data.rcapsule_name,
 			}),
 		);
 	} catch (error) {
