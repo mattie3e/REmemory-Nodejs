@@ -43,10 +43,10 @@ export const readCapsuleDetail = async (req, res, next) => {
 
 export const getOwnCapsules = async (req, res, next) => {
 	console.log("getOwnCapsules 시작, req.user.userId: ", req.user.userId);
-	console.log("getOwnCapsules , req.params.userId: ", req.params.userId);
-	const check = req.user.userId != req.params.userId ? 0 : 1;
+	console.log("getOwnCapsules , req.params.userId: ", req.query.userId);
+	const check = req.user.userId != req.query.userId ? 0 : 1;
 	console.log("getOwnCapsules , check: ", check);
-	if (req.user.userId != req.params.userId) {
+	if (req.user.userId != req.query.userId) {
 		throw new BaseError(status.FORBIDDEN);
 	} else if (!req.user) {
 		throw new BaseError(status.BAD_REQUEST);
