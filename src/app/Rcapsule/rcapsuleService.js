@@ -86,13 +86,12 @@ export const readDear_s = async (capsuleNumber) => {
 
 		// 캡슐 비밀번호 설정 확인
 		const isExistPassword = await checkRcapsulePw(connection, capsuleNumber);
-		if(!isExistPassword) {
+		if (!isExistPassword) {
 			throw new BaseError(status.CAPSULE_NOT_VALID);
 		}
 
 		//DAO를 총해 캡슐 정보 조회
 		const rCapsuleData = await readDear_d(connection, capsuleNumber);
-		console.log("DAO를 총해 캡슐 정보 조회", rCapsuleData);
 
 		const resdata = {
 			dear_name: rCapsuleData.dear_name,
@@ -136,8 +135,6 @@ export const addTextImage_rcs = async (
 			from_name,
 			1,
 		); //글/사진의 경우 1
-
-		console.log("writer_id : ", writer_id);
 
 		let textImageId = null;
 
@@ -187,11 +184,8 @@ export const postRcapsule = async (body, nickname, userId) => {
 		}
 	});
 
-	console.log("body 추출 : ", rcapsule_name, open_date, dear_name, theme);
-
 	const capsule_number = await createCapsuleNum_r(nickname);
 	const rcapsuleUrl = `${process.env.FRONT_DOMAIN}/rolling/${capsule_number}`;
-	console.log(rcapsuleUrl);
 
 	const connection = await pool.getConnection(async (conn) => conn);
 	try {
@@ -199,11 +193,9 @@ export const postRcapsule = async (body, nickname, userId) => {
 		// console.log("transaction start!");
 		//create time_capsule
 		await insertTimeCapsule(connection, capsule_number, userId);
-		console.log("insertTimeCapsule 성공");
 
 		//create rcapsule
 		const time_capsule_id = await getTimeCapsuleId(connection, capsule_number);
-		console.log("time_capsule_id : ", time_capsule_id);
 
 		if (!time_capsule_id) {
 			throw new BaseError(status.CAPSULE_NOT_FOUND);
@@ -219,12 +211,9 @@ export const postRcapsule = async (body, nickname, userId) => {
 		];
 
 		const createRcsData = await insertRcapsule(connection, insertData);
-		console.log("insertRcapsule성공", createRcsData);
 
 		const newRcapsuleId = await getRcapsuleId(connection, capsule_number);
 		const rcapsule_url = await getRcapsuleUrl(connection, capsule_number);
-
-		console.log("url : ", rcapsule_url);
 
 		await connection.commit();
 
@@ -239,7 +228,6 @@ export const postRcapsule = async (body, nickname, userId) => {
 
 export const setPassword_s = async (body, rcapsule_id) => {
 	const { rcapsule_password } = body;
-	console.log("rcapsuleService.js, body :", body, "rcapusle_id", rcapsule_id);
 
 	if (!rcapsule_password) {
 		throw new BaseError(status.BAD_REQUEST);
@@ -248,7 +236,7 @@ export const setPassword_s = async (body, rcapsule_id) => {
 	const connection = await pool.getConnection(async (conn) => conn);
 
 	const check_rcapsule = await checkRcapsule_d(connection, rcapsule_id);
-	// console.log(check_rcapsule);
+
 	if (!check_rcapsule) {
 		throw new BaseError(status.CAPSULE_NOT_FOUND);
 	}
@@ -294,10 +282,13 @@ export const addVoiceLetter_s = async (voiceUrl, capsule_number, body) => {
 		connection.beginTransaction();
 
 		const rcapsule_id = await getRcapsuleId(connection, capsule_number);
-		console.log("rcapsule_id", rcapsule_id);
 
-		const writer_id = await setRcapsuleWriter_n(connection, rcapsule_id, from_name, content_type);
-		console.log('찐 writer : ', writer_id);
+		const writer_id = await setRcapsuleWriter_n(
+			connection,
+			rcapsule_id,
+			from_name,
+			content_type,
+		);
 
 		// const writer_id = await getWriterId(connection, rcapsule_id, from_name, content_type);
 		// console.log("writer_id : ", writer_id);
@@ -309,7 +300,7 @@ export const addVoiceLetter_s = async (voiceUrl, capsule_number, body) => {
 		return response(status.SUCCESS);
 	} catch (error) {
 		await connection.rollback();
-		console.log("rcapsuleService.js error : ", error);
+
 		throw error;
 	} finally {
 		connection.release();
@@ -330,7 +321,6 @@ export const readRcs_s = async (capsuleNumber, capsulePassword) => {
 		if (!isExistCapsule) {
 			throw new BaseError(status.CAPSULE_NOT_FOUND);
 		}
-		console.log("n", capsuleNumber, "p", capsulePassword);
 
 		// 패스워드 확인
 		const isPasswordValid = await checkPasswordValidity(
@@ -338,7 +328,6 @@ export const readRcs_s = async (capsuleNumber, capsulePassword) => {
 			capsuleNumber,
 			capsulePassword,
 		);
-		console.log(isPasswordValid);
 
 		if (!isPasswordValid) {
 			throw new BaseError(status.CAPSULE_PASSWORD_WRONG);
@@ -346,7 +335,6 @@ export const readRcs_s = async (capsuleNumber, capsulePassword) => {
 
 		// 캡슐 정보 조회
 		const rcapsuleData = await retrieveCapsule_d(connection, capsuleNumber);
-		console.log("readRcs_s : ", rcapsuleData);
 
 		// 상세정보를 전부 반환하지 않고 일부만 반환
 		const responseData = {
@@ -389,8 +377,6 @@ export const readDetailRcs_s = async (capsuleNumber, capsulePassword) => {
 			capsuleNumber,
 			capsulePassword,
 		);
-		console.log('readDetailRcs_s : ', capsuleNumber, capsulePassword);
-		console.log('isPasswordValid : ', isPasswordValid);
 
 		if (!isPasswordValid) {
 			throw new BaseError(
@@ -410,12 +396,14 @@ export const readDetailRcs_s = async (capsuleNumber, capsulePassword) => {
 
 		const rollingPaperList = await getRollingPaperList(connection, rcapsule_id);
 
-		const { theme, dear_name, rcapsule_name } = await getRcapsuleInfo(connection, rcapsule_id);
+		const { theme, dear_name, rcapsule_name } = await getRcapsuleInfo(
+			connection,
+			rcapsule_id,
+		);
 
 		await connection.commit();
 
 		return { rollingPaperList, theme, dear_name, rcapsule_name };
-
 	} catch (error) {
 		await connection.rollback();
 		throw error;
@@ -431,16 +419,15 @@ export const readInnerDetailRcs_s = async (wId) => {
 		await connection.beginTransaction();
 
 		// writer 존재 확인
-		console.log('readInnerDetailRcs_s', wId);
+
 		const isExistW = await checkWid_d(connection, wId);
-		console.log("isExistW:", isExistW);
+
 		if (!isExistW) {
 			throw new BaseError(status.WRONG_WRITER);
 		}
 
 		// writer content type, from_name 가져오기
 		const wData = await getRcsWContentType(connection, wId);
-		console.log("wdata:", wData);
 
 		let text_img_data = null;
 		let voice_data = null;
@@ -452,7 +439,6 @@ export const readInnerDetailRcs_s = async (wId) => {
 				connection,
 				wData.id,
 			);
-			console.log('text_img_data', text_img_data);
 
 			align_type = text_img_data[0].align_type;
 
@@ -461,7 +447,6 @@ export const readInnerDetailRcs_s = async (wId) => {
 				image_url: row.image_url,
 			}));
 		} else if (wData.content_type === 2) {
-			console.log("?");
 			voice_data = await retrievevoice_idBypcapsule_id(connection, wData.id);
 		}
 

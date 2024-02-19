@@ -18,8 +18,6 @@ import { savePassword_p } from "./pcapsuleProvider.js";
 export const createPcs_c = async (req, res, next) => {
 	// body: pcapsule_name, open_date, dear_name, theme, content_type, userId
 	try {
-		console.log("createPcs_c req.body: ", req.body);
-		console.log("createPcs_c req.user.userId: ", req.user.userId);
 		if (req.user.userId == req.body.userId) {
 			const userId = req.user.userId; // 토큰에서 추출한 사용자 ID
 			const userInfos = await getUserInfos(userId);
