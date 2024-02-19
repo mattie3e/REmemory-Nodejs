@@ -7,8 +7,8 @@ const options = {
 			version: "1.0.0",
 			description: "Rememory API 설명",
 		},
-		// host: "dev.mattie3e.store",
-		host: "localhost:3000", //로컬 테스트용
+		host: "dev.mattie3e.store",
+		// host: "localhost:3000", //로컬 테스트용
 		basepath: "../",
 	},
 	apis: [
