@@ -13,7 +13,6 @@ export const checkUserEmail = async (data) => {
 		conn.release();
 		return confirm[0].isExistEmail;
 	} catch (err) {
-		console.log(err);
 		throw new BaseError(status.BAD_REQUEST);
 	}
 };
@@ -34,7 +33,6 @@ export const insertUser = async (data) => {
 		conn.release();
 		return result[0].insertId;
 	} catch (err) {
-		console.log(err);
 		throw new BaseError(status.BAD_REQUEST);
 	}
 };
@@ -54,7 +52,6 @@ export const getUserIdByEmail = async (email) => {
 
 		return user[0].id;
 	} catch (err) {
-		console.log(err);
 		throw new BaseError(status.BAD_REQUEST);
 	}
 };
@@ -75,7 +72,6 @@ export const getUserInfo = async (userId) => {
 
 		return user[0];
 	} catch (err) {
-		console.log(err);
 		throw new BaseError(status.BAD_REQUEST);
 	}
 };
@@ -98,7 +94,6 @@ export const setUserNickname = async (userId, nickname) => {
 		conn.release();
 		return result[0].changedRows;
 	} catch (err) {
-		console.log(err);
 		throw new BaseError(status.BAD_REQUEST);
 	}
 };
@@ -122,7 +117,6 @@ export const setUserStatus = async (userId, status) => {
 		conn.release();
 		return result[0].changedRows;
 	} catch (err) {
-		console.log(err);
 		throw new BaseError(status.BAD_REQUEST);
 	}
 };

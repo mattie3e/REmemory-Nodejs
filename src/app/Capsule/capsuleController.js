@@ -9,7 +9,6 @@ export const readCapsuleByType = async (req, res, next) => {
 	// capsule_number, capsule_password
 	const pw = req.query.capsule_password;
 	const c_num = req.query.capsule_number;
-	console.log(pw, c_num);
 	if (!c_num || !pw) {
 		throw new BaseError(status.BAD_REQUEST);
 	} else {
@@ -27,7 +26,6 @@ export const readCapsuleDetail = async (req, res, next) => {
 	// capsule_number, capsule_password
 	const pw = req.query.capsule_password;
 	const c_num = req.query.capsule_number;
-	console.log(pw, c_num);
 	if (!c_num || !pw) {
 		throw new BaseError(status.BAD_REQUEST);
 	} else {

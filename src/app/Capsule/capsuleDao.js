@@ -12,10 +12,8 @@ export const getCapsule = async (userId) => {
 		const [capsules] = await pool.query(getCapsules, [userId]);
 
 		conn.release();
-		console.log(capsules);
 		return capsules;
 	} catch (err) {
-		console.log(err);
 		throw new BaseError(status.BAD_REQUEST);
 	}
 };
@@ -41,7 +39,6 @@ export const getCapsuleType = async (c_num) => {
 		conn.release();
 		return pcapsule[0].isExist;
 	} catch (err) {
-		console.log(err);
 		throw new BaseError(status.BAD_REQUEST);
 	}
 };
@@ -53,7 +50,6 @@ export const updateOpenDate_d = async (connection) => {
 	const [r_result] = await connection.query(queryRcs);
 
 	if (p_result.changedRows > 0 || r_result.changedRows > 0) {
-		console.log("메일 보내기 테스트");
 		sendNotificationEmail();
 	}
 };
@@ -64,12 +60,8 @@ export const checkUpdatedRows = async (connection, oneDayAgo) => {
 
 	const [r_rows] = await connection.query(r_query, [oneDayAgo]);
 	const [p_rows] = await connection.query(p_query, [oneDayAgo]);
-	console.log("r_rows", r_rows);
-	console.log("p_rows", p_rows);
 
 	const mergedRows = r_rows.concat(p_rows);
-
-	console.log("updatedRows: ", mergedRows);
 
 	return mergedRows;
 };

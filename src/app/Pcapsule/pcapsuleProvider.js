@@ -47,8 +47,6 @@ export const getUserCapsules_p = async (user_id) => {
 		const userId = user_id;
 		const data = await getPcapsulesByUserId(connection, userId);
 
-		console.log(data);
-
 		return data;
 	} catch (error) {
 		console.error("Error in getUserCapsules_p:", error);

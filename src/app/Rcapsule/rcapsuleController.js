@@ -42,7 +42,6 @@ export const readNumNUrl_c = async (req, res, next) => {
 	} catch (error) {
 		//에러 처리
 		next(error);
-		console.log(error);
 	}
 };
 
@@ -55,8 +54,6 @@ export const readNumNUrl_c = async (req, res, next) => {
 export const readDear_c = async (req, res, next) => {
 	try {
 		const capsuleNumber = req.params.rcapsule_number;
-		console.log(capsuleNumber);
-		console.log(req.params);
 
 		const data = await readDear_s(capsuleNumber);
 
@@ -77,14 +74,13 @@ export const readDear_c = async (req, res, next) => {
 			res.status(403).send(
 				response(status.CAPSULE_NOT_VALID, {
 					err: "비밀번호가 없는 캡슐입니다. 비밀번호를 먼저 설정해 주세요.",
-				})
-			)
+				}),
+			);
 		} else {
 			res
 				.status(500)
 				.send(response(status.INTERNAL_SERVER_ERROR), { detail: error });
 		}
-		console.log("url_info error : ", error);
 	}
 };
 
@@ -97,15 +93,11 @@ export const createRcapsule = async (req, res, next) => {
 	try {
 		// const userId = req.user ? req.user.userId : null; //userId를 어떻게 가져올 수 있을까..?
 
-		console.log(req.url);
 		// const paramsRegex = /[?&]userId=([^&]+)/;
 		// const match = paramsRegex.exec(req.url);
 		// const userId = match && decodeURIComponent(match[1]);
 
 		const userId = req.query.userId || req.user.userId;
-		console.log(userId);
-
-		console.log("userID : ", userId);
 
 		if (!userId) {
 			return res
@@ -114,11 +106,11 @@ export const createRcapsule = async (req, res, next) => {
 		}
 
 		const userInfos = await getUserInfos(userId);
-		console.log("userInfos : ", userInfos);
+
 		const nickname = userInfos.nickname; // userInfos -> 이거 userInfo 함수 없어져서 수정 필요 *****
 
 		const data = await postRcapsule(req.body, nickname, userId);
-		console.log(data);
+
 		res.send(
 			response(status.SUCCESS, {
 				// ...data,
@@ -140,7 +132,7 @@ export const createRcapsule = async (req, res, next) => {
 		//    // console.error("Error creating rcapsule:", error);
 		//    res.status(StatusCodes.INTERNAL_SERVER_ERROR).send(response(status.INTERNAL_SERVER_ERROR));
 		// }
-		console.log(error);
+
 		res
 			.status(500)
 			.send(response(status.INTERNAL_SERVER_ERROR, { detail: error }));
@@ -152,8 +144,6 @@ export const createRcapsule = async (req, res, next) => {
 export const setRcapsulePw = async (req, res, next) => {
 	// body: rcapsule_password
 	const rcapsule_id = req.params.rcapsule_id;
-	console.log("rcapsuleController.js, req.params.rcapsule_id", rcapsule_id);
-	console.log("req.body! : \n", req.body);
 
 	try {
 		if (!rcapsule_id) {
@@ -163,10 +153,9 @@ export const setRcapsulePw = async (req, res, next) => {
 		}
 
 		const result = await setPassword_s(req.body, rcapsule_id);
-		// console.log('rcapsuleController.js, result: ', result);
+
 		res.send(result);
 	} catch (error) {
-		console.log(error.data);
 		if (error.data.status == 400) {
 			res.status(400).send(
 				response(status.BAD_REQUEST, {
@@ -214,17 +203,6 @@ export const createText_c = async (req, res, next) => {
 			}),
 		);
 	} catch (error) {
-		console.log(error.data);
-		// if (error.data.code == 'CAPSULE4001') {
-		//    res.status(400).send(response(status.CAPSULE_NOT_FOUND, {error: "존재하지 않는 롤링페이퍼 캡슐입니다."}))
-		// } else {
-		//    res.status(500).send(
-		//    response(status.INTERNAL_SERVER_ERROR, {
-		//       err: "글/사진 메세지 쓰기 실패",
-		//       detail: error,
-		//    }),
-		// );
-		// }
 		res.status(500).send(
 			response(status.INTERNAL_SERVER_ERROR, {
 				err: "글/사진 메세지 쓰기 실패",
@@ -238,10 +216,6 @@ export const createText_c = async (req, res, next) => {
 export const addVoiceLetter_c = async (req, res, next) => {
 	// body : from_name, content_type, voice (formdata)
 	try {
-		// aws s3에 업로드 된 파일 url 접근 및 db 저장
-		console.log(req.file.location); // aws s3에 올려진 파일 url
-		console.log("req.params.rcapsule_number : ", req.params.rcapsule_number);
-
 		const fromName = req.query.from_name;
 		const contentType = req.query.content_type;
 
@@ -249,11 +223,8 @@ export const addVoiceLetter_c = async (req, res, next) => {
 			from_name: fromName,
 			content_type: contentType,
 		};
-		
-		console.log("body : ", body);
 
 		if (!req.file.location) {
-			console.log("file x");
 			// throw error;
 			return res
 				.status(500)
@@ -278,7 +249,6 @@ export const addVoiceLetter_c = async (req, res, next) => {
 		res.send(result);
 	} catch (error) {
 		// res.send(status.INTERNAL_SERVER_ERROR, { error: "음성 파일 업로드 실패.", detail: error });
-		console.log(error);
 		if (error.data.code == "CAPSULE4001") {
 			res.status(400).send(
 				response(status.CAPSULE_NOT_FOUND, {
@@ -306,7 +276,6 @@ export const readRcs_c = async (req, res, next) => {
 		const capsuleNumber = req.query.capsule_number;
 		const capsulePassword =
 			req.query.rcapsule_password || req.query.capsule_password;
-		console.log("readRcs_c : ", capsuleNumber, capsulePassword);
 
 		const data = await readRcs_s(capsuleNumber, capsulePassword);
 
@@ -349,13 +318,12 @@ export const readDetailRcs_c = async (req, res, next) => {
 export const readInnerDetailRcs_c = async (req, res, next) => {
 	try {
 		const wId = req.query.writer_id;
-		console.log(wId);
-		if(!wId) {
+		if (!wId) {
 			res.status(400).send(
 				response(status.BAD_REQUEST, {
 					err: "writer id undefined",
-				})
-			)
+				}),
+			);
 		}
 
 		const data = await readInnerDetailRcs_s(wId);

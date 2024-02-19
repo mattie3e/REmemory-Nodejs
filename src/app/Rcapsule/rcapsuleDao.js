@@ -3,14 +3,21 @@
 export const getRcapsuleId = async (connection, capsule_number) => {
 	const query = `SELECT id FROM rcapsule WHERE capsule_number = ?;`;
 	const [result] = await connection.query(query, capsule_number);
-	console.log("getRcapsuleId : ", result[0]);
 	return result[0].id;
 };
 
-export const getWriterId = async (connection, rcapsule_id, from_name, content_type) => {
+export const getWriterId = async (
+	connection,
+	rcapsule_id,
+	from_name,
+	content_type,
+) => {
 	const query = `SELECT id FROM rcapsule_writer WHERE rcapsule_id = ? AND from_name = ? AND content_type = ?;`;
-	const [result] = await connection.query(query, [rcapsule_id, from_name, content_type]);
-	console.log("getWriterId", result[0]);
+	const [result] = await connection.query(query, [
+		rcapsule_id,
+		from_name,
+		content_type,
+	]);
 	return result[0].id;
 };
 
@@ -52,7 +59,7 @@ VALUES (null, null, ?, ?, ?, ?, ?);`;
 		new Date(),
 		new Date(),
 	]);
-	console.log("addTextImage_d : ", result[0]);
+
 	return result[0];
 };
 
@@ -62,7 +69,7 @@ export const insertTimeCapsule = async (connection, capsule_number, userId) => {
 		userId,
 		capsule_number,
 	]);
-	console.log(insertTimeCapsuleRow[0]);
+
 	return insertTimeCapsuleRow[0];
 };
 
@@ -75,7 +82,6 @@ WHERE capsule_number = ?;`;
 };
 
 export const insertRcapsule = async (connection, insertData) => {
-	console.log("insertData", insertData);
 	const query = `INSERT INTO rcapsule 
 (time_capsule_id, capsule_number, rcapsule_name, rcapsule_password, rcapsule_cnt, url, open_date, dear_name, theme, status, created_at, updated_at)
 VALUES (?, ?, ?, NULL, NULL, ?, ?, ?, ?, ?, ?, ?);`;
@@ -93,19 +99,13 @@ export const updatePassword = async (
 	rcapsule_password,
 	rcapsule_id,
 ) => {
-	console.log(
-		"rcapsuleDao.js, rcs_pw : ",
-		rcapsule_password,
-		"\nrcapsule_id : ",
-		rcapsule_id,
-	);
 	const query = `UPDATE rcapsule SET rcapsule_password = ?, updated_at = ? WHERE capsule_number = ?;`;
 	const [result] = await connection.query(query, [
 		rcapsule_password,
 		new Date(),
 		rcapsule_id,
 	]);
-	console.log("쿼리문 실행 결과 : ", result);
+
 	return result[0];
 };
 
@@ -136,7 +136,6 @@ VALUES (?, ?, ?, ?);`;
 		new Date(),
 		new Date(),
 	]);
-	console.log("addVoiceLetter_d", result[0]);
 	return result[0];
 };
 
@@ -191,7 +190,6 @@ export const checkPasswordValidity = async (
 		capsuleNumber,
 		capsulePassword,
 	]);
-	console.log(passwordResult);
 	return passwordResult[0].isValidPassword;
 };
 
@@ -224,7 +222,7 @@ export const saveTextImage_rcs = async (
 export const getRollingPaperList = async (connection, rcapsule_id) => {
 	const query = `SELECT id AS writer_id, from_name, content_type FROM rcapsule_writer WHERE rcapsule_id = ?;`;
 	const [result] = await connection.query(query, [rcapsule_id]);
-	// console.log('writer list : ', result);
+
 	return result;
 };
 
@@ -264,7 +262,6 @@ export const getRcapsuleInfo = async (connection, rcapsule_id) => {
 	const query = `SELECT theme, dear_name, rcapsule_name FROM rcapsule WHERE id = ?;`;
 	const [result] = await connection.query(query, [rcapsule_id]);
 
-	console.log(result);
 	return result[0];
 };
 
@@ -273,4 +270,4 @@ export const checkRcapsulePw = async (connection, capsule_number) => {
 	const [result] = await connection.query(query, [capsule_number]);
 
 	return result[0].password_existence;
-}
+};

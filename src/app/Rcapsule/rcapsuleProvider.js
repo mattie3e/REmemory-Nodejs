@@ -71,8 +71,6 @@ export const sendNotificationEmail = async () => {
 					}
 				},
 			);
-
-			console.log("이메일 전송 성공 : ", userEmail);
 		}
 	} catch (error) {
 		console.error(error);
