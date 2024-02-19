@@ -148,7 +148,7 @@ export const addVoice_s = async (voiceFile, capsule_number) => {
 		// pcapsuleNumber를 이용해 pcapsuleId를 찾는 함수
 		const pcapsuleId = await getPcapsuleId(connection, capsule_number);
 
-		const result = await saveVoice(connection, pcapsuleId, voiceUrl);
+		const result = await saveVoice(connection, capsule_number, voiceUrl);
 
 		await connection.commit();
 		return result;
