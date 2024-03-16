@@ -14,6 +14,10 @@ capsuleRouter.get("/retrieve", asyncHandler(readCapsuleByType));
 
 capsuleRouter.get("/retrieve/detail", asyncHandler(readCapsuleDetail));
 
+capsuleRouter.post("/delete", asyncHandler(deleteStatusCapsule));
+
+capsuleRouter.post("/delete/detail", asyncHandler(deleteCapsule));
+
 // 유저의 전체 캡슐 가져오기
 capsuleRouter.get(
 	"/retrieve/all",

@@ -4,6 +4,7 @@ import { status } from "../../../config/responseStatus";
 import { readDetailPcs_c, readPcs_c } from "../Pcapsule/pcapsuleController.js";
 import { readDetailRcs_c, readRcs_c } from "../Rcapsule/rcapsuleController.js";
 import { getCapsuleByType, getUserCapsules } from "./capsuleProvider.js";
+import { updateCapsuleStatus } from "./capsuleDao.js";
 
 export const readCapsuleByType = async (req, res, next) => {
 	// capsule_number, capsule_password
@@ -48,3 +49,30 @@ export const getOwnCapsules = async (req, res, next) => {
 		res.send(response(status.SUCCESS, await getUserCapsules(req.query.userId)));
 	}
 };
+
+
+
+export const deleteStatusCapsule = async (req, res, next) => {
+	try {
+		const capsuleId = req.params.id; // URL 파라미터에서 id를 추출
+		const newStatus = "UNACTIVATED"; // 하드코딩된 값으로 새로운 상태를 설정
+		const type=n;//무의미의 값
+		if (req.body.type==1) {
+			type = p;
+		}
+		else {
+			type = r;
+		}
+
+		const data = await updateCapsuleStatus(capsuleId, newStatus, type);
+
+		res.send(
+			response(status.SUCCESS, {
+				capsule: data, // 변경된 capsule 정보를 응답에 포함
+			}),
+		);
+	} catch (error) {
+		next(error);
+	}
+};
+
