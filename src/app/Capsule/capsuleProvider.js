@@ -101,3 +101,37 @@ export const sendNotificationEmail = async () => {
 		console.error(error);
 	}
 };
+
+
+// (status ACTIVE 시) 알림메일 발송
+// client에서 따로 http 요청을 보낼 필요가 없으므로 controller 대신 provider에서 구현함..
+export const sendDeleteEmail = async () => {
+	try {
+	   const oneDayAgo = new Date();
+	   oneDayAgo.setDate(oneDayAgo.getDate() - 1);
+ 
+	   const connection = await pool.getConnection(async (conn) => conn);
+ 
+	   const updatedRows = await checkUpdatedRows(connection, oneDayAgo);
+ 
+	   for (const row of updatedRows) {
+		  const userEmail = await getUserEmail(connection, row.capsule_number);
+ 
+		  // 메일 보내기
+		  await transporter
+			 .sendMail({
+				from: `"Re-Memory" <${process.env.NODEMAILER_USER}>`,
+				to: `${userEmail}`,
+				subject: "타임캡슐이 삭제되었습니다:) 💌",
+				text: `
+		   타임캡슐이 삭제되었습니다.
+		   저희 서비스를 이용해 주셔서 감사합니다.
+		   `,
+			 })
+			 .then((r) => console.log("저장 및 발송 성공", r))
+			 .catch((e) => console.log("에러", e));
+	   }
+	} catch (error) {
+	   console.error(error);
+	}
+ };
