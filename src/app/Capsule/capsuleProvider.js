@@ -4,6 +4,8 @@ import {
 	getCapsule,
 	getCapsuleType,
 	updateOpenDate_d,
+	deleteOpenCapsule_d,
+	deleteStatusCapsule_d,
 	checkUpdatedRows,
 	getUserEmail,
 } from "./capsuleDao.js";
@@ -61,6 +63,50 @@ export const updateOpenDate_p = async () => {
 	}
 };
 
+// 캡슐 db에서 삭제
+export const deleteOpenCapsule_p = async () => {
+	const connection = await pool.getConnection(async (conn) => conn);
+
+	try {
+		connection.beginTransaction();
+
+		await deleteOpenCapsule_d(connection);
+
+		await connection.commit();
+
+		return { message: "OpenedCapsule deleted successfully." };
+	} catch (error) {
+		await connection.rollback();
+		throw error;
+	} finally {
+		connection.release();
+	}
+};
+
+// 캡슐 db에서 삭제
+export const deleteStatusCapsule_p = async () => {
+	const connection = await pool.getConnection(async (conn) => conn);
+
+	try {
+		connection.beginTransaction();
+
+		await deleteStatusCapsule_d(connection);
+
+		await connection.commit();
+
+		return { message: "DeletedCapsule deleted successfully." };
+	} catch (error) {
+		await connection.rollback();
+		throw error;
+	} finally {
+		connection.release();
+	}
+};
+
+
+
+
+
 // (status ACTIVE 시) 알림메일 발송
 // client에서 따로 http 요청을 보낼 필요가 없으므로 controller 대신 provider에서 구현함..
 export const sendNotificationEmail = async () => {
@@ -103,8 +149,7 @@ export const sendNotificationEmail = async () => {
 };
 
 
-// (status ACTIVE 시) 알림메일 발송
-// client에서 따로 http 요청을 보낼 필요가 없으므로 controller 대신 provider에서 구현함..
+// (완전 delete 시) 알림메일 발송
 export const sendDeleteEmail = async () => {
 	try {
 	   const oneDayAgo = new Date();

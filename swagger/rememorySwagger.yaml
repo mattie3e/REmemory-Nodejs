@@ -118,6 +118,46 @@ paths:
                     type: array
                     example:
                       [{ capsule_name: "타임캡슐", capsule_number: test_1234 }]
+  /capsule/delete:
+    get:
+      tags:
+        - Capsule
+      summary: 캡슐 상태 삭제로 변경
+      parameters:
+        - name: delete
+          in: body
+          required: true
+          schema:
+            type: object
+            properties:
+              capsule_number:
+                type: string
+                description: capsule 이름
+                example: "testMember1_74177"
+              capsule_type:
+                type: integer
+                description: (p==1 or r==2)
+                example: 1
+      responses:
+        "200":
+          description: 성공
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: integer
+                    example: 200
+                  isSuccess:
+                    type: boolean
+                    example: true
+                  code:
+                    type: integer
+                    example: 2000
+                  message:
+                    type: string
+                    example: "success!"
   /pcapsule/create:
     post:
       tags:
