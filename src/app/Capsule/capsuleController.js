@@ -54,10 +54,10 @@ export const getOwnCapsules = async (req, res, next) => {
 
 export const deleteStatusCapsule = async (req, res, next) => {
 	try {
-		const capsuleId = req.params.id; // URL 파라미터에서 id를 추출
-		const newStatus = "UNACTIVATED"; // 하드코딩된 값으로 새로운 상태를 설정
-		const type=n;//무의미의 값
-		if (req.body.type==1) {
+		const capsuleId = req.body.id; 
+		const newStatus = "UNACTIVATED"; 
+		const type=n; //무의미의 값
+		if (req.body.capsule_type==1) {
 			type = p;
 		}
 		else {

@@ -1,5 +1,5 @@
 import schedule from "node-schedule";
-import { updateOpenDate_p, deleteOpenCapsule_p } from "../src/app/Capsule/capsuleProvider.js";
+import { updateOpenDate_p, deleteOpenCapsule_p, deleteStatusCapsule_p } from "../src/app/Capsule/capsuleProvider.js";
 
 export const startSchedulers = () => {
    // 매일 자정에 실행
@@ -7,6 +7,7 @@ export const startSchedulers = () => {
    schedule.scheduleJob("0 0 * * *", async function () {
       await updateOpenDate_p();
       await deleteOpenCapsule_p();
+      await deleteStatusCapsule_p();
    });
 };
 
