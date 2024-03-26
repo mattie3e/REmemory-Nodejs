@@ -20,11 +20,13 @@ import { readDetailRcs_s } from "./rcapsuleService.js";
 export const rcapsuleRouter = express.Router();
 
 //캡슐 생성
-rcapsuleRouter.post(
-	"/create",
-	tokenAuthMiddleware,
-	asyncHandler(createRcapsule),
-);
+// rcapsuleRouter.post(
+// 	"/create",
+// 	tokenAuthMiddleware,
+// 	asyncHandler(createRcapsule),
+// );
+
+rcapsuleRouter.post("/create", asyncHandler(createRcapsule));
 
 //비밀번호 설정
 rcapsuleRouter.patch("/:rcapsule_id", asyncHandler(setRcapsulePw));
