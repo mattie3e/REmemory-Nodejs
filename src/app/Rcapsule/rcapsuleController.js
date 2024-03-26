@@ -190,7 +190,7 @@ export const createText_c = async (req, res, next) => {
 
 		const capsule_number = req.body.capsule_number;
 		const textImageContent = req.body.contents;
-		const align_type = req.body.align_type;
+		const align_type = req.body.alignType;
 		const from_name = req.body.from_name; // rcapsule 글/사진 쓰기의 경우 이게 필요
 
 		const result = await addTextImage_rcs(
