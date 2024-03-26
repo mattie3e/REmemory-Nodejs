@@ -18,20 +18,34 @@ import { savePassword_p } from "./pcapsuleProvider.js";
 export const createPcs_c = async (req, res, next) => {
 	// body: pcapsule_name, open_date, dear_name, theme, content_type, userId
 	try {
-		if (req.user.userId == req.body.userId) {
-			const userId = req.user.userId; // 토큰에서 추출한 사용자 ID
-			const userInfos = await getUserInfos(userId);
-			const nickname = userInfos.nickname;
-			const data = await createPcs_s(req.body, nickname);
-			res.send(
-				response(status.SUCCESS, {
-					...data,
-					capsule_number: data.capsule_number,
-				}),
-			);
-		} else {
-			throw new BaseError(status.FORBIDDEN);
-		}
+		// if (req.user.userId == req.body.userId) {
+		// 	const userId = req.user.userId; // 토큰에서 추출한 사용자 ID
+		// 	const userInfos = await getUserInfos(userId);
+		// 	const nickname = userInfos.nickname;
+		// 	const data = await createPcs_s(req.body, nickname);
+		// 	res.send(
+		// 		response(status.SUCCESS, {
+		// 			...data,
+		// 			capsule_number: data.capsule_number,
+		// 		}),
+		// 	);
+		// } else {
+		// 	throw new BaseError(status.FORBIDDEN);
+		// }
+
+		// 광고 때문에 임시로 수정 user_id 고정
+		const userId = 10; // test용 user_id
+
+		const userInfos = await getUserInfos(userId);
+		const nickname = userInfos.nickname;
+		const data = await createPcs_s(req.body, nickname);
+		res.send(
+			response(status.SUCCESS, {
+				...data,
+				capsule_number: data.capsule_number,
+			}),
+		);
+
 		// const userId = req.user.userId; // 토큰에서 추출한 사용자 ID
 		// const userInfos = await getUserInfos(userId);
 		// const nickname = userInfos.nickname;
