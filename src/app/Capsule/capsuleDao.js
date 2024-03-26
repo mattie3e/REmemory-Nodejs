@@ -54,38 +54,35 @@ export const updateOpenDate_d = async (connection) => {
 	}
 };
 
-
 export const deleteOpenCapsule_d = async (connection) => {
 	const queryPcs = `DELETE FROM pcapsule WHERE open_date <= DATE_SUB(CURDATE(), INTERVAL 7 DAY) AND status = 'OPENED';`;
 	const queryRcs = `DELETE FROM rcapsule WHERE open_date <= DATE_SUB(CURDATE(), INTERVAL 7 DAY) AND status = 'OPENED';`;
 	const [p_result] = await connection.query(queryPcs);
 	const [r_result] = await connection.query(queryRcs);
- 
-	// 삭제된 행의 총 수를 계산
-	 const totalDeletedRows = p_result.affectedRows + r_result.affectedRows;
- 
-	 // 삭제된 행의 총 수가 0보다 크면 이메일을 보냄
-	 if (totalDeletedRows > 0) {
-		 sendDeleteEmail();
-	 }
- };
 
- export const deleteStatusCapsule_d = async (connection) => {
+	// 삭제된 행의 총 수를 계산
+	const totalDeletedRows = p_result.affectedRows + r_result.affectedRows;
+
+	// 삭제된 행의 총 수가 0보다 크면 이메일을 보냄
+	if (totalDeletedRows > 0) {
+		sendDeleteEmail();
+	}
+};
+
+export const deleteStatusCapsule_d = async (connection) => {
 	const queryPcs = `DELETE FROM pcapsule WHERE status = 'UNACTIVATED';`;
 	const queryRcs = `DELETE FROM rcapsule WHERE status = 'UNACTIVATED';`;
 	const [p_result] = await connection.query(queryPcs);
 	const [r_result] = await connection.query(queryRcs);
- 
+
 	// 삭제된 행의 총 수를 계산
-	 const totalDeletedRows = p_result.affectedRows + r_result.affectedRows;
- 
-	 // 삭제된 행의 총 수가 0보다 크면 이메일을 보냄
-	 if (totalDeletedRows > 0) {
-		 sendDeleteEmail();
-	 }
- };
+	const totalDeletedRows = p_result.affectedRows + r_result.affectedRows;
 
-
+	// 삭제된 행의 총 수가 0보다 크면 이메일을 보냄
+	if (totalDeletedRows > 0) {
+		sendDeleteEmail();
+	}
+};
 
 export const checkUpdatedRows = async (connection, oneDayAgo) => {
 	const r_query = `SELECT capsule_number, rcapsule_name AS capsule_name, rcapsule_password AS capsule_password FROM rcapsule WHERE status = 'OPENED' AND updated_at >= ?;`;
@@ -107,18 +104,19 @@ export const getUserEmail = async (connection, capsule_number) => {
 	return result[0].userEmail;
 };
 
-
 //삭제(status 바꾸기)
-export const updateCapsuleStatus = async (connection, capsule_number, status, type) => {
-	const query='';
-	if (type==p) {
-		const query = 'UPDATE pcapsule SET status = ? WHERE capsule_number = ?';
+export const updateCapsuleStatus = async (
+	connection,
+	capsule_number,
+	status,
+	type,
+) => {
+	const query = "";
+	if (type == p) {
+		const query = "UPDATE pcapsule SET status = ? WHERE capsule_number = ?";
 	} else {
-		const query = 'UPDATE rcapsule SET status = ? WHERE capsule_number = ?';
+		const query = "UPDATE rcapsule SET status = ? WHERE capsule_number = ?";
 	}
-	
+
 	await connection.query(query, [capsule_number, status]);
 };
-
-
-

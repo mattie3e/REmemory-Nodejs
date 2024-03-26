@@ -40,27 +40,30 @@ export const readCapsuleDetail = async (req, res, next) => {
 	}
 };
 
+// export const getOwnCapsules = async (req, res, next) => {
+// 	if (req.user.userId != req.query.userId) {
+// 		throw new BaseError(status.FORBIDDEN);
+// 	} else if (!req.user) {
+// 		throw new BaseError(status.BAD_REQUEST);
+// 	} else {
+// 		res.send(response(status.SUCCESS, await getUserCapsules(req.query.userId)));
+// 	}
+//   res.send(response(status.SUCCESS, await getUserCapsules(req.query.userId)));
+// };
+
 export const getOwnCapsules = async (req, res, next) => {
-	if (req.user.userId != req.query.userId) {
-		throw new BaseError(status.FORBIDDEN);
-	} else if (!req.user) {
-		throw new BaseError(status.BAD_REQUEST);
-	} else {
-		res.send(response(status.SUCCESS, await getUserCapsules(req.query.userId)));
-	}
+	const userId = 10;
+	res.send(response(status.SUCCESS, await getUserCapsules(userId)));
 };
-
-
 
 export const deleteStatusCapsule = async (req, res, next) => {
 	try {
-		const capsuleId = req.body.id; 
-		const newStatus = "UNACTIVATED"; 
-		const type=n; //무의미의 값
-		if (req.body.capsule_type==1) {
+		const capsuleId = req.body.id;
+		const newStatus = "UNACTIVATED";
+		const type = n; //무의미의 값
+		if (req.body.capsule_type == 1) {
 			type = p;
-		}
-		else {
+		} else {
 			type = r;
 		}
 
@@ -75,4 +78,3 @@ export const deleteStatusCapsule = async (req, res, next) => {
 		next(error);
 	}
 };
-
