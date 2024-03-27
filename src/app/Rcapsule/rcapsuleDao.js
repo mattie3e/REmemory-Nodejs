@@ -210,6 +210,7 @@ export const saveTextImage_rcs = async (
 	image_url,
 	align_type,
 ) => {
+	console.log("현재 saveTextImage_rcs, 쿼리날리기 전");
 	const query = `INSERT INTO text_image (rwcapsule_id, body, image_url, align_type, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?);`;
 	const [result] = await connection.query(query, [
 		rwcapsule_id,
@@ -219,6 +220,12 @@ export const saveTextImage_rcs = async (
 		new Date(),
 		new Date(),
 	]);
+	console.log("현재 saveTextImage_rcs, 쿼리날린 후 result: ", result);
+	console.log("현재 saveTextImage_rcs, 쿼리날린 후 result: ", result[0]);
+	console.log(
+		"현재 saveTextImage_rcs, 쿼리날린 후 result: ",
+		result[0].insertId,
+	);
 	return result.insertId;
 };
 
