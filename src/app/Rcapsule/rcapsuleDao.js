@@ -115,8 +115,9 @@ export const setRcapsuleWriter_n = async (
 	from_name,
 	content_type,
 ) => {
-	const query = `INSERT INTO rcapsule_writer (id, rcapsule_id, from_name, content_type, created_at, updated_at) 
-VALUES (null, ?, ?, ?, ?, ?);`;
+	console.log("현재 setRcapsuleWriter_n, 쿼리날리기 전");
+	const query = `INSERT INTO rcapsule_writer (rcapsule_id, from_name, content_type, created_at, updated_at) 
+  VALUES (?, ?, ?, ?, ?);`;
 	const [result] = await connection.query(query, [
 		rcapsule_id,
 		from_name,
@@ -124,6 +125,9 @@ VALUES (null, ?, ?, ?, ?, ?);`;
 		new Date(),
 		new Date(),
 	]);
+	console.log("현재 setRcapsuleWriter_n, 쿼리날린 후 : ", result);
+	console.log("현재 setRcapsuleWriter_n, 쿼리날린 후 : ", result[0]);
+	console.log("현재 setRcapsuleWriter_n, 쿼리날린 후 : ", result[0].insertId);
 	return result.insertId;
 };
 
