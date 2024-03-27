@@ -196,6 +196,7 @@ export const addTextImage_rcs = async (
 
 		return { textImageId };
 	} catch (error) {
+		console.log("addTextImage_rcs 에러발생");
 		await connection.rollback();
 		throw error;
 	} finally {
