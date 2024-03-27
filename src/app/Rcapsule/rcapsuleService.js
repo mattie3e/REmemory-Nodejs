@@ -121,45 +121,27 @@ export const addTextImage_rcs = async (
 	try {
 		connection.beginTransaction();
 
-		console.log("현재 addTextImage_rcs, checkCapsuleNum_d 시작: ");
-
 		const isExistCapsule = await checkCapsuleNum_d(connection, capsule_number);
 
 		if (!isExistCapsule) {
-			console.log(
-				"현재 addTextImage_rcs, checkCapsuleNum_d 후에 isExistCapsule 에러: ",
-			);
+			console.log();
 			throw new BaseError(status.CAPSULE_NOT_FOUND);
 		}
-		console.log("현재 addTextImage_rcs, getRcapsuleId 시작: ");
-		const rcapsuleId = await getRcapsuleId(connection, capsule_number);
-		console.log(
-			"현재 addTextImage_rcs, getRcapsuleId 후 rcapsuleId: ",
-			rcapsuleId,
-		);
 
-		console.log("현재 addTextImage_rcs, setRcapsuleWriter_n 시작: ");
+		const rcapsuleId = await getRcapsuleId(connection, capsule_number);
+
 		const writer_id = await setRcapsuleWriter_n(
 			connection,
 			rcapsuleId,
 			from_name,
 			1,
 		); //글/사진의 경우 1
-		console.log(
-			"현재 addTextImage_rcs, setRcapsuleWriter_n 후 writer_id: ",
-			writer_id,
-		);
 
 		let textImageId = null;
-		console.log(
-			"현재 addTextImage_rcs, textImageContent 값 넣을 차례, 크기: ",
-			textImageContent.length,
-		);
 
 		for (let i = 0; i < textImageContent.length; i++) {
 			const value = textImageContent[i];
-			console.log("반복문 안, value: ", value);
-			console.log("반복문 안, value.type: ", value.type);
+
 			if (value.type === "text") {
 				console.log("saveTextImage_rcs 시작: ");
 				textImageId = await saveTextImage_rcs(
@@ -169,11 +151,9 @@ export const addTextImage_rcs = async (
 					null,
 					align_type,
 				);
-				console.log("saveTextImage_rcs 갔다왔음, textImageId: ", textImageId);
 			} else if (value.type === "image") {
-				console.log("uploadImageToS3 가기 전 ");
 				const imageUrl = await uploadImageToS3(value.content);
-				console.log("saveTextImage_rcs 시작: ");
+
 				textImageId = await saveTextImage_rcs(
 					connection,
 					writer_id,
@@ -181,13 +161,9 @@ export const addTextImage_rcs = async (
 					imageUrl,
 					align_type,
 				);
-				console.log("saveTextImage_rcs 갔다왔음, textImageId: ", textImageId);
 			}
 
-			console.log("값 집어넣고 현재 textImageId: ", textImageId);
-
 			if (!textImageId) {
-				console.log("!textImageId 들어옴 에러처리 : ", textImageId);
 				throw new BaseError(status.INTERNAL_SERVER_ERROR);
 			}
 		}
@@ -196,7 +172,6 @@ export const addTextImage_rcs = async (
 
 		return { textImageId };
 	} catch (error) {
-		console.log("addTextImage_rcs 에러발생");
 		await connection.rollback();
 		throw error;
 	} finally {
