@@ -118,7 +118,7 @@ export const setRcapsuleWriter_n = async (
 	console.log("현재 setRcapsuleWriter_n, 쿼리날리기 전");
 	const query = `INSERT INTO rcapsule_writer (rcapsule_id, from_name, content_type, created_at, updated_at) 
   VALUES (?, ?, ?, ?, ?);`;
-	const [result] = await connection.query(query, [
+	const result = await connection.query(query, [
 		rcapsule_id,
 		from_name,
 		content_type,
