@@ -125,9 +125,10 @@ export const setRcapsuleWriter_n = async (
 		new Date(),
 		new Date(),
 	]);
-	console.log("현재 setRcapsuleWriter_n, 쿼리날린 후 : ", result);
-	console.log("현재 setRcapsuleWriter_n, 쿼리날린 후 : ", result[0]);
-	console.log("현재 setRcapsuleWriter_n, 쿼리날린 후 : ", result[0].insertId);
+	console.log(
+		"현재 setRcapsuleWriter_n, 쿼리날린 후 result: ",
+		result.insertId,
+	);
 	return result.insertId;
 };
 
