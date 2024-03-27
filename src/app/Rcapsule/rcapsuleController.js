@@ -107,20 +107,11 @@ export const createRcapsule = async (req, res, next) => {
 				.send(response(status.EMPTY_TOKEN, { err: "유저 정보가 없습니다." }));
 		}
 
-		console.log("createRcapsule 내부, getUserInfos시작");
 		const userInfos = await getUserInfos(userId);
-		console.log(
-			"createRcapsule 내부, getUserInfos시작 후 userInfos: ",
-			userInfos,
-		);
 
 		const nickname = userInfos.nickname; // userInfos -> 이거 userInfo 함수 없어져서 수정 필요 *****
-		console.log("createRcapsule 내부, nickname: ", nickname);
-
-		console.log("createRcapsule 내부, postRcapsule 시작");
 
 		const data = await postRcapsule(req.body, nickname, userId);
-		console.log("createRcapsule 내부, postRcapsule 후 data: ", data);
 
 		res.send(
 			response(status.SUCCESS, {
