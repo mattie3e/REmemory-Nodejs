@@ -408,7 +408,7 @@ export const readDetailRcs_s = async (capsuleNumber, capsulePassword) => {
 		// 캡슐 정보 조회
 		const rcapsuleData = await retrieveCapsule_d(connection, capsuleNumber);
 		// 추가된 로직: opened 상태의 캡슐만 반환
-		if (rcapsuleData.status !== "OPENED") {
+		if (rcapsuleData[0].status !== "OPENED") {
 			throw new BaseError(status.CAPSULE_NOT_OPENED);
 		}
 
