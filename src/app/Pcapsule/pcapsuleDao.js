@@ -1,10 +1,20 @@
 export const insertPcapsule_d = async (connection, data) => {
+	const status = ["LOCKED", "OPENED"];
+
+	const oepn_date = new Date(data[4]);
+	const curDate = new Date();
+
 	const query = `INSERT INTO pcapsule 
   (time_capsule_id, capsule_number, pcapsule_password, pcapsule_name, open_date, dear_name, theme, content_type, status, created_at, updated_at) 
   VALUES (?,?,?,?,?,?,?,?,?,?,?);`;
+
 	const [insertPcapsuleRow] = await connection.query(query, [
 		...data,
-		"LOCKED", // status 추가
+		oepn_date.getFullYear() == curDate.getFullYear() &&
+		oepn_date.getMonth() == curDate.getMonth() &&
+		oepn_date.getDate() == curDate.getDate()
+			? status[1]
+			: status[0], // status 추가
 		new Date(),
 		new Date(),
 	]);
