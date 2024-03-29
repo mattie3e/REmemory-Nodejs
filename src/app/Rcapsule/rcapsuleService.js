@@ -190,6 +190,18 @@ export const postRcapsule = async (body, nickname, userId) => {
 		}
 	});
 
+	const openDate = new Date(open_date);
+	const curDate = new Date();
+
+	// 생성날짜보다 이전 날짜로 입력한 경우
+	if (
+		openDate.getFullYear() < curDate.getFullYear() ||
+		(openDate.getMonth() <= curDate.getMonth() &&
+			openDate.getDate() < curDate.getDate())
+	) {
+		throw new BaseError(status.OPEN_DATE_NOT_VALID);
+	}
+
 	const capsule_number = await createCapsuleNum_r(nickname);
 	const rcapsuleUrl = `${process.env.FRONT_DOMAIN}/rolling/${capsule_number}`;
 
@@ -225,6 +237,7 @@ export const postRcapsule = async (body, nickname, userId) => {
 
 		return { ...createRcsData, capsule_number, newRcapsuleId, rcapsule_url };
 	} catch (error) {
+		console.log(error);
 		await connection.rollback(); // 실패 시 롤백
 		throw new BaseError(status.INTERNAL_SERVER_ERROR);
 	} finally {

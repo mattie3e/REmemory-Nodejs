@@ -107,4 +107,10 @@ export const status = {
 		code: "CAPSULE4006",
 		message: "유효하지 않은 캡슐입니다.",
 	},
+	OPEN_DATE_NOT_VALID: {
+		status: StatusCodes.BAD_REQUEST,
+		isSuccess: false,
+		code: "CAPSULE4007",
+		message: "유효하지 않은 캡슐 오픈 날짜입니다.",
+	},
 };
