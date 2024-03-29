@@ -38,6 +38,18 @@ export const createPcs_s = async (body, nickname) => {
 		}
 	});
 
+	const openDate = new Date(open_date);
+	const curDate = new Date();
+
+	// 생성날짜보다 이전 날짜로 입력한 경우
+	if (
+		openDate.getFullYear() < curDate.getFullYear() ||
+		(openDate.getMonth() <= curDate.getMonth() &&
+			openDate.getDate() < curDate.getDate())
+	) {
+		throw new BaseError(status.OPEN_DATE_NOT_VALID);
+	}
+
 	const capsule_number = await createCapsuleNum_p(nickname);
 
 	const connection = await pool.getConnection(async (conn) => conn);

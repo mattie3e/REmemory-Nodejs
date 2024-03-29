@@ -190,6 +190,18 @@ export const postRcapsule = async (body, nickname, userId) => {
 		}
 	});
 
+	const openDate = new Date(open_date);
+	const curDate = new Date();
+
+	// 생성날짜보다 이전 날짜로 입력한 경우
+	if (
+		openDate.getFullYear() < curDate.getFullYear() ||
+		(openDate.getMonth() <= curDate.getMonth() &&
+			openDate.getDate() < curDate.getDate())
+	) {
+		throw new BaseError(status.OPEN_DATE_NOT_VALID);
+	}
+
 	const capsule_number = await createCapsuleNum_r(nickname);
 	const rcapsuleUrl = `${process.env.FRONT_DOMAIN}/rolling/${capsule_number}`;
 
@@ -225,6 +237,7 @@ export const postRcapsule = async (body, nickname, userId) => {
 
 		return { ...createRcsData, capsule_number, newRcapsuleId, rcapsule_url };
 	} catch (error) {
+		console.log(error);
 		await connection.rollback(); // 실패 시 롤백
 		throw new BaseError(status.INTERNAL_SERVER_ERROR);
 	} finally {
@@ -344,13 +357,14 @@ export const readRcs_s = async (capsuleNumber, capsulePassword) => {
 
 		// 상세정보를 전부 반환하지 않고 일부만 반환
 		const responseData = {
-			capsule_number: rcapsuleData.capsule_number,
-			rcapsule_name: rcapsuleData.rcapsule_name,
-			rcapsule_cnt: rcapsuleData.rcapsule_cnt,
-			open_date: rcapsuleData.open_date,
-			dear_name: rcapsuleData.dear_name,
-			theme: rcapsuleData.theme,
-			status: rcapsuleData.status,
+			capsule_number: rcapsuleData[0].capsule_number,
+			rcapsule_name: rcapsuleData[0].rcapsule_name,
+			rcapsule_cnt: rcapsuleData[0].rcapsule_cnt,
+			open_date: rcapsuleData[0].open_date,
+			dear_name: rcapsuleData[0].dear_name,
+			theme: rcapsuleData[0].theme,
+			status: rcapsuleData[0].status,
+			count: rcapsuleData[1],
 		};
 
 		await connection.commit();

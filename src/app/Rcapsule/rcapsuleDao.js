@@ -82,12 +82,21 @@ WHERE capsule_number = ?;`;
 };
 
 export const insertRcapsule = async (connection, insertData) => {
+	const status = ["LOCKED", "OPENED"];
+
+	const openDate = new Date(insertData[4]);
+	const curDate = new Date();
+
 	const query = `INSERT INTO rcapsule 
-(time_capsule_id, capsule_number, rcapsule_name, rcapsule_password, rcapsule_cnt, url, open_date, dear_name, theme, status, created_at, updated_at)
-VALUES (?, ?, ?, NULL, NULL, ?, ?, ?, ?, ?, ?, ?);`;
+(time_capsule_id, capsule_number, rcapsule_name, rcapsule_password, url, open_date, dear_name, theme, status, created_at, updated_at)
+VALUES (?, ?, ?, NULL, ?, ?, ?, ?, ?, ?, ?);`;
 	const [insertRcapsuleRow] = await connection.query(query, [
 		...insertData,
-		"LOCKED", // status
+		openDate.getFullYear() == curDate.getFullYear() &&
+		openDate.getMonth() == curDate.getMonth() &&
+		openDate.getDate() == curDate.getDate()
+			? status[1]
+			: status[0], // status 추가
 		new Date(),
 		new Date(),
 	]);
@@ -197,7 +206,11 @@ export const checkPasswordValidity = async (
 export const retrieveCapsule_d = async (connection, capsule_number) => {
 	const query = `SELECT * FROM rcapsule WHERE capsule_number = ?`;
 	const [retrieveCapsuleRow] = await connection.query(query, capsule_number);
-	return retrieveCapsuleRow[0];
+
+	const cntQuery = `SELECT COUNT(*) FROM rcapsule_writer WHERE rcapsule_id IN (SELECT id FROM rcapsule WHERE capsule_number = ?)`;
+	const [retrieveCapsuleCnt] = await connection.query(cntQuery, capsule_number);
+
+	return [retrieveCapsuleRow[0], retrieveCapsuleCnt[0]["COUNT(*)"]];
 };
 
 export const saveTextImage_rcs = async (

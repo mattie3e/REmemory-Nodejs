@@ -29,27 +29,3 @@ jobs:
           docker build -t rememory-docker-test .
           docker tag rememory-docker-test antaehyun/rememory-docker-test:latest
           docker push antaehyun/rememory-docker-test:latest
-
-  deploy:
-    needs: build
-    runs-on: self-hosted
-
-    steps:
-      - uses: actions/checkout@v3
-
-      - name: prev sha get test
-        run: echo ${GITHUB_REF}
-
-      - name: Pull Docker image
-        run: |
-          sudo docker login -u ${{ secrets.DOCKER_HUB_USERNAME }} -p ${{ secrets.DOCKER_HUB_PASSWORD }}
-          sudo docker pull antaehyun/rememory-docker-test:latest
-
-      - name: Delete Old docker container
-        run: |
-          sudo docker rm -f container || true
-      - name: Create .env file
-        run: echo "${{ secrets.ENV_FILE }}" | base64 --decode > .env
-
-      - name: Run Docker Container
-        run: sudo docker run -d -p 3000:3000 --env-file .env --name container antaehyun/rememory-docker-test:latest
