@@ -197,7 +197,11 @@ export const checkPasswordValidity = async (
 export const retrieveCapsule_d = async (connection, capsule_number) => {
 	const query = `SELECT * FROM rcapsule WHERE capsule_number = ?`;
 	const [retrieveCapsuleRow] = await connection.query(query, capsule_number);
-	return retrieveCapsuleRow[0];
+
+	const cntQuery = `SELECT COUNT(*) FROM rcapsule_writer WHERE rcapsule_id IN (SELECT id FROM rcapsule WHERE capsule_number = ?)`;
+	const [retrieveCapsuleCnt] = await connection.query(cntQuery, capsule_number);
+
+	return [retrieveCapsuleRow[0], retrieveCapsuleCnt[0]["COUNT(*)"]];
 };
 
 export const saveTextImage_rcs = async (

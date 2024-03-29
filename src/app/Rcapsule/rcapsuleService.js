@@ -344,13 +344,14 @@ export const readRcs_s = async (capsuleNumber, capsulePassword) => {
 
 		// 상세정보를 전부 반환하지 않고 일부만 반환
 		const responseData = {
-			capsule_number: rcapsuleData.capsule_number,
-			rcapsule_name: rcapsuleData.rcapsule_name,
-			rcapsule_cnt: rcapsuleData.rcapsule_cnt,
-			open_date: rcapsuleData.open_date,
-			dear_name: rcapsuleData.dear_name,
-			theme: rcapsuleData.theme,
-			status: rcapsuleData.status,
+			capsule_number: rcapsuleData[0].capsule_number,
+			rcapsule_name: rcapsuleData[0].rcapsule_name,
+			rcapsule_cnt: rcapsuleData[0].rcapsule_cnt,
+			open_date: rcapsuleData[0].open_date,
+			dear_name: rcapsuleData[0].dear_name,
+			theme: rcapsuleData[0].theme,
+			status: rcapsuleData[0].status,
+			count: rcapsuleData[1],
 		};
 
 		await connection.commit();
