@@ -17,11 +17,10 @@ capsuleRouter.get("/retrieve/detail", asyncHandler(readCapsuleDetail));
 
 capsuleRouter.post("/delete", asyncHandler(deleteStatusCapsule));
 
-// 유저의 전체 캡슐 가져오기
-// capsuleRouter.get(
-// 	"/retrieve/all",
-// 	tokenAuthMiddleware,
-// 	asyncHandler(getOwnCapsules),
-// );
+capsuleRouter.get(
+	"/retrieve/all",
+	tokenAuthMiddleware,
+	asyncHandler(getOwnCapsules),
+);
 
-capsuleRouter.get("/retrieve/all", asyncHandler(getOwnCapsules));
+// capsuleRouter.get("/retrieve/all", asyncHandler(getOwnCapsules));
