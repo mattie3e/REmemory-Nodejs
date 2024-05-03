@@ -1,5 +1,6 @@
 import { response } from "../../../config/response.js";
 import { status } from "../../../config/responseStatus.js";
+import { BaseError } from "../../../config/error.js";
 
 import { getUserInfos } from "../User/userProvider.js";
 
@@ -31,6 +32,9 @@ export const createPcs_c = async (req, res, next) => {
 			);
 		} else {
 			throw new BaseError(status.FORBIDDEN);
+			// return res
+			// .status(401)
+			// .send(response(status.EMPTY_TOKEN, { err: "유저 정보가 없습니다." }));
 		}
 	} catch (error) {
 		next(error);
