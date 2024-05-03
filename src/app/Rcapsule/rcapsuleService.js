@@ -143,7 +143,6 @@ export const addTextImage_rcs = async (
 			const value = textImageContent[i];
 
 			if (value.type === "text") {
-				console.log("saveTextImage_rcs 시작: ");
 				textImageId = await saveTextImage_rcs(
 					connection,
 					writer_id,

@@ -97,9 +97,9 @@ export const createRcapsule = async (req, res, next) => {
 		// const match = paramsRegex.exec(req.url);
 		// const userId = match && decodeURIComponent(match[1]);
 
-		// const userId = req.query.userId || req.user.userId;
+		const userId = req.query.userId || req.user.userId;
 		// 광고 때문에 임시로 수정 user_id 고정
-		const userId = 10; // test용 user_id
+		// const userId = 10; // test용 user_id
 
 		if (!userId) {
 			return res
