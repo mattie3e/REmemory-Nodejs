@@ -15,12 +15,15 @@ dotenv.config();
 export const userSign = async (req, res) => {
 	const code = req.query.code;
 	if (!code) throw new BaseError(status.BAD_REQUEST);
+	console.log("userInfo 시작직전");
 	const userInfo = await kakaoGetUserInfo(code);
-
+	console.log("userInfo 후 userCheck 직전");
 	const userCheck = await emailCheck(userInfo);
 
+	console.log("userCheck 후 userSignAction 직전");
 	const userData = await userSignAction(userCheck, userInfo);
 
+	console.log("userSignAction 후 userData: ", userData);
 	const type = userData.type;
 
 	if (type == 1) {

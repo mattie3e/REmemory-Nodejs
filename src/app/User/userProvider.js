@@ -6,6 +6,7 @@ import { checkUserEmail, getUserInfo } from "./userDao.js";
 
 export const kakaoGetUserInfo = async (code) => {
 	try {
+		console.log("kakaoGetUserInfo 들어온 직후");
 		const accessTokenResponse = await axios({
 			method: "POST",
 			url: "https://kauth.kakao.com/oauth/token",
@@ -19,7 +20,9 @@ export const kakaoGetUserInfo = async (code) => {
 				code: code,
 			},
 		});
+		console.log("accessTokenResponse: ", accessTokenResponse);
 		const accessToken = accessTokenResponse.data.access_token;
+		console.log("accessToken: ", accessToken);
 		const userInfoResponse = await axios({
 			method: "GET",
 			url: "https://kapi.kakao.com/v2/user/me",
@@ -28,10 +31,13 @@ export const kakaoGetUserInfo = async (code) => {
 				"content-type": "application/json",
 			},
 		});
+		console.log("userInfoResponse: ", userInfoResponse);
 		const userInfo = userInfoResponse.data.kakao_account;
+		console.log("userInfo: ", userInfo);
 
 		return userInfo;
 	} catch (err) {
+		console.log("error !");
 		console.log(err);
 		throw new BaseError(status.KAKAO_REJECTION);
 	}
