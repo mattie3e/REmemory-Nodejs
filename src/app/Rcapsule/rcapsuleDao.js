@@ -84,19 +84,15 @@ WHERE capsule_number = ?;`;
 export const insertRcapsule = async (connection, insertData) => {
 	const status = ["LOCKED", "OPENED"];
 
-	const openDate = new Date(insertData[4]);
-	const curDate = new Date();
+	let openDate = new Date(insertData[4]);
+	let curDate = new Date();
 
 	const query = `INSERT INTO rcapsule 
 (time_capsule_id, capsule_number, rcapsule_name, rcapsule_password, url, open_date, dear_name, theme, status, created_at, updated_at)
 VALUES (?, ?, ?, NULL, ?, ?, ?, ?, ?, ?, ?);`;
 	const [insertRcapsuleRow] = await connection.query(query, [
 		...insertData,
-		openDate.getFullYear() == curDate.getFullYear() &&
-		openDate.getMonth() == curDate.getMonth() &&
-		openDate.getDate() == curDate.getDate()
-			? status[1]
-			: status[0], // status 추가
+		openDate.getTime() === curDate.getTime() ? status[1] : status[0],
 		new Date(),
 		new Date(),
 	]);
