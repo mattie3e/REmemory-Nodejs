@@ -98,8 +98,6 @@ export const setUserNickname = async (userId, nickname) => {
 	}
 };
 
-// 추가된 코드
-
 // 유저 계정 상태 변경
 export const setUserStatus = async (userId, status) => {
 	try {
@@ -123,13 +121,12 @@ export const setUserStatus = async (userId, status) => {
 	}
 };
 
-export const setInactiveDate = async (userId) => {
+// 추가된 코드
+export const resetInactiveDate = async (userId) => {
 	try {
 		const conn = await pool.getConnection();
-		const inactiveDate = new Date();
-		const patchInactiveDate =
-			"UPDATE member SET inactive_date = ? WHERE id = ?";
-		await pool.query(patchInactiveDate, [inactiveDate, userId]);
+		const query = "UPDATE member SET inactive_date = NULL WHERE id = ?";
+		await conn.query(query, [userId]);
 		conn.release();
 	} catch (err) {
 		throw new BaseError(status.BAD_REQUEST);

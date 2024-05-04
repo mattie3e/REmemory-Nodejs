@@ -5,6 +5,7 @@ import {
 	userSetNickname,
 	userSign,
 	userStatusChange,
+	userActivate,
 } from "./userController.js";
 import { tokenAuthMiddleware } from "../../../config/tokenAuthMiddleware.js";
 
@@ -29,3 +30,7 @@ userRouter.patch(
 	tokenAuthMiddleware,
 	asyncHandler(userStatusChange),
 );
+
+// 추가 코드
+// 비활성화 -> 활성화 변경
+userRouter.patch("/activate", tokenAuthMiddleware, asyncHandler(userActivate));
