@@ -29,6 +29,8 @@ export const userSignAction = async (userCheck, userInfo) => {
 				userData.status,
 			);
 			await changeUserStatus(userId, 0);
+			userData = await getUserInfo(userId);
+			console.log("Service, getUserInfo 후 userData: ", userData);
 			console.log("changeUserStatus 후 status: ", userData.status);
 		}
 
