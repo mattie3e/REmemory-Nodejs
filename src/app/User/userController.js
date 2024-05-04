@@ -20,9 +20,9 @@ export const userSign = async (req, res) => {
 	const userInfo = await kakaoGetUserInfo(code);
 
 	const userCheck = await emailCheck(userInfo);
-
+	console.log("controller, userData 시작 전");
 	const userData = await userSignAction(userCheck, userInfo);
-
+	console.log("controller, userData 시작 후");
 	const type = userData.type;
 
 	if (type == 1) {
