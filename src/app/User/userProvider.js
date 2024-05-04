@@ -56,8 +56,6 @@ export const getUserInfos = async (userId) => {
 			userId: userInfo.id,
 			email: userInfo.email,
 			nickname: userInfo.nickname,
-			// 비활성화 알려줄 status 코드 추가
-			status: userInfo.status,
 		};
 	}
 };
