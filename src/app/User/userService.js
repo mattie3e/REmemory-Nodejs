@@ -7,6 +7,7 @@ import {
 	setUserNickname,
 	setUserStatus,
 	setInactiveDate,
+	resetInactiveDate,
 } from "./userDao.js";
 import { getUserInfos, getuserStatus, setUserJwt } from "./userProvider.js";
 
@@ -19,8 +20,12 @@ export const userSignAction = async (userCheck, userInfo) => {
 
 		const userData = await getUserInfo(userId);
 
+		// if (!userData.status) {
+		// 	await changeUserStatus(userId, 1);
+		// }
+
 		if (!userData.status) {
-			await changeUserStatus(userId, 1);
+			await changeUserStatus(userId, 0);
 		}
 
 		return {
@@ -82,12 +87,21 @@ export const changeUserStatus = async (userId, userStatus) => {
 		if (result == -1) {
 			throw new BaseError(status.BAD_REQUEST);
 		} else {
-			// 비활성화 -> 삭제 로직 구현 위한 코드 추가 line:85~88
-			if (userStatus === 0) {
-				// 비활성화 상태인 경우
-				await setInactiveDate(userId); // 비활성화 날짜 저장
-			}
 			return await getuserStatus(userId);
 		}
 	}
+};
+
+//추가 함수
+export const changeInactiveDate = async (userId) => {
+	// 사용자의 현재 상태를 확인
+	const userData = await getuserStatus(userId);
+	if (userData.status !== 0) {
+		throw new BaseError(status.BAD_REQUEST);
+	}
+
+	// inactive_date를 초기화
+	await resetInactiveDate(userId);
+
+	return { message: "Account has been successfully activated." };
 };
