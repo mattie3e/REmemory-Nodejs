@@ -24,7 +24,7 @@ export const userSign = async (req, res) => {
 	const userData = await userSignAction(userCheck, userInfo);
 	console.log("controller, userData 후");
 	const type = userData.type;
-	console.log("type: ", type);
+	console.log("현재 controller, type: ", type);
 	console.log("status: ", userData.data.status);
 
 	if (type == 1) {

@@ -85,7 +85,16 @@ export const insertRcapsule = async (connection, insertData) => {
 	const status = ["LOCKED", "OPENED"];
 
 	let openDate = new Date(insertData[4]);
+	console.log("openData: ", openDate);
 	let curDate = new Date();
+	console.log("curDate: ", curDate);
+
+	// 날짜만 비교하기 위해 시간을 제거
+	openDate.setHours(0, 0, 0, 0);
+	curDate.setHours(0, 0, 0, 0);
+	console.log("openData: ", openDate);
+	console.log("curDate: ", curDate);
+	console.log("newDate(): ", new Date());
 
 	const query = `INSERT INTO rcapsule 
 (time_capsule_id, capsule_number, rcapsule_name, rcapsule_password, url, open_date, dear_name, theme, status, created_at, updated_at)
