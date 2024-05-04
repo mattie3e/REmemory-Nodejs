@@ -3,7 +3,12 @@ export const insertPcapsule_d = async (connection, data) => {
 
 	let openDate = new Date(data[4]);
 	console.log("openData: ", openDate);
-	let curDate = new Date();
+
+	let now = new Date();
+
+	const timeOffset = now.getTimezoneOffset() * 60000; // 현재 시간대와 UTC의 차이(밀리초)
+	const kstOffset = 9 * 60 * 60 * 1000; // KST는 UTC+9
+	const curDate = new Date(now.getTime() + timeOffset + kstOffset);
 	console.log("curDate: ", curDate);
 
 	// 날짜만 비교하기 위해 시간을 제거
@@ -20,8 +25,8 @@ export const insertPcapsule_d = async (connection, data) => {
 	const [insertPcapsuleRow] = await connection.query(query, [
 		...data,
 		openDate.getTime() === curDate.getTime() ? status[1] : status[0],
-		new Date(),
-		new Date(),
+		curDate,
+		curDate,
 	]);
 	// return insertPcapsuleRow[0];
 	return insertPcapsuleRow.insertId; //, ...insertPcapsuleRow[0] };
