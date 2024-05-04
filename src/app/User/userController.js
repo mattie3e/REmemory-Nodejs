@@ -30,9 +30,9 @@ export const userSign = async (req, res) => {
 	if (type == 1) {
 		if (userData.data.status === 0) {
 			res.status(200).send(response(status.INACTIVE_ACCOUNT, userData.data));
+		} else {
+			res.send(response(status.LOGIN_SUCCESS, userData.data));
 		}
-
-		res.send(response(status.LOGIN_SUCCESS, userData.data));
 	} else if (type == 0) {
 		res.send(response(status.SIGNUP_SUCCESS, userData.data));
 	}
