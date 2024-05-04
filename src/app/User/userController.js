@@ -29,7 +29,7 @@ export const userSign = async (req, res) => {
 
 	if (type == 1) {
 		if (userData.data.status === 0) {
-			return res.send(response(status(200), userData.data.status));
+			res.status(200).send(response(status.INACTIVE_ACCOUNT, userData.data));
 		}
 
 		res.send(response(status.LOGIN_SUCCESS, userData.data));
