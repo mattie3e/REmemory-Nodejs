@@ -12,7 +12,7 @@ import {
 import { getUserInfos, getuserStatus, setUserJwt } from "./userProvider.js";
 
 export const userSignAction = async (userCheck, userInfo) => {
-	console.log("service, userSignAction 들어 온 직후");
+	console.log("2. service, userSignAction 들어 온 직후");
 	if (userCheck) {
 		const userId = await getUserIdByEmail(userInfo.email);
 
@@ -20,17 +20,15 @@ export const userSignAction = async (userCheck, userInfo) => {
 
 		const tokenInfo = setUserJwt(userId);
 
-		let userData = await getUserInfo(userId);
-		console.log("getUserInfo 후 userData.status: ", userData.status);
+		const userData = await getUserInfo(userId);
+		console.log("3. getUserInfo 후 userData: ", userData);
 
 		if (userData.status === 0) {
 			console.log(
-				"userData.status 0일 때 changeUserStatus 시작 전: ",
+				"4. userData.status 0일 때 changeUserStatus 시작 전: ",
 				userData.status,
 			);
 			await changeUserStatus(userId, 0);
-			userData = await getUserInfo(userId);
-			console.log("Service, getUserInfo 후 userData: ", userData);
 			console.log("changeUserStatus 후 status: ", userData.status);
 		}
 
@@ -84,22 +82,22 @@ export const setNickname = async (body) => {
 };
 
 export const changeUserStatus = async (userId, userStatus) => {
-	console.log("changeUserStatus 들어온 직후 userStatuse: ", userStatus);
+	console.log("4. changeUserStatus 들어온 직후 userStatuse: ", userStatus);
 	if (!userId) throw new BaseError(status.BAD_REQUEST);
 
-	const userData = await getuserStatus(userId);
-	console.log("userData 체크 완료");
+	// const userData = await getuserStatus(userId);
+	// console.log("userData 체크 완료");
 
 	const result = await setUserStatus(userId, userStatus);
-	console.log("setUserStatus 후 result: ", result);
+	console.log("5. setUserStatus 후 result: ", result);
 	if (result == -1) {
-		console.log("result -1이라 에러");
 		throw new BaseError(status.BAD_REQUEST);
 	} else {
-		console.log("현재 changeUserStatus, getuserStatus 들어가기 전");
+		console.log("6. 현재 changeUserStatus, getuserStatus 들어가기 전");
 		return await getuserStatus(userId);
 	}
 
+	// 원래 코드
 	// if (userData.status == userStatus) {
 	// 	throw new BaseError(status.CURRENT_STATUS);
 	// } else {

@@ -20,17 +20,20 @@ export const userSign = async (req, res) => {
 	const userInfo = await kakaoGetUserInfo(code);
 
 	const userCheck = await emailCheck(userInfo);
-	console.log("controller, userData 시작 전");
+	console.log("1. controller, userData 시작 전");
 	const userData = await userSignAction(userCheck, userInfo);
-	console.log("controller, userData 후");
+	console.log("9. controller, userData 후");
 	const type = userData.type;
-	console.log("현재 controller, type: ", type);
-	console.log("userData.data: ", userData.data);
-	console.log("status: ", userData.data.status);
+	console.log("10. 현재 controller, type: ", type);
+	console.log("10. userData.data: ", userData.data);
+	console.log("10. status: ", userData.data.status);
 
 	if (type == 1) {
 		if (userData.data.status === 0) {
-			console.log("전달값:", response(status.INACTIVE_ACCOUNT, userData.data));
+			console.log(
+				"11. 전달값:",
+				response(status.INACTIVE_ACCOUNT, userData.data),
+			);
 			res.status(200).send(response(status.INACTIVE_ACCOUNT, userData.data));
 		} else {
 			res.send(response(status.LOGIN_SUCCESS, userData.data));
