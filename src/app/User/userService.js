@@ -28,6 +28,7 @@ export const userSignAction = async (userCheck, userInfo) => {
 			data: {
 				userId: userData.id,
 				nickname: userData.nickname,
+				status: userData.status,
 				...tokenInfo,
 			},
 		};
@@ -43,6 +44,7 @@ export const userSignAction = async (userCheck, userInfo) => {
 			data: {
 				userId: userData.userId,
 				nickname: userData.nickname,
+				status: userData.status,
 				...tokenInfo,
 			},
 		};
