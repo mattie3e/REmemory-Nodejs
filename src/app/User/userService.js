@@ -27,9 +27,12 @@ export const userSignAction = async (userCheck, userInfo) => {
 		console.log("getUserInfo 후 userData: ", userData.status);
 
 		if (!userData.status) {
-			console.log("userData.status 0일 때 changeUserStatus 시작 전");
+			console.log(
+				"userData.status 0일 때 changeUserStatus 시작 전: ",
+				userData.status,
+			);
 			await changeUserStatus(userId, 0);
-			console.log("changeUserStatus 후");
+			console.log("changeUserStatus 후 status: ", userData.status);
 		}
 
 		return {

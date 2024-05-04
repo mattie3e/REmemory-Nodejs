@@ -1,8 +1,12 @@
 export const insertPcapsule_d = async (connection, data) => {
 	const status = ["LOCKED", "OPENED"];
 
-	const oepn_date = new Date(data[4]);
-	const curDate = new Date();
+	let openDate = new Date(data[4]);
+	let curDate = new Date();
+
+	// 날짜만 비교하기 위해 시간을 제거
+	openDate.setHours(0, 0, 0, 0);
+	curDate.setHours(0, 0, 0, 0);
 
 	const query = `INSERT INTO pcapsule 
   (time_capsule_id, capsule_number, pcapsule_password, pcapsule_name, open_date, dear_name, theme, content_type, status, created_at, updated_at) 
@@ -10,11 +14,7 @@ export const insertPcapsule_d = async (connection, data) => {
 
 	const [insertPcapsuleRow] = await connection.query(query, [
 		...data,
-		oepn_date.getFullYear() == curDate.getFullYear() &&
-		oepn_date.getMonth() == curDate.getMonth() &&
-		oepn_date.getDate() == curDate.getDate()
-			? status[1]
-			: status[0], // status 추가
+		openDate.getTime() === curDate.getTime() ? status[1] : status[0],
 		new Date(),
 		new Date(),
 	]);

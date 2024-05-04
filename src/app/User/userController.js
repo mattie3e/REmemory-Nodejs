@@ -22,12 +22,14 @@ export const userSign = async (req, res) => {
 	const userCheck = await emailCheck(userInfo);
 	console.log("controller, userData 시작 전");
 	const userData = await userSignAction(userCheck, userInfo);
-	console.log("controller, userData 시작 후");
+	console.log("controller, userData 후");
 	const type = userData.type;
+	console.log("type: ", type);
+	console.log("status: ", userData.data.status);
 
 	if (type == 1) {
 		if (userData.data.status === 0) {
-			return res.send(response(status.INACTIVE_ACCOUNT, userData.data));
+			return res.send(response(status.INACTIVE_ACCOUNT, userData.data.status));
 		}
 
 		res.send(response(status.LOGIN_SUCCESS, userData.data));
