@@ -37,6 +37,7 @@ export const userSignAction = async (userCheck, userInfo) => {
 			data: {
 				userId: userData.id,
 				nickname: userData.nickname,
+				status: userData.status,
 				...tokenInfo,
 			},
 		};
