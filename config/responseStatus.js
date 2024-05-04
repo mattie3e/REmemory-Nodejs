@@ -45,6 +45,12 @@ export const status = {
 		code: "USER006",
 		message: "계정 상태를 변경할 수 없습니다.",
 	},
+	INACTIVE_ACCOUNT: {
+		status: StatusCodes.BAD_REQUEST,
+		isSuccess: false,
+		code: "USER007",
+		message: "비활성화된 계정입니다.",
+	},
 
 	INTERNAL_SERVER_ERROR: {
 		status: StatusCodes.INTERNAL_SERVER_ERROR,
