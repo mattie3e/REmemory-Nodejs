@@ -98,6 +98,8 @@ export const setUserNickname = async (userId, nickname) => {
 	}
 };
 
+// 추가된 코드
+
 // 유저 계정 상태 변경
 export const setUserStatus = async (userId, status) => {
 	try {
@@ -116,6 +118,50 @@ export const setUserStatus = async (userId, status) => {
 
 		conn.release();
 		return result[0].changedRows;
+	} catch (err) {
+		throw new BaseError(status.BAD_REQUEST);
+	}
+};
+
+export const setInactiveDate = async (userId) => {
+	try {
+		const conn = await pool.getConnection();
+		const inactiveDate = new Date();
+		const patchInactiveDate =
+			"UPDATE member SET inactive_date = ? WHERE id = ?";
+		await pool.query(patchInactiveDate, [inactiveDate, userId]);
+		conn.release();
+	} catch (err) {
+		throw new BaseError(status.BAD_REQUEST);
+	}
+};
+
+export const deleteInactiveUsers = async () => {
+	try {
+		const conn = await pool.getConnection();
+		// curDate == 현재 날짜 - 8일
+		const curDate = new Date();
+		curDate.setDate(curDate.getDate() - 8); // 8일 전 날짜
+		const getInactiveUsers =
+			"SELECT id FROM member WHERE status = 0 AND inactive_date <= ?";
+		const [inactiveUsers] = await pool.query(getInactiveUsers, [curDate]);
+
+		for (const user of inactiveUsers) {
+			await deleteUser(user.id);
+		}
+
+		conn.release();
+	} catch (err) {
+		throw new BaseError(status.BAD_REQUEST);
+	}
+};
+
+export const deleteUser = async (userId) => {
+	try {
+		const conn = await pool.getConnection();
+		const deleteUserQuery = "DELETE FROM member WHERE id = ?";
+		await pool.query(deleteUserQuery, [userId]);
+		conn.release();
 	} catch (err) {
 		throw new BaseError(status.BAD_REQUEST);
 	}
