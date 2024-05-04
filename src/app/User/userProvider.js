@@ -6,7 +6,6 @@ import { checkUserEmail, getUserInfo } from "./userDao.js";
 
 export const kakaoGetUserInfo = async (code) => {
 	try {
-		console.log("kakaoGetUserInfo 들어온 직후");
 		const accessTokenResponse = await axios({
 			method: "POST",
 			url: "https://kauth.kakao.com/oauth/token",
@@ -31,11 +30,9 @@ export const kakaoGetUserInfo = async (code) => {
 			},
 		});
 		const userInfo = userInfoResponse.data.kakao_account;
-		console.log("userInfo: ", userInfo);
 
 		return userInfo;
 	} catch (err) {
-		console.log("error !");
 		console.log(err);
 		throw new BaseError(status.KAKAO_REJECTION);
 	}

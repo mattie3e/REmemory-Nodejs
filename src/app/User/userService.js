@@ -12,20 +12,24 @@ import {
 import { getUserInfos, getuserStatus, setUserJwt } from "./userProvider.js";
 
 export const userSignAction = async (userCheck, userInfo) => {
+	console.log("service, userSignAction 들어 온 직후");
 	if (userCheck) {
 		const userId = await getUserIdByEmail(userInfo.email);
+		console.log("getUserIdByEmail 후 userId: ", userId);
 
 		if (userId == -1) throw new BaseError(status.BAD_REQUEST);
+		console.log("userId -1 아님");
+
 		const tokenInfo = setUserJwt(userId);
+		console.log("setUserJwt 후 tokenInfo: ", tokenInfo);
 
 		const userData = await getUserInfo(userId);
-
-		// if (!userData.status) {
-		// 	await changeUserStatus(userId, 1);
-		// }
+		console.log("getUserInfo 후 userData: ", userData.status);
 
 		if (!userData.status) {
+			console.log("userData.status 0일 때 changeUserStatus 시작 전");
 			await changeUserStatus(userId, 0);
+			console.log("changeUserStatus 후");
 		}
 
 		return {
@@ -77,19 +81,32 @@ export const setNickname = async (body) => {
 };
 
 export const changeUserStatus = async (userId, userStatus) => {
+	console.log("changeUserStatus 들어온 직후");
 	if (!userId) throw new BaseError(status.BAD_REQUEST);
+	console.log("userId 체크 완료");
 
 	const userData = await getuserStatus(userId);
-	if (userData.status == userStatus) {
-		throw new BaseError(status.CURRENT_STATUS);
+	console.log("userData 체크 완료");
+
+	const result = await setUserStatus(userId, userStatus);
+	console.log("setUserStatus 후 result: ", result);
+	if (result == -1) {
+		console.log("result -1이라 에러");
+		throw new BaseError(status.BAD_REQUEST);
 	} else {
-		const result = await setUserStatus(userId, userStatus);
-		if (result == -1) {
-			throw new BaseError(status.BAD_REQUEST);
-		} else {
-			return await getuserStatus(userId);
-		}
+		return await getuserStatus(userId);
 	}
+
+	// if (userData.status == userStatus) {
+	// 	throw new BaseError(status.CURRENT_STATUS);
+	// } else {
+	// 	const result = await setUserStatus(userId, userStatus);
+	// 	if (result == -1) {
+	// 		throw new BaseError(status.BAD_REQUEST);
+	// 	} else {
+	// 		return await getuserStatus(userId);
+	// 	}
+	// }
 };
 
 //추가 함수
