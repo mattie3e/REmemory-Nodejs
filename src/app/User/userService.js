@@ -6,6 +6,7 @@ import {
 	insertUser,
 	setUserNickname,
 	setUserStatus,
+	setInactiveDate,
 } from "./userDao.js";
 import { getUserInfos, getuserStatus, setUserJwt } from "./userProvider.js";
 
@@ -81,6 +82,11 @@ export const changeUserStatus = async (userId, userStatus) => {
 		if (result == -1) {
 			throw new BaseError(status.BAD_REQUEST);
 		} else {
+			// 비활성화 -> 삭제 로직 구현 위한 코드 추가 line:85~88
+			if (userStatus === 0) {
+				// 비활성화 상태인 경우
+				await setInactiveDate(userId); // 비활성화 날짜 저장
+			}
 			return await getuserStatus(userId);
 		}
 	}
