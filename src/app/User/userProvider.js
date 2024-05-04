@@ -62,7 +62,10 @@ export const getUserInfos = async (userId) => {
 };
 
 export const getuserStatus = async (userId) => {
+	console.log("getuserStatus 들어온 직후");
 	const userInfo = await getUserInfo(userId);
+	console.log("userId :", userInfo.id);
+	console.log("status :", userInfo.status);
 	if (userInfo == -1) throw new BaseError(status.BAD_REQUEST);
 	else {
 		return {

@@ -15,18 +15,15 @@ export const userSignAction = async (userCheck, userInfo) => {
 	console.log("service, userSignAction 들어 온 직후");
 	if (userCheck) {
 		const userId = await getUserIdByEmail(userInfo.email);
-		console.log("getUserIdByEmail 후 userId: ", userId);
 
 		if (userId == -1) throw new BaseError(status.BAD_REQUEST);
-		console.log("userId -1 아님");
 
 		const tokenInfo = setUserJwt(userId);
-		console.log("setUserJwt 후 tokenInfo: ", tokenInfo);
 
 		const userData = await getUserInfo(userId);
-		console.log("getUserInfo 후 userData: ", userData.status);
+		console.log("getUserInfo 후 userData.status: ", userData.status);
 
-		if (!userData.status) {
+		if (userData.status === 0) {
 			console.log(
 				"userData.status 0일 때 changeUserStatus 시작 전: ",
 				userData.status,
@@ -40,6 +37,7 @@ export const userSignAction = async (userCheck, userInfo) => {
 			data: {
 				userId: userData.id,
 				nickname: userData.nickname,
+				status: userData.status,
 				...tokenInfo,
 			},
 		};
@@ -84,9 +82,8 @@ export const setNickname = async (body) => {
 };
 
 export const changeUserStatus = async (userId, userStatus) => {
-	console.log("changeUserStatus 들어온 직후");
+	console.log("changeUserStatus 들어온 직후 userStatuse: ", userStatus);
 	if (!userId) throw new BaseError(status.BAD_REQUEST);
-	console.log("userId 체크 완료");
 
 	const userData = await getuserStatus(userId);
 	console.log("userData 체크 완료");
@@ -97,6 +94,7 @@ export const changeUserStatus = async (userId, userStatus) => {
 		console.log("result -1이라 에러");
 		throw new BaseError(status.BAD_REQUEST);
 	} else {
+		console.log("현재 changeUserStatus, getuserStatus 들어가기 전");
 		return await getuserStatus(userId);
 	}
 
