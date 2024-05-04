@@ -20,7 +20,7 @@ export const userSignAction = async (userCheck, userInfo) => {
 
 		const tokenInfo = setUserJwt(userId);
 
-		const userData = await getUserInfo(userId);
+		let userData = await getUserInfo(userId);
 		console.log("getUserInfo 후 userData.status: ", userData.status);
 
 		if (userData.status === 0) {
