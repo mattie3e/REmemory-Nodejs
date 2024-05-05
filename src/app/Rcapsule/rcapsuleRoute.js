@@ -1,6 +1,7 @@
 import express from "express";
 import asyncHandler from "express-async-handler";
 import upload from "../../../config/multer.js";
+import { uploadAudioToS3 } from "../../../config/multer.js";
 
 import { tokenAuthMiddleware } from "../../../config/tokenAuthMiddleware.js";
 
@@ -30,10 +31,17 @@ rcapsuleRouter.post(
 //비밀번호 설정
 rcapsuleRouter.patch("/:rcapsule_id", asyncHandler(setRcapsulePw));
 
+// //음성 쓰기
+// rcapsuleRouter.post(
+// 	"/voice/:rcapsule_number",
+// 	upload.single("voice_rcapsule"),
+// 	asyncHandler(addVoiceLetter_c),
+// );
+
 //음성 쓰기
 rcapsuleRouter.post(
 	"/voice/:rcapsule_number",
-	upload.single("voice_rcapsule"),
+	uploadAudioToS3.single("voice_rcapsule"),
 	asyncHandler(addVoiceLetter_c),
 );
 

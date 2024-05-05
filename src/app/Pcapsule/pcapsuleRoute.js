@@ -1,6 +1,7 @@
 import express from "express";
 import asyncHandler from "express-async-handler";
 import upload from "../../../config/multer.js";
+import { uploadAudioToS3 } from "../../../config/multer.js";
 
 import { tokenAuthMiddleware } from "../../../config/tokenAuthMiddleware.js";
 
@@ -21,10 +22,17 @@ pcapsuleRouter.post("/create", tokenAuthMiddleware, asyncHandler(createPcs_c));
 
 pcapsuleRouter.post("/create/text_image", asyncHandler(addTextImage_c));
 
+// // 음성 저장 라우트
+// pcapsuleRouter.post(
+// 	"/create/voice",
+// 	upload.single("voice_pcapsule"),
+// 	asyncHandler(addVoice_c),
+// );
+
 // 음성 저장 라우트
 pcapsuleRouter.post(
 	"/create/voice",
-	upload.single("voice_pcapsule"),
+	uploadAudioToS3.single("voice_pcapsule"),
 	asyncHandler(addVoice_c),
 );
 

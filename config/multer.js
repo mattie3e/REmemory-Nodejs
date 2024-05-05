@@ -21,6 +21,42 @@ const upload = multer({
 	//    limits: { fileSize: 5 * 1024 * 1024 }, 5mb 용량 제한 (이건 나중에 필요할듯)
 });
 
+// Base64 형식의 오디오 데이터를 받아서 S3에 업로드하는 함수
+export const uploadAudioToS3 = async (base64Audio) => {
+	// 오디오 데이터의 MIME 타입 추출 (예: 'audio/mp3')
+	const audioType = base64Audio.match(/data:(.*);base64,/)[1];
+
+	// Base64 인코딩 부분만 추출
+	// Base64 데이터의 헤더 부분을 제거한 후 Buffer.from 함수에 전달
+	const base64Data = base64Audio.replace(/^data:audio\/\w+;base64,/, "");
+
+	// Base64 데이터를 Buffer로 변환
+	const buffer = Buffer.from(base64Data, "base64");
+
+	// 확장자 추출 (예: 'mp3')
+	const extension = audioType.split("/")[1];
+
+	// 파일 이름 설정 (현재 시간 기준)
+	const fileName = `audios/${Date.now().toString()}.${extension}`;
+
+	const data = {
+		Bucket: process.env.S3_BUCKET_NAME,
+		Key: fileName,
+		Body: buffer,
+		ContentEncoding: "base64",
+		ContentType: audioType,
+		ACL: "public-read",
+	};
+
+	try {
+		const response = await s3Client.upload(data).promise();
+		return response.Location; // 업로드된 오디오의 URL을 반환
+	} catch (error) {
+		console.error("uploadAudioToS3 error:", error);
+		throw error;
+	}
+};
+
 const allowedExtensions = [".png", ".jpg", ".jpeg", ".bmp"];
 
 const imageupload = multer({
