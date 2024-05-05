@@ -460,6 +460,7 @@ export const readInnerDetailRcs_s = async (wId) => {
 			);
 
 			align_type = text_img_data[0].align_type;
+			console.log("align_type: ", align_type);
 
 			text_img_data = text_img_data.map((row) => ({
 				body: row.body,

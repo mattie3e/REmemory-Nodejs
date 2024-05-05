@@ -113,6 +113,7 @@ export const changeUserStatus = async (userId, userStatus) => {
 //추가 함수
 export const changeInactiveDate = async (userId) => {
 	// 사용자의 현재 상태를 확인
+	console.log("changeInactivateDate 들어온 직후");
 	const userData = await getuserStatus(userId);
 	if (userData.status !== 0) {
 		throw new BaseError(status.BAD_REQUEST);
@@ -120,6 +121,7 @@ export const changeInactiveDate = async (userId) => {
 
 	// inactive_date를 초기화
 	await resetInactiveDate(userId);
+	console.log("resetInactiveDate 직후");
 
 	return { message: "Account has been successfully activated." };
 };

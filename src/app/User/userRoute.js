@@ -33,4 +33,4 @@ userRouter.patch(
 
 // 추가 코드
 // 비활성화 -> 활성화 변경
-userRouter.patch("/activate", tokenAuthMiddleware, asyncHandler(userActivate));
+userRouter.patch("/activate", asyncHandler(userActivate));
