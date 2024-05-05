@@ -80,14 +80,11 @@ export const userActivate = async (req, res) => {
 	console.log("user Activate, userId: ", userId);
 
 	if (userId == null) throw new BaseError(status.BAD_REQUEST);
-
-	try {
+	else {
 		await changeUserStatus(userId, 1); // 사용자 상태를 활성화로 변경
 		console.log("changeUserStatus 직후");
 		await changeInactiveDate(userId); // inactive_date를 null로 초기화
 		console.log("changeInactiveDate 직후");
 		res.send(response(status.SUCCESS, { message: "계정이 활성화되었습니다." }));
-	} catch (error) {
-		throw new BaseError(status.BAD_REQUEST);
 	}
 };
